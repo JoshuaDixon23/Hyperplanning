@@ -1,0 +1,10 @@
+On veut modéliser L'hyperplanning pour l'université. L'objectif est de pouvoir visualiser son emploi du temps quelques soit notre rôle.
+Les personnes externes à l'université peuvent consulter le planning par promotion (étudiant en attente d'inscription).
+Les étudiants peuvent consulter leur planning individuel et au moins celui de leur promotion.
+Une promotion = Un groupe d'étudiant appartenant à des mêmes études.
+Les professeurs ont les mêmes fonctionnalités que les étudiants et ils peuvent gérer leurs emplois du temps (ajout/suppression)
+Le personnel DRI peut consulter l'EDT et appliquer des filtres.
+Les filtres = Langues, niveau d'étude, UFR.
+Les administateurs ont accès à toutes les fonctionnalités.
+Les administateurs, professeurs, étudiants peuvent rechercher les salles disponibles selon une plage horaire ou vérifier les disponibilités d'une salle.
+Le planning est composé d'évenements. Chaque évenement est associé à une heure de début/fin et peut avoir d'autres informations tel que module, professeurs, salle, type (CM, TD, TP).
