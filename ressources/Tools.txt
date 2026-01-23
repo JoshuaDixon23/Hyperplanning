@@ -1,0 +1,2 @@
+L'outils que nous utilisons pour L'UML est PlantUML. C'est un logiciel permettant de créer de nombreux diagrammes.
+Pour le pilotage du projet nous utilisons est Jira qui est un outils de développement pour les équipes agiles.
