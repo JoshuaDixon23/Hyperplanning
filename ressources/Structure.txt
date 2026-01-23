@@ -8,3 +8,4 @@ Les filtres = Langues, niveau d'étude, UFR.
 Les administateurs ont accès à toutes les fonctionnalités.
 Les administateurs, professeurs, étudiants peuvent rechercher les salles disponibles selon une plage horaire ou vérifier les disponibilités d'une salle.
 Le planning est composé d'évenements. Chaque évenement est associé à une heure de début/fin et peut avoir d'autres informations tel que module, professeurs, salle, type (CM, TD, TP).
+Ajout de la carte de l'université.
