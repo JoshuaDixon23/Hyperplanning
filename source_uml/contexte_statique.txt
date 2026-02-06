@@ -7,7 +7,7 @@ actor Student as s
 actor Professor as p
 actor Invited as i
 actor Admin as a
-actor Staff
+actor StaffDRI as DRI
 actor Server
 
 rectangle app {
@@ -15,9 +15,10 @@ rectangle app {
   p --down-- (app)
   i --down-- (app)
   a --down-- (app)
-  Staff --down-- (app)
+  DRI --down-- (app)
 
   Server --up-- (app)
 }
 @enduml
+
 
