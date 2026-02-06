@@ -16,7 +16,7 @@ Elève :
 Staff:
 - Doit pouvoir voir SON planning
 - Doit pouvoir filtrer les plannings 
-- Doit pouvoir faire des demandes de modification de planning 
+- Doit pouvoir former le planning pour les etudiants étrangers
 
 
 Professeur:

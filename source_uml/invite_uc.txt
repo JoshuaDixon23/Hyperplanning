@@ -1,0 +1,26 @@
+@startuml
+left to right direction
+
+actor Invited as I
+package InviteService {
+(consult planning by syllabus) as cp
+(get course info) as gci
+(see map) as sp 
+(see menu) as sm
+}
+
+
+I -- cp
+I -- gci
+I -- sp
+I -- sm
+
+
+
+
+
+
+
+
+
+@enduml
