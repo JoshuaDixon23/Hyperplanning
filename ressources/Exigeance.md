@@ -10,7 +10,7 @@ Elève :
 - Doit pouvoir voir SON planning
 - Doit pouvoir voir le planning de sa promo
 - Doit pouvoir filtrer les plannings 
-- Doit pouvoir consulter ses devoirs
+- Doit pouvoir consulter les controles à venir
 
 
 Staff:
