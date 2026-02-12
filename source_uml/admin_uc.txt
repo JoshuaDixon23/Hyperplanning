@@ -251,5 +251,11 @@ cp <.-- consult : "extend"
 A -- consult
 consult .--> mp : "extend"
 
+'(sign in) as si
+'StaffDRIService .--> si : "include"
+'StudentService .--> si : "include"
+'AdminService .--> si : "include"
+'ProfessorService .--> si : "include"
+note "UCs of all the services\n except InvitedService \ninclude UC Sign In" as N1
 
 @enduml
