@@ -1,0 +1,71 @@
+@startuml
+actor StaffDRI as s
+participant App as a
+actor Admin as ad
+actor Student as st
+
+group Student dossier creation 
+    s -> a : Clicks on create dossier
+    a -> s : Asks for name and surname
+    s -> a : Enters name and surname
+end
+
+group Choice of convenient courses in basket
+    a -> s : Displays UFRs of university
+    s -> a : Chooses convenient UFRS from the list
+    a -> s : Asks the language(s) convenient for studing for a student
+    s -> a : Chooses the language(s) spoken by student
+    a -> s : Displays convenient syllabuses
+    s -> a : Chooses convenient syllabuses
+    note right
+    Can consult convenient courses 
+    for each syllabus but not chose 
+    them for instance
+    end note
+    a -> s : Displays all the syllabuses chosen with courses names 
+    s -> a : Chooses convenient courses in basket
+    note right
+    Can consult courses details by
+    clicking on them (ECTS, language etc)
+    end note
+    s -> a : Validates basket
+end
+
+group Choice of courses for planning from basket
+    a -> s : Displays semester planning by weeks
+    note right
+    With ECTS sum on 0 in the bottom and  
+    basket of courses on the right
+    end note
+    loop 
+        s -> a:  Chooses a course from basket
+        a -> s : Adds all the classes of chosen course on planning
+        a -> s : Updates ECTS sum
+        alt conflict with chosen courses
+            a -> s : Puts weeks with conflicts in red
+            opt
+                s -> a : Removes course from chosen
+                a -> s : Removes course from planning
+                a -> s : Updates ECTS sum
+            end
+        else no conflict
+        end 
+        
+    end
+end
+
+group Share planning with student
+    s -> st : Sends consultable link with planning 
+end
+
+group Validate planning with admin
+    s -> ad : Send proposition of planning 
+    alt planning ok
+        group Validate student planning
+        end
+    else planning not ok
+        ad -> s : Send commentary of refuse
+    end
+end
+
+@enduml

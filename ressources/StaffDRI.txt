@@ -4,4 +4,4 @@ A chaque étape il doit être possible de sauvegarder le résultat de ses recher
 
 Eventuellement, il doit pouvoir être de possible de revenir en arrière, de changer les choix, de partir de la création d'un planning du panier fait pour l'autre étudiant. 
 
-Ce planning pourrais aussi faciliter la création des horaires des groupe de FLE (français langue étrangère) - module obligatoire qui n'est dans aucun parcours universitaire, mais est une matière avec le nombre d'ECTS précis et fait par la professeur de l'équipe de la DRI (par staff DRI pour cette application, comme n'a pas besoin de constituer le planning pour les étudiants ni de le consulter). 
+Ce planning pourrais aussi faciliter la création des horaires des groupes de FLE (français langue étrangère) - module obligatoire qui n'est dans aucun parcours universitaire, mais est une matière avec le nombre d'ECTS précis et fait par la professeur de l'équipe de la DRI (par staff DRI pour cette application, comme n'a pas besoin de constituer le planning pour les étudiants ni de le consulter). 

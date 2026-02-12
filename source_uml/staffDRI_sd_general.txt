@@ -1,0 +1,17 @@
+@startuml
+actor StaffDRI as s
+participant App as a
+actor Admin as ad
+actor Student as st
+
+ref over s, a : Student dossier creation 
+
+ref over s, a : Choice of convenient courses in basket
+
+ref over s, a :  Choice of courses for planning from basket
+
+ref over s, st : Share planning with student
+
+ref over s, ad :Validate planning with admin
+
+@enduml
