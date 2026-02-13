@@ -1,5 +1,9 @@
 @startuml
 left to right direction
+'skinparam nodesep 60
+'skinparam ranksep 60
+'skinparam padding 8
+skinparam linetype ortho
 class User {
     name
     surname
@@ -25,7 +29,6 @@ class CourseReal{
 }
 
 class Room{
-    buiding
     num
     capacity
     Enum type (TP, amphitheater etc)
@@ -36,22 +39,63 @@ class Promo{
     Enum studyLevel
 }
 
-class UFR
+class UFR{
+    name
+    campus
+    
+    
+}
 
-Professor --> User
-Student --> User
+class Building{
+    localisation
+    openingTime
+    closingTime
+
+}
+
+class Planning{
+
+}
+
+class Map{
+    city
+}
+
+
+Professor --|> User
+Student --|> User
+
 
 Professor "responsible" --- "0..*" CourseGeneric 
 Student "*\nstudent " --- "*" CourseGeneric
 
 Professor "responsible" --- "0..1" Promo
-Student "*\nstudent " --- "?" Promo
+Student "*\nstudent " --- "0..1" Promo : belongs >
 
-diamond d
+UFR "1" *-- "1..*" Promo
+'CourseGeneric "1..*" --- "1..*" Promo : quelque chose
+'CourseGeneric -[hidden]- Promo
 
-Professor -r- d
-Room -- d
-Student -u- d
-d .r- CourseReal 
+Building *--  Room
+Building "1..*" --- "0..1" UFR : belongs > 
+
+Planning *--  CourseReal
+Planning "1"-- "1..*" Promo : owns <
+Planning "1"-- "1..*" Student : owns <
+Planning "1"-- "1..*" Professor : owns <
+
+diamond d1
+
+Professor -- d1
+Room -u- d1
+Student -r- d1
+d1 .l- CourseReal 
+
+CourseGeneric  --- "0..*"CourseReal : describes >
+Building --o Map
+
+
+
 
 @enduml
+
