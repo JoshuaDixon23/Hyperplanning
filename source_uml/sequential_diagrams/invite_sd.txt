@@ -1,0 +1,43 @@
+@startuml
+title Invite - Nominal Scenario (Course info via planning)
+
+actor "Invited" as U
+boundary "App" as UI
+database "Database" as DB
+
+U -> UI : Open application
+UI --> U : Display options\n(menu, map, planning)
+
+loop While the invited user consults information
+
+  U -> UI : Select an option
+
+  alt option = "see menu"
+    group See menu
+      UI -> DB : getMenu()
+      DB --> UI : menuData
+      UI --> U : Display menu
+    end
+
+  else option = "see map"
+    group See map
+      UI -> DB : getMap()
+      DB --> UI : mapData
+      UI --> U : Display map
+    end
+
+  else option = "consult planning by syllabus"
+    group Consult planning by syllabus
+      UI --> U : Display syllabus list
+      U -> UI : Select syllabus
+      UI -> DB : findPlanning(syllabusId)
+      DB --> UI : planningData
+      UI --> U : Display planning
+
+
+    end
+  end
+
+end
+
+@enduml
