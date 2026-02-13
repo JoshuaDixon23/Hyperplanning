@@ -1,0 +1,57 @@
+@startuml
+left to right direction
+class User {
+    name
+    surname
+    mail
+}
+
+class Professor {
+    
+}
+
+class Student {
+
+}
+
+class CourseGeneric{
+    code
+    name
+}
+
+class CourseReal{
+    startTime
+    duration
+}
+
+class Room{
+    buiding
+    num
+    capacity
+    Enum type (TP, amphitheater etc)
+}
+
+class Promo{
+    year
+    Enum studyLevel
+}
+
+class UFR
+
+Professor --> User
+Student --> User
+
+Professor "responsible" --- "0..*" CourseGeneric 
+Student "*\nstudent " --- "*" CourseGeneric
+
+Professor "responsible" --- "0..1" Promo
+Student "*\nstudent " --- "?" Promo
+
+diamond d
+
+Professor -r- d
+Room -- d
+Student -u- d
+d .r- CourseReal 
+
+@enduml
