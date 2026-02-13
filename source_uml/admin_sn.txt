@@ -1,0 +1,50 @@
+@startuml
+header Nominal Scenario - Administrator
+
+actor Admin
+participant "App" as App
+database "Database" as DB
+
+group Authentication
+    Admin -> App: Authentication Request (Logins)
+    App -> DB: Verify credentials
+    DB --> App: Admin profile validated
+    App --> Admin: Access to Dashboard
+end
+
+group UFR & Program Management
+    Admin -> App: Create "Sciences and Technologies" UFR
+    App -> DB: Save new UFR
+    Admin -> App: Generate "Computer Science - L3"  Program within UFR
+    App -> DB: Associate Program with UFR
+    Admin -> App: Configure parameters (Academic year, Expected headcount)
+    App -> DB: Update Database
+
+
+group Module Management
+    Admin -> App: Add Modules ("Crypto", "Databases")
+    App -> DB: Link modules to L3 Program
+    App --> Admin: Modules registered
+end
+end
+
+group Availability Analysis
+    Admin -> App: Consult Rooms schedules
+    App -> DB: Get Room schedule
+    DB --> App: Data on used time slots
+    App --> Admin: Display availability
+end
+
+group Mapping
+    Admin -> App: Modify map (Add new building)
+    App -> DB: Update map
+    App --> Admin: Map updated
+end
+
+group Menu Updates
+    Admin -> App: Update Canteen Menu
+    App -> DB: Save weekly menu
+    App --> Admin: Menu published successfully
+end
+
+@enduml
