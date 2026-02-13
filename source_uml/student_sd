@@ -1,0 +1,46 @@
+@startuml
+actor       Student      as S
+participant App as A
+
+
+group open account
+    S -> A : sign in
+    A -> A : check the identifiers
+    A -> S : open his account
+end
+
+group notifications
+    opt
+        S -> A : ask if he has notifications
+        A -> S : send him back the notifications
+    end
+end
+
+group Find empty room 
+    S -> A : ask for a list of empty room
+    A -> S : send the actual checklist 
+end
+
+group Consult planning
+
+    alt his planning
+        S -> A : ask the planning of himself
+        A -> S : send the planning associated to the user of the account
+    
+    else professor planning
+        S -> A : ask for the planning of the professor
+        A -> S : send the planning's prof
+        
+    else promo planning
+        S -> A : ask for a specific planning of one promotion
+        A -> S : send the list of promotion
+        S -> A : select one promotion 
+        A -> S : send the specific planning
+    end
+end 
+
+A -> S : send the wanted planning
+
+
+
+@enduml
