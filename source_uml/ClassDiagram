@@ -59,6 +59,7 @@ class Planning{
 
 class Map{
     city
+    imageFileName
 }
 
 
@@ -94,7 +95,7 @@ d1 .l- CourseReal
 CourseGeneric  --- "0..*"CourseReal : describes >
 Building --o Map
 
-
+CourseGeneric "*"--"*" Promo : follows <
 
 
 @enduml
