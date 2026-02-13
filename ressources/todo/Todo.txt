@@ -1,7 +1,10 @@
 Diagramme de classe staff dri à travailler
 Diagramme d'état pour cours réel à faire
-Le menu de la cantine à modéliser
-Use case remplacer "syllabus" par "promotion"
+Le menu de la cantine à modéliser en diagramme statique
+Use case remplacer "syllabus" par "promotion" + dans diagramme de séquence StaffDRI
 Modifier "consult his promotion" dans le diagramme
 Diagramme de séquence pour la visualisation des salles vides 
 Vérifier la compatibilité entre le diagramme de séquence admin et le diagramme de classe
+User stories de l'invité à ajouter
+Réfléchir sur les US pour S1/S2
+Les interfaces essentielles à modeliser
