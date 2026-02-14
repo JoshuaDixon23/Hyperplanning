@@ -1,9 +1,9 @@
 @startuml
-left to right direction
-'skinparam nodesep 60
-'skinparam ranksep 60
-'skinparam padding 8
 skinparam linetype ortho
+skinparam nodesep 120
+skinparam ranksep 120
+skinparam padding 10
+
 class User {
     name
     surname
@@ -13,25 +13,15 @@ class User {
 class Professor {
     
 }
-
 class Student {
-
 }
+
+Professor -u-|> User
+Student -u-|> User
 
 class CourseGeneric{
     code
     name
-}
-
-class CourseReal{
-    startTime
-    duration
-}
-
-class Room{
-    num
-    capacity
-    Enum type (TP, amphitheater etc)
 }
 
 class Promo{
@@ -41,20 +31,13 @@ class Promo{
 
 class UFR{
     name
-    campus
-    
-    
+    campus   
 }
 
 class Building{
     localisation
     openingTime
     closingTime
-
-}
-
-class Planning{
-
 }
 
 class Map{
@@ -62,41 +45,80 @@ class Map{
     imageFileName
 }
 
+class CourseReal{
+    startTime
+    duration
+}
 
-Professor --|> User
-Student --|> User
+class Group{
+    Enum type (promo?, TD, TP)
+}
 
+class Room{
+    num
+    capacity
+    Enum type (TP, amphitheater etc)
+}
 
-Professor "responsible" --- "0..*" CourseGeneric 
-Student "*\nstudent " --- "*" CourseGeneric
+class Basket{
+}
 
-Professor "responsible" --- "0..1" Promo
-Student "*\nstudent " --- "0..1" Promo : belongs >
+class Planning{
+}
 
-UFR "1" *-- "1..*" Promo
-'CourseGeneric "1..*" --- "1..*" Promo : quelque chose
-'CourseGeneric -[hidden]- Promo
+User -[hidden]d- Professor
 
-Building *--  Room
-Building "1..*" --- "0..1" UFR : belongs > 
+Professor -[hidden]r- Student
 
-Planning *--  CourseReal
-Planning "1"-- "1..*" Promo : owns <
-Planning "1"-- "1..*" Student : owns <
-Planning "1"-- "1..*" Professor : owns <
+CourseGeneric -[hidden]r- Promo
+Promo -[hidden]r- UFR
+UFR -[hidden]r- Building
+Building -[hidden]r- Map
 
-diamond d1
+CourseReal -[hidden]r- Group
+Group -[hidden]r- Room
+Room -[hidden]r- Basket
 
-Professor -- d1
-Room -u- d1
-Student -r- d1
-d1 .l- CourseReal 
+Professor -[hidden]d- CourseGeneric
+Student -[hidden]d- Promo
+UFR -[hidden]d- Group
+Building -[hidden]d- Room
 
-CourseGeneric  --- "0..*"CourseReal : describes >
-Building --o Map
+CourseGeneric -[hidden]d- CourseReal
+Promo -[hidden]d- Group
 
-CourseGeneric "*"--"*" Promo : follows <
+CourseReal -[hidden]d- Planning
+Group -[hidden]d- Planning
 
+Professor "responsible" -d- "0..*" CourseGeneric 
+Professor "responsible" -d- "0..1" Promo
+Professor "1..*" -d- "*" CourseReal
+
+Student "* " -d- "*" CourseGeneric
+Student "*" -d- "0..1" Promo : belongs >
+Student "*" -d- "0..*" Group: belongs >
+
+CourseGeneric -d- "0..*" CourseReal : describes >
+CourseGeneric "*" -r- "*" Promo : follows <
+
+Promo *-d- Group
+UFR "1" *-l- "1..*" Promo
+
+Group "1..*" -l- "*" CourseReal
+
+Building *-d- Room
+Building -r-o Map
+Building "1..*" -u- "0..1" UFR : belongs > 
+
+Room -l- "*" CourseReal
+
+Planning *-u- CourseReal
+Planning -u- "1..*" Promo : owns <
+Planning -l- "1..*" Student : owns <
+Planning -l- "1..*" Professor : owns <
+Planning -u- "1..*" Group: owns <
+
+Basket o-u- CourseGeneric
+Basket -l- "international" Student
 
 @enduml
-
