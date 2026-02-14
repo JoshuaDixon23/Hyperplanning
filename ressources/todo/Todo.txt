@@ -1,4 +1,4 @@
-Diagramme de classe staff dri à travailler
+Diagramme de classe staff dri à travailler :  +- fait 
 Diagramme d'état pour cours réel à faire
 Le menu de la cantine à modéliser en diagramme statique
 Use case remplacer "syllabus" par "promotion" + dans diagramme de séquence StaffDRI
