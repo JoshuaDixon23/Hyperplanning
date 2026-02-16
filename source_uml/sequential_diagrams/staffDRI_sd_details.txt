@@ -15,14 +15,14 @@ group Choice of convenient courses in basket
     s -> a : Chooses convenient UFRS from the list
     a -> s : Asks the language(s) convenient for studing for a student
     s -> a : Chooses the language(s) spoken by student
-    a -> s : Displays convenient syllabuses
-    s -> a : Chooses convenient syllabuses
+    a -> s : Displays convenient promos
+    s -> a : Chooses convenient promos
     note right
     Can consult convenient courses 
-    for each syllabus but not chose 
+    for each promo but not chose 
     them for instance
     end note
-    a -> s : Displays all the syllabuses chosen with courses names 
+    a -> s : Displays all the promos chosen with courses names 
     s -> a : Chooses convenient courses in basket
     note right
     Can consult courses details by
@@ -39,7 +39,10 @@ group Choice of courses for planning from basket
     end note
     loop 
         s -> a:  Chooses a course from basket
-        a -> s : Adds all the classes of chosen course on planning
+        opt
+            s -> a: Chooses a group for this course
+        end
+        a -> s : Adds all the classes of chosen course on planning (of specific group)
         a -> s : Updates ECTS sum
         alt conflict with chosen courses
             a -> s : Puts weeks with conflicts in red
