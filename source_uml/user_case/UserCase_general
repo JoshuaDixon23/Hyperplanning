@@ -3,17 +3,18 @@ left to right direction
 
 actor Invited as I
 package InvitedService {
-(consult planning by syllabus) as cp
+(consult planning by promo) as cp
 (see map) as sp 
 (consult restorations information) as cri
 }
+
 
 actor Student as S
 package StudentService {
 (search for empty room) as sfer
 (consult his planning) as chp
-(consult his promo's planning) as chpp
 (consult professor's planning) as cpp
+(consult his promo's planning) as chpp
 }
 
 actor StaffDRI as SD
@@ -33,11 +34,9 @@ package ProfessorService {
 }
 actor Admin as A
 package AdminService {
-(manage planing ) as mp
 (manage promotion) as mpromo
-
+(manage planing ) as mp
 }
-
 
 I -- cp
 I -- sp
@@ -49,33 +48,34 @@ S -- chp
 S -- chpp
 S -- cpp
 
-S -> I
+S -|> I
 
 
 SD -- misp
-SD -> I
+SD -|> I
 
 
 P -- chppro
 P -- rpc
 'P -- sci
 
-P -> I
+P -|> I
 
-A -- mp
 A -- mpromo
+A -- mp
 
-A -> I
+A -|> I
 
 (consult planning) as consult
 
-chppro <.-- consult : "extend"
-chp <.-- consult : "extend"
-chpp <.-- consult : "extend"
-cp <.-- consult : "extend"
-
-A -- consult
 consult .--> mp : "extend"
+A -- consult
+chp <.-- consult : "extend"
+cpp <.-- consult : "extend"
+chpp <.-- consult : "extend"
+chppro <.-- consult : "extend"
+cp <.-- consult : "extend"
+'chpp <.-- cp : "extend"
 
 '(sign in) as si
 'StaffDRIService .--> si : "include"
@@ -83,5 +83,4 @@ consult .--> mp : "extend"
 'AdminService .--> si : "include"
 'ProfessorService .--> si : "include"
 note "UCs of all the services\n except InvitedService \ninclude UC Sign In" as N1
-
 @enduml
