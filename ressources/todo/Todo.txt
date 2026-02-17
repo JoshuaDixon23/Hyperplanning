@@ -1,10 +1,25 @@
+Agate :
+Diagramme de séquence pour la visualisation des salles vides (comment ça doit se passer)
+
+Joshua :
+Vérifier la compatibilité entre le diagramme de séquence admin et le diagramme de classe (si tout les fonctionnalités d'admin sont faisant à partir du diagramme existant)
+Interfaces les plus pertinents d'admin à modeliser
+(diagramme de sequence d'admin à découper en deux parties (comme il a deux UC), mais on le discutera ensemble)
+
+Nikita :
 Diagramme de classe staff dri à travailler : +- fait 
-Diagramme d'état pour cours réel à faire
-Le menu de la cantine à modéliser en diagramme statique
 Use case remplacer "syllabus" par "promotion" + dans diagramme de séquence StaffDRI : fait
 Modifier "consult his promotion" dans le diagramme : fait (finalement pas besoin de supprimer, mais le lien d'extend avec consult planning by promo d'invited peut être ajouté au lieu de lien direct avec consult planning, mais ce dernier choix allège le diagramme sans trop affecter la justesse de la modélisation)
-Diagramme de séquence pour la visualisation des salles vides 
-Vérifier la compatibilité entre le diagramme de séquence admin et le diagramme de classe
+Modeliser l'interface de choix de cours par StaffDRI du panier + le problème de superpositions à réflechir
+
+Thomas :
+Le menu de la cantine à modéliser en diagramme statique (et plus généralement consulter les infos des restauration, des préférence sur le diagramme de classe apart, puis on va attacher ce morceau au diagramme général)
 User stories de l'invité à ajouter
+
+Ugo :
+Diagramme d'état pour cours réel à faire (les premières réflections "brouillon" à faire, peut être sur papier premièrement, mais de préférence ensuite en PlantUML à commencer)
+! pas de diagramme de sequence de prof sur github (on le discutera ensuite également, il dois y avoir des choses à améliorer)
+
+Tout le monde :
 Réfléchir sur les US pour S1/S2
-Les interfaces essentielles à modeliser
+Les interfaces essentielles à modeliser (de votre acteur, si vous avez le temps)
