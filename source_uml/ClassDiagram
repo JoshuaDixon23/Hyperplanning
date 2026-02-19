@@ -1,7 +1,7 @@
 @startuml
 skinparam linetype ortho
-skinparam nodesep 120
-skinparam ranksep 120
+skinparam nodesep 140
+skinparam ranksep 130
 skinparam padding 10
 
 class User {
@@ -13,25 +13,36 @@ class User {
 class Professor {
     
 }
+
 class Student {
 }
 
 Professor -u-|> User
 Student -u-|> User
 
-class CourseGeneric{
-    code
-    name
-}
-
 class Promo{
     year
     Enum studyLevel
 }
 
+class CourseGeneric{
+    code
+    name
+    language
+}
+
 class UFR{
     name
     campus   
+}
+
+class Group{
+    Enum type (promo?, TD, TP)
+}
+
+class CourseReal{
+    startTime
+    duration
 }
 
 class Building{
@@ -40,77 +51,68 @@ class Building{
     closingTime
 }
 
-class Map{
-    city
-    imageFileName
-}
-
-class CourseReal{
-    startTime
-    duration
-}
-
-class Group{
-    Enum type (promo?, TD, TP)
-}
-
 class Room{
     num
     capacity
     Enum type (TP, amphitheater etc)
 }
 
-class Basket{
+class Map{
+    city
+    imageFileName
 }
 
 class Planning{
+}
+
+class Basket{
 }
 
 User -[hidden]d- Professor
 
 Professor -[hidden]r- Student
 
-CourseGeneric -[hidden]r- Promo
-Promo -[hidden]r- UFR
-UFR -[hidden]r- Building
-Building -[hidden]r- Map
+Promo -[hidden]r- CourseGeneric
+CourseGeneric -[hidden]r- UFR
 
-CourseReal -[hidden]r- Group
-Group -[hidden]r- Room
-Room -[hidden]r- Basket
+Group -[hidden]r- CourseReal
+CourseReal -[hidden]r- Building
 
-Professor -[hidden]d- CourseGeneric
-Student -[hidden]d- Promo
-UFR -[hidden]d- Group
+Room -[hidden]r- Map
+Map -[hidden]r- Basket
+
+Professor -[hidden]d- Promo
+Student -[hidden]d- CourseGeneric
+CourseGeneric -[hidden]d- Group
+UFR -[hidden]d- CourseReal
 Building -[hidden]d- Room
 
-CourseGeneric -[hidden]d- CourseReal
 Promo -[hidden]d- Group
-
-CourseReal -[hidden]d- Planning
 Group -[hidden]d- Planning
+CourseReal -[hidden]d- Planning
 
-Professor "responsible" -d- "0..*" CourseGeneric 
 Professor "responsible" -d- "0..1" Promo
+Professor "responsible" -r- "0..*" CourseGeneric 
 Professor "1..*" -d- "*" CourseReal
 
-Student "* " -d- "*" CourseGeneric
 Student "*" -d- "0..1" Promo : belongs >
-Student "*" -d- "0..*" Group: belongs >
+Student -d-o Group
 
+CourseGeneric "*" -l- "*" Promo : follows <
+CourseGeneric "*" -d- "*" Student: follows <
 CourseGeneric -d- "0..*" CourseReal : describes >
-CourseGeneric "*" -r- "*" Promo : follows <
 
 Promo *-d- Group
+
 UFR "1" *-l- "1..*" Promo
 
-Group "1..*" -l- "*" CourseReal
+Group "1..*" -r- "*" CourseReal
 
 Building *-d- Room
 Building -r-o Map
-Building "1..*" -u- "0..1" UFR : belongs > 
+Building "1..*" -l- "0..1" UFR : belongs > 
 
-Room -l- "*" CourseReal
+Room -u- "*" CourseReal
 
 Planning *-u- CourseReal
 Planning -u- "1..*" Promo : owns <
@@ -120,5 +122,4 @@ Planning -u- "1..*" Group: owns <
 
 Basket o-u- CourseGeneric
 Basket -l- "international" Student
-
 @enduml
