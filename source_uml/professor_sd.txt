@@ -1,0 +1,41 @@
+@startuml
+title Professor - Nominal Scenario (Course info via planning)
+
+actor "professor" as P
+actor "admin" as A
+boundary "App" as UI
+database "Database" as DB
+group Authentication
+    P -> UI : Provide login credentials
+    UI -> DB : Verify user ID and password
+    DB --> UI : Authentication successful
+    UI --> P : Access granted
+end
+
+group  Consult planning
+    P -> UI : Request schedule
+    UI -> DB : Retrieve schedule data
+    DB --> UI : Schedule data
+    UI --> P : Display schedule
+end
+
+'group Consult courses info 
+'    P -> UI : Request courses info
+'    UI -> DB : Retrieve courses data
+'    DB --> UI : Courses data
+'    UI --> P : Display courses info
+'end
+opt
+    group Request course modification
+        P -> A : Course modification request
+        A -> UI : Approve course modification
+        UI -> DB : Update course
+        DB --> UI : Course updated
+        UI --> P : Display modification
+    end
+end
+
+
+
+@enduml
+
