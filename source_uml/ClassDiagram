@@ -112,9 +112,9 @@ Building *-d- Room
 Building -r-o Map
 Building "1..*" -l- "0..1" UFR : belongs > 
 
-Room -u- "*" CourseReal
+Room -u- "*" Course
 
-Planning *-u- CourseReal
+Planning *-u- Course
 Planning -u- "1..*" Promo : owns <
 Planning -l- "1..*" Student : owns <
 Planning -l- "1..*" Professor : owns <
