@@ -10,30 +10,29 @@ Application -> Student : Demander le jour
 Student -> Application : Sélectionner le jour
 
 Application -> Student : Demander l'heure
-Student -> Application : Sélectionner le jour
+Student -> Application : Sélectionner l'heure
 
-Application -> Student : Proposer la liste des UFR
-Student -> Application : Sélectionner l'UFR
+Application -> Student : Proposer la liste des Campus
+Student -> Application : Sélectionner le Campus
 
 Application -> Student : Afficher le logo de chargement 
 Application -> Application : Calculer salles disponibles 
 
 Application -> Student : Enlever le logo de chargement 
-Application -> Student : Envoyer liste des salles libres
 
-
-opt Salles disponibles par batîment
-Application --> Student : demander le choix du batîment
-Student --> Application: choisir le batiment
 alt Salles disponibles 
-Application --> Student : Liste des salles libres
- else Aucune salle libre 
-Application --> Student : Message « Aucune salle disponible » 
-end
+  Application -> Student : Affiche les batiments avec les salles disponibles
+  Student -> Application : Consulte les salles disponibles par batiment
+  opt
+    ref over Student, Application : "Reserver" la salle pour être notifié de son occupation
+  end
+
+else Aucune salle libre 
+  Application --> Student : Message « Aucune salle disponible » 
 end
 
-Student -> Application : Sélectionner le créneau souhaité
-Application -> Application : Réserver le créneau
-Application -> Student : Confirmer la demande
+'Student -> Application : Sélectionner le créneau souhaité
+'Application -> Application : Réserver le créneau
+'Application -> Student : Confirmer la demande
 
 @enduml
