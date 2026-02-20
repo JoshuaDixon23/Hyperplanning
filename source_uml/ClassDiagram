@@ -37,7 +37,7 @@ class UFR{
 }
 
 class Group{
-    Enum type (promo?, TD, TP)
+    Enum type (promo, TD, TP)
 }
 
 class Course{
@@ -115,7 +115,7 @@ Building "1..*" -l- "0..1" UFR : belongs >
 Room -u- "*" Course
 
 Planning *-u- Course
-Planning -u- "1..*" Promo : owns <
+'Planning -u- "1..*" Promo : owns <
 Planning -l- "1..*" Student : owns <
 Planning -l- "1..*" Professor : owns <
 Planning -u- "1..*" Group: owns <
