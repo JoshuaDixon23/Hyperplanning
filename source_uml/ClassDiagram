@@ -120,6 +120,6 @@ Planning -l- "1..*" Student : owns <
 Planning -l- "1..*" Professor : owns <
 Planning -u- "1..*" Group: owns <
 
-Basket o-u- CourseGeneric
+Basket o-u- Course
 Basket -l- "international" Student
 @enduml
