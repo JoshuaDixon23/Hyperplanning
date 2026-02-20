@@ -1,0 +1,25 @@
+@startuml 
+title Visualiser les salles libres 
+
+actor Student 
+participant Application 
+Student -> Application : Demander la connection 
+Application -> Student : Autoriser la demande 
+Student -> Application : Demander salles libres(date, créneau) 
+Application -> Student : Afficher le logo de chargement 
+Application -> Application : Calculer salles disponibles 
+
+Application -> Student : Enlever le logo de chargement 
+alt Salles disponibles 
+Application --> Student : Liste des salles libres
+ else Aucune salle libre 
+Application --> Student : Message « Aucune salle disponible » 
+end
+ Student -> Application : Sélectionner salle
+ Application -> Student : Envoyer les infos de la salle 
+Application -> Student : Afficher les créneaux libres  
+Student -> Application : Sélectionner le créneau souhaité
+Application -> Application : Réserver le créneau
+Application -> Student : Confirmer la demande
+
+@enduml
