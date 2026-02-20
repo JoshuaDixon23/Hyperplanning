@@ -1,0 +1,39 @@
+@startuml
+title CourseReal  : state diagramm
+
+[*] --> Draft : création 
+
+state Draft {
+  [*] --> Editing
+  Editing --> Editing : (startTime, duration, room, group)
+}
+
+Draft --> Scheduled : [startTime set && duration set]
+Scheduled --> Published :  planning shared
+
+
+Published --> ModificationRequested : Professor request modification
+
+state ModificationRequested {
+  [*] --> PendingReview
+  PendingReview --> PendingReview : waiting for the admin
+}
+
+ModificationRequested --> Modified : Admin aproval 
+ModificationRequested --> Published : Admin rejection 
+ModificationRequested --> Published : [when time before cours < 24h] 
+
+
+
+Modified --> Published : update CourseReal
+
+
+
+Published --> InProgress : [time == startTime]
+InProgress --> Completed : [time >= startTime + duration]
+
+
+Completed --> [*]
+
+@enduml
+
