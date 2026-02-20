@@ -25,7 +25,7 @@ class Promo{
     Enum studyLevel
 }
 
-class CourseGeneric{
+class Module{
     code
     name
     language
@@ -40,7 +40,7 @@ class Group{
     Enum type (promo?, TD, TP)
 }
 
-class CourseReal{
+class Course{
     startTime
     duration
 }
@@ -72,41 +72,41 @@ User -[hidden]d- Professor
 
 Professor -[hidden]r- Student
 
-Promo -[hidden]r- CourseGeneric
-CourseGeneric -[hidden]r- UFR
+Promo -[hidden]r- Module
+Module-[hidden]r- UFR
 
-Group -[hidden]r- CourseReal
-CourseReal -[hidden]r- Building
+Group -[hidden]r- Course
+Course -[hidden]r- Building
 
 Room -[hidden]r- Map
 Map -[hidden]r- Basket
 
 Professor -[hidden]d- Promo
-Student -[hidden]d- CourseGeneric
-CourseGeneric -[hidden]d- Group
-UFR -[hidden]d- CourseReal
+Student -[hidden]d- Module
+Module-[hidden]d- Group
+UFR -[hidden]d- Course
 Building -[hidden]d- Room
 
 Promo -[hidden]d- Group
 Group -[hidden]d- Planning
-CourseReal -[hidden]d- Planning
+Course -[hidden]d- Planning
 
 Professor "responsible" -d- "0..1" Promo
-Professor "responsible" -r- "0..*" CourseGeneric 
-Professor "1..*" -d- "*" CourseReal
+Professor "responsible" -r- "0..*" Module
+Professor "1..*" -d- "*" Course
 
 Student "*" -d- "0..1" Promo : belongs >
 Student -d-o Group
 
-CourseGeneric "*" -l- "*" Promo : follows <
-CourseGeneric "*" -d- "*" Student: follows <
-CourseGeneric -d- "0..*" CourseReal : describes >
+Module "*" -l- "*" Promo : follows <
+'CourseGeneric "*" -d- "*" Student: follows <
+Module-d- "0..*" Course : describes >
 
 Promo *-d- Group
 
 UFR "1" *-l- "1..*" Promo
 
-Group "1..*" -r- "*" CourseReal
+Group "1..*" -r- "*" Course
 
 Building *-d- Room
 Building -r-o Map
