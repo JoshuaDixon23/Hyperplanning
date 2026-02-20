@@ -1,5 +1,5 @@
 @startuml
-title CourseReal  : state diagramm
+title Course  : state diagramm
 
 [*] --> Draft : création 
 
