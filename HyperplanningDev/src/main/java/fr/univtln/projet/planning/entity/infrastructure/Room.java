@@ -1,4 +1,4 @@
-package fr.univtln.projet.planning.entity.infrastructure;
+package fr.univtln.projet.planning.infrastructure;
 
 public class Room {
 }

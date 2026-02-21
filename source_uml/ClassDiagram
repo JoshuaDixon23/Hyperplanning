@@ -5,9 +5,9 @@ skinparam ranksep 130
 skinparam padding 10
 
 class User {
-    name
-    surname
-    mail
+    firstName
+    lastName
+    emailUniv
 }
 
 class Professor {
@@ -15,10 +15,19 @@ class Professor {
 }
 
 class Student {
+    emailPersonal
+}
+
+class StaffDRI{
+}
+
+class Admin{
 }
 
 Professor -u-|> User
 Student -u-|> User
+StaffDRI -u-|> User
+Admin -u-|> User
 
 class Promo{
     year

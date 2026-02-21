@@ -1,4 +1,4 @@
-package fr.univtln.projet.planning.entity.planning;
+package fr.univtln.projet.planning.planning;
 
 public class Planning {
 }

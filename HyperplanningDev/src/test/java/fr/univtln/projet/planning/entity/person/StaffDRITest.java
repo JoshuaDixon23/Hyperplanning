@@ -1,0 +1,23 @@
+package fr.univtln.projet.planning.entity.person;
+
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
+public class StaffDRITest {
+
+    @Test
+    void testCreationProfessor() {
+        // Arrange (préparation)
+        String firstName = "bRigitte";
+        String lastName = "Boucand";
+
+        // Act (action)
+        StaffDRI staffDRI = StaffDRI.StaffDRIFactory(firstName, lastName);
+
+        // Assert (vérification)
+        assertEquals("Brigitte", staffDRI.getFirstName());
+        assertEquals("BOUCAND", staffDRI.getLastName());
+        assertEquals("brigitte.boucand@univ-tln.fr", staffDRI.getEmailUniv());
+    }
+
+}

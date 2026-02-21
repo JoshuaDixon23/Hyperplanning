@@ -1,4 +1,4 @@
-package fr.univtln.projet.planning.entity.international;
+package fr.univtln.projet.planning.international;
 
 public class Basket {
 }

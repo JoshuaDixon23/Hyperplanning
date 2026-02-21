@@ -1,4 +1,4 @@
-package fr.univtln.projet.planning.entity.academic;
+package fr.univtln.projet.planning.academic;
 
 public class Promo {
 }
