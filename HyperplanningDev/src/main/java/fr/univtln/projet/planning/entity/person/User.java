@@ -1,5 +1,7 @@
 package fr.univtln.projet.planning.entity.person;
 
+import fr.univtln.projet.planning.entity.TextTransformation;
+
 import java.util.function.BiFunction;
 
 public abstract class User{
@@ -18,7 +20,7 @@ public abstract class User{
         // verification of entries to do !!!
 
         // format : Firstname LASTNAME
-        String formattedFname = capitalize(fname);
+        String formattedFname = TextTransformation.capitalize(fname);
         String formattedLname = lname.toUpperCase();
 
         // Call of real constructor of subclass
@@ -27,11 +29,6 @@ public abstract class User{
         user.emailUniv = functionUnivMail.apply(user);
 
         return user;
-    }
-
-    private static String capitalize(String s) {
-        if (s == null || s.isEmpty()) return s;
-        return s.substring(0, 1).toUpperCase() + s.substring(1).toLowerCase();
     }
     
     public String getFirstName() {
@@ -48,5 +45,14 @@ public abstract class User{
 
     public String getEmailUniv() {
         return emailUniv;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", emailUniv='" + emailUniv + '\'' +
+                '}';
     }
 }

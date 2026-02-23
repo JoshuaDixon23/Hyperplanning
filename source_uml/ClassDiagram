@@ -38,6 +38,7 @@ class Module{
     code
     name
     language
+    ECTS
 }
 
 class UFR{
@@ -52,6 +53,7 @@ class Group{
 class Course{
     startTime
     duration
+    courseType
 }
 
 class Building{
