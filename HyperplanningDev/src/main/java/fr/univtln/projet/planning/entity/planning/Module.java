@@ -3,14 +3,17 @@ package fr.univtln.projet.planning.entity.planning;
 import fr.univtln.projet.planning.entity.TextTransformation;
 import fr.univtln.projet.planning.entity.person.Professor;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 public class Module {
     private String code; // code may be not unique and depend on promo ?, a dictionary may be a solution
     private String name;
     private Language language;
-    float ECTS; // number of credits
+    private float ECTS; // number of credits
     Professor responsible;
+    private Map<CourseType, Float> courseHours; // Dictionary for CM/TD/TP hours in module
 
     private Module(Builder b){
         code = b.code;
@@ -18,6 +21,7 @@ public class Module {
         language = b.language;
         ECTS = b.ECTS;
         responsible = b.responsible;
+        courseHours = new HashMap<CourseType, Float>();
     }
 
     public String code() { return code; }
@@ -75,5 +79,9 @@ public class Module {
 
     public float getECTS() {
         return ECTS;
+    }
+
+    public void setCourseHours(Map<CourseType, Float> courseHours) {
+        this.courseHours = courseHours;
     }
 }
