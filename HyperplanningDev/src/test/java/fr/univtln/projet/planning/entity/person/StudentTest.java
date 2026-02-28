@@ -6,14 +6,31 @@ import static org.junit.jupiter.api.Assertions.*;
 public class StudentTest {
 
     @Test
-    void testCreationStudent() {
+    void testCreationLocalStudent() {
         // Arrange (préparation)
         String firstName = "nikita";
         String lastName = "Rodyhin";
         String emailPersonal = "rodygin.nikita2005@gmail.com";
 
         // Act (action)
-        Student student = Student.StudentFactory(firstName, lastName, emailPersonal);
+        LocalStudent student = LocalStudent.LocalStudentFactory(firstName, lastName, emailPersonal);
+
+        // Assert (vérification)
+        assertEquals("Nikita", student.getFirstName());
+        assertEquals("RODYHIN", student.getLastName());
+        assertEquals("rodygin.nikita2005@gmail.com", student.getEmailPersonal());
+        assertEquals("nikita-rodyhin@etud.univ-tln.fr", student.getEmailUniv());
+    }
+
+    @Test
+    void testCreationInternationalStudent() {
+        // Arrange (préparation)
+        String firstName = "nikita";
+        String lastName = "Rodyhin";
+        String emailPersonal = "rodygin.nikita2005@gmail.com";
+
+        // Act (action)
+        InternationalStudent student = InternationalStudent.InternationalStudentFactory(firstName, lastName, emailPersonal);
 
         // Assert (vérification)
         assertEquals("Nikita", student.getFirstName());
