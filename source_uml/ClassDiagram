@@ -128,8 +128,8 @@ Room -u- "*" Course
 Planning *-u- Course
 'Planning -u- "1..*" Promo : owns <
 Planning -l- "1..*" Student : owns <
-Planning -l- "1..*" Professor : owns <
-Planning -u- "1..*" Group: owns <
+Planning -l- Professor : owns <
+Planning -u- Group: owns <
 
 Basket o-u- Course
 Basket -l- "international" Student

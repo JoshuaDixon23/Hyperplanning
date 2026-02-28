@@ -1,0 +1,143 @@
+@startuml
+skinparam linetype ortho
+skinparam nodesep 140
+skinparam ranksep 130
+skinparam padding 10
+
+abstract class User {
+    firstName
+    lastName
+    emailUniv
+}
+
+class Professor {
+    
+}
+
+abstract class Student {
+    emailPersonal
+}
+
+class StaffDRI{
+}
+
+class Admin{
+}
+
+class LocalStudent{
+}
+
+class InternationalStudent{
+}
+
+Professor -u-|> User
+Student -u-|> User
+StaffDRI -u-|> User
+Admin -u-|> User
+LocalStudent -u-|> Student 
+InternationalStudent -u-|> Student 
+
+class Promo{
+    year
+    Enum studyLevel
+}
+
+class Module{
+    code
+    name
+    language
+    ECTS
+}
+
+class UFR{
+    name
+    campus   
+}
+
+class Group{
+    Enum type - promo, TD, TP
+}
+
+class Course{
+    startTime
+    duration
+    courseType
+}
+
+class Building{
+    localisation
+    openingTime
+    closingTime
+}
+
+class Room{
+    num
+    capacity
+    Enum type - TP, amphitheater etc
+}
+
+class Map{
+    city
+    imageFileName
+}
+
+class Planning {
+}
+
+class Basket{
+}
+
+User -[hidden]d- Professor
+
+Professor -[hidden]r- Student
+
+Promo -[hidden]r- Module
+Module-[hidden]r- UFR
+
+Group -[hidden]r- Course
+Course -[hidden]r- Building
+
+Room -[hidden]r- Map
+Map -[hidden]r- Basket
+
+Professor -[hidden]d- Promo
+Student -[hidden]d- Module
+Module-[hidden]d- Group
+UFR -[hidden]d- Course
+Building -[hidden]d- Room
+
+Promo -[hidden]d- Group
+'Group -[hidden]d- Planning
+'Course -[hidden]d- Planning
+
+Professor "responsible" -d- "0..1" Promo
+Professor "responsible" -r- "0..*" Module
+Professor "1..*" -d- "*" Course
+
+LocalStudent "*" -d- Promo : belongs >
+LocalStudent -d-o Group
+
+'Module "*" -l- "*" Promo : follows <
+Module-d- "0..*" Course : describes >
+
+'Promo -d- Group : forms part of <
+
+UFR *-l- Promo
+
+Group "1..*" -r- "1..*" Module : follows >
+
+Building *-d- Room
+Building -r-o Map
+Building "1..*" -l- "0..1" UFR : belongs > 
+
+Room -u- "*" Course
+
+Planning *-u- Course
+'Planning -u- "1..*" Promo : owns <
+'Planning -l- "1..*" Student : owns <
+Planning -l- "1..*" Professor : owns <
+Planning -u- Group: owns <
+
+Basket o-u- Module
+Basket -l- InternationalStudent
+@enduml

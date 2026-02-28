@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class Course {
+public class Course implements Comparable<Course>{
     private final Module module;
     private Instant startTime;
     private Duration duration;
@@ -124,5 +124,22 @@ public class Course {
 
     public void setCourseType(CourseType courseType) {
         this.courseType = courseType;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Course course = (Course) o;
+        return Objects.equals(module, course.module) && Objects.equals(startTime, course.startTime) && Objects.equals(duration, course.duration) && Objects.equals(professors, course.professors) && Objects.equals(room, course.room) && courseType == course.courseType;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(module, startTime, duration, professors, room, courseType);
+    }
+
+    @Override
+    public int compareTo(Course c) {
+        return this.startTime.compareTo(c.startTime);
     }
 }
