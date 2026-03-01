@@ -1,0 +1,230 @@
+
+import sqlite3
+
+# Chemin vers la base de données
+database_path = 'Database_hyperplanning.db'
+
+# Connexion
+connection = sqlite3.connect(database_path)
+
+# Activer les clés étrangères
+connection.execute("PRAGMA foreign_keys = ON;")
+
+cursor = connection.cursor()
+
+
+
+tables = [
+    "Basket",
+    "Map",
+    "Course",
+    "Planning",
+    "Group",
+    "Room",
+    "Building",
+    "UFR",
+    "Module",
+    "Promo",
+    "Professor",
+    "Student",
+    "Users"
+]
+
+for table in tables:
+    cursor.execute(f"DROP TABLE IF EXISTS {table};")
+
+
+cursor.execute("""
+CREATE TABLE Users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name VARCHAR(100) NOT NULL,
+    surname VARCHAR(100) NOT NULL,
+    mail VARCHAR(150) UNIQUE NOT NULL
+);
+""")
+
+
+
+cursor.execute("""
+CREATE TABLE Student (
+    id INTEGER PRIMARY KEY,
+    international INTEGER DEFAULT 0,
+    FOREIGN KEY (id) REFERENCES Users(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+);
+""")
+
+
+
+cursor.execute("""
+CREATE TABLE Professor (
+    id INTEGER PRIMARY KEY,
+    FOREIGN KEY (id) REFERENCES Users(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+);
+""")
+
+
+
+cursor.execute("""
+CREATE TABLE Promo (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    year INTEGER NOT NULL,
+    study_level TEXT CHECK(study_level IN ('L1','L2','L3','M1','M2','PhD')),
+    responsible_id INTEGER,
+    FOREIGN KEY (responsible_id) REFERENCES Professor(id)
+        ON DELETE SET NULL
+);
+""")
+
+
+
+cursor.execute("""
+CREATE TABLE Module (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    code VARCHAR(20) UNIQUE NOT NULL,
+    name VARCHAR(150) NOT NULL,
+    language VARCHAR(50),
+    responsible_id INTEGER,
+    FOREIGN KEY (responsible_id) REFERENCES Professor(id)
+        ON DELETE SET NULL
+);
+""")
+
+
+cursor.execute("""
+CREATE TABLE StudentModule (
+    student_id INTEGER,
+    module_id INTEGER,
+    PRIMARY KEY (student_id, module_id),
+    FOREIGN KEY (student_id) REFERENCES Student(id)
+        ON DELETE CASCADE,
+    FOREIGN KEY (module_id) REFERENCES Module(id)
+        ON DELETE CASCADE
+);
+""")
+
+
+
+cursor.execute("""
+CREATE TABLE StudentGroup (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    type TEXT CHECK(type IN ('PROMO','TD','TP')),
+    promo_id INTEGER,
+    FOREIGN KEY (promo_id) REFERENCES Promo(id)
+        ON DELETE CASCADE
+);
+""")
+
+
+
+cursor.execute("""
+CREATE TABLE StudentGroupMembership (
+    student_id INTEGER,
+    group_id INTEGER,
+    PRIMARY KEY (student_id, group_id),
+    FOREIGN KEY (student_id) REFERENCES Student(id)
+        ON DELETE CASCADE,
+    FOREIGN KEY (group_id) REFERENCES StudentGroup(id)
+        ON DELETE CASCADE
+);
+""")
+
+
+
+cursor.execute("""
+CREATE TABLE Planning (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    group_id INTEGER NOT NULL,
+    FOREIGN KEY (group_id) REFERENCES StudentGroup(id)
+        ON DELETE CASCADE
+);
+""")
+
+
+cursor.execute("""
+CREATE TABLE UFR (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name VARCHAR(150) NOT NULL,
+    campus VARCHAR(150)
+);
+""")
+
+
+
+cursor.execute("""
+CREATE TABLE Building (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    localisation VARCHAR(150),
+    opening_time TIME,
+    closing_time TIME,
+    ufr_id INTEGER NOT NULL,
+    FOREIGN KEY (ufr_id) REFERENCES UFR(id)
+        ON DELETE CASCADE
+);
+""")
+
+cursor.execute("""
+CREATE TABLE Room (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    num VARCHAR(20),
+    capacity INTEGER,
+    type TEXT CHECK(type IN ('TP','AMPHITHEATER','CLASSROOM')),
+    building_id INTEGER NOT NULL,
+    FOREIGN KEY (building_id) REFERENCES Building(id)
+        ON DELETE CASCADE
+);
+""")
+
+cursor.execute("""
+CREATE TABLE Course (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    start_time DATETIME NOT NULL,
+    duration INTEGER NOT NULL,
+    module_id INTEGER NOT NULL,
+    room_id INTEGER,
+    FOREIGN KEY (module_id) REFERENCES Module(id),
+    FOREIGN KEY (room_id) REFERENCES Room(id)
+);
+""")
+
+
+
+cursor.execute("""
+CREATE TABLE Map (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    city VARCHAR(100),
+    image_file_name VARCHAR(200),
+    building_id INTEGER UNIQUE,
+    FOREIGN KEY (building_id) REFERENCES Building(id)
+        ON DELETE CASCADE
+);
+""")
+
+
+
+cursor.execute("""
+CREATE TABLE Basket (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    student_id INTEGER UNIQUE,
+    FOREIGN KEY (student_id) REFERENCES Student(id)
+        ON DELETE CASCADE
+);
+""")
+
+
+
+connection.commit()
+
+print("Toutes les tables de la base University ont été créées avec succès !")
+
+cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
+tables = cursor.fetchall()
+
+print("\nTables créées :")
+for table in tables:
+    print(f" - {table[0]}")
+
+connection.close()
