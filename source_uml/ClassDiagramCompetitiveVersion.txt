@@ -140,6 +140,9 @@ Planning -u- Group: owns <
 
 Basket o-u- Module
 Basket -l- InternationalStudent
+<<<<<<< HEAD
 
 UFR -u- Admin 
+=======
+>>>>>>> feature/entity/person
 @enduml
