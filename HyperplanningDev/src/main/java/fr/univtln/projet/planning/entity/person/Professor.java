@@ -1,6 +1,6 @@
 package fr.univtln.projet.planning.entity.person;
 
-import fr.univtln.projet.planning.planning.Planning;
+import fr.univtln.projet.planning.entity.planning.Planning;
 
 public class Professor extends User{
     private Planning planning;
