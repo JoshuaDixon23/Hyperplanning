@@ -34,8 +34,8 @@ Professor -u-|> User
 Student -u-|> User
 StaffDRI -u-|> User
 Admin -u-|> User
-LocalStudent -u-|> Student 
-InternationalStudent -u-|> Student 
+LocalStudent -r-|> Student 
+InternationalStudent -l-|> Student 
 
 class Promo{
     year
@@ -59,6 +59,7 @@ class Group{
 }
 
 class Course{
+    date
     startTime
     duration
     courseType
@@ -66,8 +67,7 @@ class Course{
 
 class Building{
     localisation
-    openingTime
-    closingTime
+    Map openingHours
 }
 
 class Room{
@@ -78,11 +78,11 @@ class Room{
 
 class Map{
     city
-    imageFileName
+    image
 }
 
-class Planning {
-}
+'class Planning {
+'}
 
 class Basket{
 }
@@ -114,17 +114,17 @@ Professor "responsible" -d- "0..1" Promo
 Professor "responsible" -r- "0..*" Module
 Professor "1..*" -d- "*" Course
 
-LocalStudent "*" -d- Promo : belongs >
-LocalStudent -d-o Group
+LocalStudent -d-* Promo
+LocalStudent "*"-d-"*" Group : form >
 
 'Module "*" -l- "*" Promo : follows <
 Module-d- "0..*" Course : describes >
 
-'Promo -d- Group : forms part of <
+Promo -d-"1..*" Group : divide <
 
 UFR *-l- Promo
 
-Group "1..*" -r- "1..*" Module : follows >
+'Group "1..*" -r- "1..*" Module : follows >
 
 Building *-d- Room
 Building -r-o Map
@@ -132,17 +132,16 @@ Building "1..*" -l- "0..1" UFR : belongs >
 
 Room -u- "*" Course
 
-Planning *-u- Course
+'Planning *-u- Course
 'Planning -u- "1..*" Promo : owns <
 'Planning -l- "1..*" Student : owns <
-Planning -l- "1..*" Professor : owns <
-Planning -u- Group: owns <
+'Planning -l- "1..*" Professor : owns <
+'Planning -u- Group: owns <
+Professor "*"--"*" Course : teaches >
+Group "*"--"*" Course : follows >
 
 Basket o-u- Module
 Basket -l- InternationalStudent
-<<<<<<< HEAD
 
-UFR -u- Admin 
-=======
->>>>>>> feature/entity/person
+UFR -u- Admin
 @enduml
