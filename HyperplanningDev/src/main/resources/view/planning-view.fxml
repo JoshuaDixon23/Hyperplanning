@@ -4,6 +4,10 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
 
 <BorderPane xmlns:fx="http://javafx.com/fxml"
             fx:controller="fr.univtln.projet.planning.controller.PlanningController"
@@ -83,20 +87,39 @@
             </HBox>
 
             <!-- Filters row -->
-            <HBox spacing="18" alignment="CENTER_LEFT" styleClass="filters-row">
-                <Label text="Promo" styleClass="filter-label"/>
-                <ComboBox prefWidth="160" styleClass="filter-combo"/>
 
-                <Region HBox.hgrow="ALWAYS"/>
+            <GridPane maxWidth="Infinity" alignment="CENTER" hgap="30" styleClass="filters-row">
 
-                <Label text="Langue" styleClass="filter-label"/>
-                <ComboBox prefWidth="160" styleClass="filter-combo"/>
+                <fx:define>
+                    <ToggleGroup fx:id="viewGroup"/>
+                </fx:define>
 
-                <Region HBox.hgrow="ALWAYS"/>
+                <columnConstraints>
+                    <ColumnConstraints hgrow="ALWAYS"/>
+                    <ColumnConstraints/>
+                    <ColumnConstraints hgrow="ALWAYS"/>
+                </columnConstraints>
 
-                <Label text="Promo" styleClass="filter-label"/>
-                <ComboBox prefWidth="160" styleClass="filter-combo"/>
-            </HBox>
+                <ToggleButton text="Mon plan"
+                              toggleGroup="$viewGroup"
+                              styleClass="filter-button"
+                              selected="true"
+                              GridPane.columnIndex="0"
+                              GridPane.halignment="RIGHT"/>
+
+                <ToggleButton text="Ma promo"
+                              toggleGroup="$viewGroup"
+                              styleClass="filter-button"
+                              GridPane.columnIndex="1"
+                              GridPane.halignment="CENTER"/>
+
+                <ToggleButton text="Autre promo"
+                              toggleGroup="$viewGroup"
+                              styleClass="filter-button"
+                              GridPane.columnIndex="2"
+                              GridPane.halignment="LEFT"/>
+
+            </GridPane>
 
             <!-- Days header -->
             <GridPane styleClass="days-header" hgap="0" vgap="0">

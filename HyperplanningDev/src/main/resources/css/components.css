@@ -1,0 +1,18 @@
+.filter-button {
+    -fx-background-color: white;
+    -fx-border-color: #d5d7db;
+    -fx-border-radius: 20;
+    -fx-background-radius: 20;
+    -fx-padding: 8 16 8 16;
+    -fx-font-size: 13px;
+    -fx-font-weight: 600;
+}
+
+.filter-button:hover {
+    -fx-background-color: #f2f4f7;
+}
+
+.filter-button:selected {
+    -fx-background-color: #1877d2;
+    -fx-text-fill: white;
+}

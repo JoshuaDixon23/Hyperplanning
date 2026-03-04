@@ -89,3 +89,12 @@
     -fx-text-fill: #1877d2;
     -fx-opacity: 1.0;
 }
+
+.filters-row {
+    -fx-padding: 10 0 10 0;
+}
+
+.filter-button{
+    -fx-min-width: 120px;
+    -fx-alignment: CENTER;
+}
