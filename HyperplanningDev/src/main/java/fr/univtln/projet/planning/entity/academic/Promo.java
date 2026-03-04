@@ -23,6 +23,8 @@ public class Promo {
     }
 
     public static Promo PromoFactory(int year, StudyLevel studyLevel) {
+
+        //conditions ??
         return new Promo(year, studyLevel);
     }
 
