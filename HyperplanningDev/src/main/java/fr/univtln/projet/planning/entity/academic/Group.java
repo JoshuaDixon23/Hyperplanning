@@ -61,6 +61,9 @@ public class Group {
     // manage group
 
     public void addModule(Module m) {
+        if (m == null) {
+            return; // throw qq chose
+        }
         modules.add(m);
     }
 
@@ -71,7 +74,7 @@ public class Group {
 
     public void addStudent(Student s) {
         if (s == null) {
-            return;
+            return; // throw qq chose
         }
         else{
             students.add(s);

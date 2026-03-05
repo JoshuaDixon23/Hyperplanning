@@ -1,7 +1,7 @@
 package fr.univtln.projet.planning.entity.person;
+import fr.univtln.projet.planning.entity.academic.Promo;
+import fr.univtln.projet.planning.entity.academic.Group;
 
-import fr.univtln.projet.planning.academic.Group;
-import fr.univtln.projet.planning.academic.Promo;
 
 import java.util.ArrayList;
 import java.util.List;
