@@ -1,18 +1,18 @@
 package fr.univtln.projet.planning.controller;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.Label;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Pane;
-import javafx.scene.control.Button;
-import javafx.scene.layout.HBox;
+import javafx.scene.control.*;
+import javafx.scene.input.ScrollEvent;
+import javafx.geometry.Bounds;
+import javafx.scene.Scene;
+import javafx.scene.layout.*;
+import javafx.scene.Node;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.WeekFields;
 import java.util.Locale;
 import javafx.animation.*;
 import javafx.application.Platform;
-import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
@@ -23,6 +23,15 @@ public class PlanningController {
     @FXML private HBox weeksContainer;
     @FXML private Button prevWeeksBtn;
     @FXML private StackPane weeksViewport;
+    @FXML private ToggleButton btnMonPlan;
+    @FXML private ToggleButton btnMaPromo;
+    @FXML private ToggleButton btnAutrePromo;
+    @FXML private VBox timeColumn;
+    @FXML private ScrollPane planningScroll;
+    @FXML private VBox planningContent;
+    @FXML private ScrollPane timeScroll;
+
+    private final ToggleGroup viewGroup = new ToggleGroup();
 
     private boolean weeksAnimating = false;
     private static final int WEEKS_SHOWN = 6;;
@@ -47,7 +56,15 @@ public class PlanningController {
 
         Platform.runLater(this::applyWeeksClip);
         renderWeeksInto(weeksContainer, baseWeekMonday);
-        buildEmptyGrid(8, 20, 2);
+        buildEmptyGrid(8, 20, 1);
+        btnMonPlan.setToggleGroup(viewGroup);
+        btnMaPromo.setToggleGroup(viewGroup);
+        btnAutrePromo.setToggleGroup(viewGroup);
+
+        btnMaPromo.setSelected(true);
+        Platform.runLater(() -> {
+            timeScroll.vvalueProperty().bindBidirectional(planningScroll.vvalueProperty());
+        });
     }
 
     private void applyWeeksClip(){
@@ -163,37 +180,52 @@ public class PlanningController {
         return startStr + " - " + endStr;
     }
 
-
     private void buildEmptyGrid(int startHour, int endHour, int stepHours) {
         planningGrid.getChildren().clear();
+        timeColumn.getChildren().clear();
 
         int dayCols = 6;
         int rows = (endHour - startHour) / stepHours;
+        double rowHeight = 60;
 
         for (int r = 0; r < rows; r++) {
 
             int hour = startHour + (r * stepHours);
 
             Label time = new Label(hour + " : 00");
-            time.getStyleClass().add("time-cell");
-
-
-            double rowHeight = 120;
+            time.getStyleClass().add("time-label");
             time.setMinHeight(rowHeight);
             time.setPrefHeight(rowHeight);
+            time.setMaxHeight(rowHeight);
             time.setMaxWidth(Double.MAX_VALUE);
+            timeColumn.getChildren().add(time);
 
-            planningGrid.add(time, 0, r);
 
-            for (int c = 1; c <= dayCols; c++) {
+            for (int c = 0; c < dayCols; c++) {
                 Pane cell = new Pane();
-                cell.getStyleClass().add("planning-cell");
+
+                if (c == 0) {
+                    cell.getStyleClass().add("planning-cell");
+                } else {
+                    cell.getStyleClass().addAll("planning-cell", "planning-cell-inner");
+                }
+
                 cell.setMinHeight(rowHeight);
                 cell.setPrefHeight(rowHeight);
+                cell.setMaxHeight(rowHeight);
                 cell.setMaxWidth(Double.MAX_VALUE);
-
+                cell.setMouseTransparent(true);
                 planningGrid.add(cell, c, r);
             }
+
         }
+        double totalHeight = rows * rowHeight;
+
+        planningContent.setMinHeight(totalHeight);
+        planningContent.setPrefHeight(totalHeight);
+        planningContent.setMaxHeight(totalHeight);
+
     }
+
+
 }

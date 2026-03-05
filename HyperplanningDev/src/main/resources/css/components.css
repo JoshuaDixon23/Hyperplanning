@@ -1,7 +1,9 @@
 .filter-button {
     -fx-background-color: white;
+    -fx-alignment: CENTER;
     -fx-border-color: #d5d7db;
     -fx-border-radius: 20;
+    -fx-min-width: 120px;
     -fx-background-radius: 20;
     -fx-padding: 8 16 8 16;
     -fx-font-size: 13px;
@@ -15,4 +17,8 @@
 .filter-button:selected {
     -fx-background-color: #1877d2;
     -fx-text-fill: white;
+}
+
+.filters-row {
+    -fx-padding: 10 0 10 0;
 }

@@ -26,27 +26,17 @@
 }
 
 
-.filters-row {
-    -fx-padding: 0 0 6 0;
-}
-
-.filter-label {
-    -fx-font-size: 18px;
-    -fx-font-weight: 700;
-    -fx-text-fill: #2a2a2a;
-}
-
-.filter-combo {
-    -fx-background-radius: 18;
-    -fx-border-radius: 18;
-}
-
 .days-header {
     -fx-padding: 0;
 }
 
+.days-header-row {
+    -fx-padding: 0;
+}
+
 .day-title {
-    -fx-font-size: 20px;
+    -fx-font-size: 14px;
+    -fx-max-width: infinity;
     -fx-font-weight: 500;
     -fx-alignment: center;
 }
@@ -56,17 +46,29 @@
     -fx-border-color: #dfe1e6;
     -fx-border-radius: 10;
     -fx-background-radius: 10;
-    -fx-padding: 10;
+    -fx-padding: 0;
 }
 
 .planning-cell {
     -fx-border-color: #cfd3da;
-    -fx-border-width: 0 1 0 0;
+    -fx-border-width: 0 0 0 0;
     -fx-min-height: 60px;
 }
 
 .planning-scroll {
     -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+
+.planning-card {
+    -fx-background-color: white;
+    -fx-border-color: #dfe1e6;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+}
+.planning-cell-inner {
+    -fx-border-color: #cfd3da;
+    -fx-border-width: 0 0 0 1; /* trait vertical gauche */
 }
 
 .time-label {
@@ -90,11 +92,19 @@
     -fx-opacity: 1.0;
 }
 
-.filters-row {
-    -fx-padding: 10 0 10 0;
+.time-column {
+    -fx-padding: 10 0 0 0;
 }
 
-.filter-button{
-    -fx-min-width: 120px;
-    -fx-alignment: CENTER;
+.planning-block {
+    -fx-padding: 0 10 10 10;
 }
+
+.time-scroll {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+    -fx-border-color: transparent;
+    -fx-padding: 0;
+}
+
+
