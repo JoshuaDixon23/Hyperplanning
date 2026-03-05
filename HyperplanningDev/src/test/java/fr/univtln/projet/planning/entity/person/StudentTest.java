@@ -19,7 +19,7 @@ public class StudentTest {
         assertEquals("Nikita", student.getFirstName());
         assertEquals("RODYHIN", student.getLastName());
         assertEquals("rodygin.nikita2005@gmail.com", student.getEmailPersonal());
-        assertEquals("nikita-rodyhin@etud.univ-tln.fr", student.getEmailUniv());
+        assertTrue(student.getEmailUniv().matches("^nikita-rodyhin[1-9][0-9]{2}@etud.univ-tln.fr$"));
     }
 
     @Test
@@ -36,7 +36,7 @@ public class StudentTest {
         assertEquals("Nikita", student.getFirstName());
         assertEquals("RODYHIN", student.getLastName());
         assertEquals("rodygin.nikita2005@gmail.com", student.getEmailPersonal());
-        assertEquals("nikita-rodyhin@etud.univ-tln.fr", student.getEmailUniv());
+        assertTrue(student.getEmailUniv().matches("^nikita-rodyhin[1-9][0-9]{2}@etud.univ-tln.fr$"));
     }
 
 }

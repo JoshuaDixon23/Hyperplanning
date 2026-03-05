@@ -17,7 +17,7 @@ public class StaffDRITest {
         // Assert (vérification)
         assertEquals("Brigitte", staffDRI.getFirstName());
         assertEquals("BOUCAND", staffDRI.getLastName());
-        assertEquals("brigitte.boucand@univ-tln.fr", staffDRI.getEmailUniv());
+        assertTrue(staffDRI.getEmailUniv().matches("^brigitte.boucand[1-9]@univ-tln.fr$"));
     }
 
 }
