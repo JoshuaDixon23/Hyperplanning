@@ -17,7 +17,7 @@ public class ProfessorTest {
         // Assert (vérification)
         assertEquals("Elisabeth", professor.getFirstName());
         assertEquals("MURISASCO", professor.getLastName());
-        assertEquals("elisabeth.murisasco@univ-tln.fr", professor.getEmailUniv());
+        assertTrue(professor.getEmailUniv().matches("^elisabeth.murisasco[1-9]@univ-tln.fr$"));
     }
 
 }

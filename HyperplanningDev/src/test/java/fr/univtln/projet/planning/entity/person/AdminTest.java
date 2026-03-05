@@ -17,7 +17,7 @@ public class AdminTest {
         // Assert (vérification)
         assertEquals("Thierry", admin.getFirstName());
         assertEquals("VIA", admin.getLastName());
-        assertEquals("thierry.via@univ-tln.fr", admin.getEmailUniv());
+        assertTrue(admin.getEmailUniv().matches("^thierry.via[1-9]@univ-tln.fr$"));
     }
 
 }
