@@ -7,6 +7,9 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * surement def equals etc dans bcp de choses 
+ */
 public class Group {
 
     private GroupType type;
