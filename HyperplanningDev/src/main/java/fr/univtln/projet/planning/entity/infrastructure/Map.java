@@ -1,4 +1,4 @@
-package fr.univtln.projet.planning.infrastructure;
+package fr.univtln.projet.planning.entity.infrastructure;
 
 public class Map {
 }
