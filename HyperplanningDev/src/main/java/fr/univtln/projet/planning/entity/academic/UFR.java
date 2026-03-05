@@ -1,6 +1,6 @@
 package fr.univtln.projet.planning.entity.academic;
 
-import fr.univtln.projet.planning.infrastructure.Building;
+import fr.univtln.projet.planning.entity.infrastructure.Building;
 
 import java.util.Collections;
 import java.util.HashSet;
