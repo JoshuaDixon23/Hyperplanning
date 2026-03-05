@@ -11,7 +11,9 @@ public class Promo {
 
     private final int year;
     private final StudyLevel studyLevel;
-    private  UFR ufr;
+    private  UFR ufr; //diaman noir attention
+
+    //private Professor responsible;
 
     private final Set<LocalStudent> students = new HashSet<>();
     private final Set<Group> groups = new HashSet<>();
@@ -65,7 +67,7 @@ public class Promo {
         if (s == null) return; //throw ?
         else {
             students.add(s);
-            s.setPromo(this); // modifier les package dans localstudent
+            s.setPromo(this);
         }
     }
 
@@ -73,7 +75,7 @@ public class Promo {
         if (s == null) return; //throw ?
         else {
             students.remove(s);
-            s.setPromo(null); // modifier les package dans localstudent
+            s.setPromo(null);
         }
     }
 

@@ -8,15 +8,15 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * surement def equals etc dans bcp de choses 
+ * surement def equals etc dans bcp de choses
  */
 public class Group {
 
-    private GroupType type;
-    private final Planning planning;
+    private final GroupType type;
+    private final Planning planning; // à enlever et relier a cours plutot
     private Promo promo;
 
-    private final Set<Module> modules = new HashSet<>();
+    private final Set<Module> modules = new HashSet<>(); // enlever
     private final Set<Student> students = new HashSet<>();
 
     //factory
@@ -37,9 +37,9 @@ public class Group {
         return type;
     }
 
-    public void setType(GroupType type) {
-        this.type = type;
-    }
+    //public void setType(GroupType type) {
+    //    this.type = type;
+    //}
 
     public Planning getPlanning() {
         return planning;

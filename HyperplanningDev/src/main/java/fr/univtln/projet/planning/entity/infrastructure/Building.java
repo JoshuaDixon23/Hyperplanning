@@ -10,7 +10,7 @@ import java.util.Set;
 public class Building {
 
     private String localisation;
-    private LocalTime openingTime;
+    private LocalTime openingTime; // à modifier regardier diagramme
     private LocalTime closingTime;
 
     private UFR ufr;
@@ -29,6 +29,7 @@ public class Building {
         return new Building(localisation, openingTime, closingTime);
     }
 
+    // getter setter
     public String getLocalisation() {
         return localisation;
     }

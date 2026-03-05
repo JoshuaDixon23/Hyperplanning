@@ -8,7 +8,7 @@ import java.util.Set;
 public class Map {
 
     private String city;
-    private String imageFileName;
+    private String imageFileName; // peut être stocker l'image directement
 
     private final Set<Building> buildings = new HashSet<>();
 

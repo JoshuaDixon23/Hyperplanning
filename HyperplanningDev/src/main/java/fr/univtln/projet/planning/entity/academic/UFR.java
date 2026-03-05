@@ -10,6 +10,8 @@ public class UFR {
     private String name;
     private String campus;
 
+    // private Admin admin:
+
     private final Set<Promo> promos = new HashSet<>();
     private final Set<Building> buildings = new HashSet<>();
 

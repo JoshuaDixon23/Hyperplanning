@@ -1,5 +1,7 @@
 package fr.univtln.projet.planning.entity.infrastructure;
 
+import java.util.Objects;
+
 /**
  * Ajout de cours bizarre j'ai prefe ne pas faire
  *
@@ -11,6 +13,8 @@ public class Room {
     private RoomType type;
 
     private Building building;
+
+    //private Set<Course> courses;
 
     //factory
 
@@ -57,5 +61,22 @@ public class Room {
     public void setBuilding(Building building) {
         this.building = building;
     }
+
+    // equals et hashCode
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Room room = (Room) o;
+        return Objects.equals(num, room.num) && Objects.equals(building, room.building);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(num, building);
+    }
+
+
+
 }
 

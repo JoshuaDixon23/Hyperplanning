@@ -15,6 +15,8 @@ public class Module {
     Professor responsible;
     private Map<CourseType, Float> courseHours; // Dictionary for CM/TD/TP hours in module
 
+    // private Set<Group> groups;
+
     private Module(Builder b){
         code = b.code;
         name = b.name;
