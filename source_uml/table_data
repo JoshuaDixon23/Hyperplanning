@@ -1,0 +1,129 @@
+‌INSERT INTO User (id, name, surname, mail) VALUES
+(1,'Lucas','Martin','lucas.martin@univ.fr'),
+(2,'Emma','Bernard','emma.bernard@univ.fr'),
+(3,'Hugo','Thomas','hugo.thomas@univ.fr'),
+(4,'Lea','Petit','lea.petit@univ.fr'),
+(5,'Louis','Robert','louis.robert@univ.fr'),
+(6,'Chloe','Richard','chloe.richard@univ.fr'),
+(7,'Nathan','Durand','nathan.durand@univ.fr'),
+(8,'Manon','Dubois','manon.dubois@univ.fr'),
+(9,'Ethan','Moreau','ethan.moreau@univ.fr'),
+(10,'Jade','Laurent','jade.laurent@univ.fr'),
+(11,'Noah','Simon','noah.simon@univ.fr'),
+(12,'Clara','Michel','clara.michel@univ.fr'),
+(13,'Adam','Garcia','adam.garcia@univ.fr'),
+(14,'Sarah','David','sarah.david@univ.fr'),
+(15,'Tom','Roux','tom.roux@univ.fr'),
+(16,'Jean','Dupont','dupont@univ.fr'),
+(17,'Paul','Durand','durand@univ.fr'),
+(18,'Marc','Martin','martin@univ.fr'),
+(19,'Luc','Leroy','leroy@univ.fr'),
+(20,'Pierre','Robert','robert@univ.fr'),
+(21,'Andre','Petit','petit@univ.fr'),
+(22,'Nicolas','Laurent','laurent@univ.fr'),
+(23,'Julien','Moreau','moreau@univ.fr'),
+(24,'Antoine','Garcia','garcia@univ.fr'),
+(25,'Thomas','Simon','simon@univ.fr');
+
+INSERT INTO Student (id, international) VALUES
+(1,0),(2,0),(3,1),(4,0),(5,0),
+(6,1),(7,0),(8,0),(9,1),(10,0),
+(11,0),(12,1),(13,0),(14,0),(15,0);
+
+INSERT INTO Professor (id) VALUES
+(16),(17),(18),(19),(20),
+(21),(22),(23),(24),(25);
+
+INSERT INTO Promo (id, year, study_level, responsible_id) VALUES
+(1,2024,'L1',16),
+(2,2024,'L2',17),
+(3,2024,'L3',18),
+(4,2024,'M1',19),
+(5,2024,'M2',20);
+
+INSERT INTO Module (code, name, language, responsible_id) VALUES
+('INF101','Programmation Python','FR',16),
+('INF102','Bases de donnees','FR',17),
+('INF201','Algorithmique','FR',18),
+('INF202','Reseaux','FR',19),
+('INF301','Intelligence Artificielle','FR',20),
+('INF302','Data Science','FR',21),
+('INF303','Developpement Web','FR',22),
+('INF304','Securite Informatique','FR',23),
+('INF401','Machine Learning','FR',24),
+('INF402','Big Data','FR',25);
+
+
+
+INSERT INTO UFR (id, name, campus) VALUES
+(1,'UFR Informatique','La Garde'),
+(2,'UFR Sciences','La Garde'),
+(3,'UFR Droit','Toulon'),
+(4,'UFR Lettres','Toulon'),
+(5,'UFR Economie','La Garde');
+
+
+INSERT INTO Building (id, localisation, opening_time, closing_time, ufr_id) VALUES
+(1,'Batiment A','08:00','20:00',1),
+(2,'Batiment B','08:00','20:00',1),
+(3,'Batiment C','08:00','20:00',2),
+(4,'Batiment D','08:00','20:00',3),
+(5,'Batiment E','08:00','20:00',4);
+
+INSERT INTO Room (num, capacity, type, building_id) VALUES
+('A101',30,'CLASSROOM',1),
+('A102',35,'CLASSROOM',1),
+('A103',40,'CLASSROOM',1),
+('A201',50,'TP',1),
+('A202',45,'TP',1),
+('B101',30,'CLASSROOM',2),
+('B102',25,'CLASSROOM',2),
+('B201',100,'AMPHITHEATER',2),
+('C101',30,'CLASSROOM',3),
+('C102',40,'TP',3),
+('C201',120,'AMPHITHEATER',3),
+('D101',35,'CLASSROOM',4),
+('D102',30,'CLASSROOM',4),
+('D201',80,'AMPHITHEATER',4),
+('E101',25,'CLASSROOM',5),
+('E102',30,'CLASSROOM',5),
+('E103',30,'TP',5),
+('E201',100,'AMPHITHEATER',5),
+('A301',30,'CLASSROOM',1),
+('A302',30,'CLASSROOM',1),
+('B301',30,'CLASSROOM',2),
+('C301',30,'CLASSROOM',3),
+('D301',30,'CLASSROOM',4),
+('E301',30,'CLASSROOM',5),
+('A401',200,'AMPHITHEATER',1);
+
+INSERT INTO Course (start_time, duration, module_id, room_id) VALUES
+('2025-09-01 08:00',120,1,1),
+('2025-09-01 10:00',120,2,2),
+('2025-09-01 13:00',90,3,3),
+('2025-09-01 15:00',90,4,4),
+('2025-09-02 08:00',120,5,5),
+('2025-09-02 10:00',120,6,6),
+('2025-09-02 13:00',90,7,7),
+('2025-09-02 15:00',90,8,8),
+('2025-09-03 08:00',120,9,9),
+('2025-09-03 10:00',120,10,10),
+('2025-09-03 13:00',90,1,11),
+('2025-09-03 15:00',90,2,12),
+('2025-09-04 08:00',120,3,13),
+('2025-09-04 10:00',120,4,14),
+('2025-09-04 13:00',90,5,15),
+('2025-09-04 15:00',90,6,16),
+('2025-09-05 08:00',120,7,17),
+('2025-09-05 10:00',120,8,18),
+('2025-09-05 13:00',90,9,19),
+('2025-09-05 15:00',90,10,20),
+('2025-09-06 08:00',120,1,21),
+('2025-09-06 10:00',120,2,22),
+('2025-09-06 13:00',90,3,23),
+('2025-09-06 15:00',90,4,24),
+('2025-09-07 10:00',120,5,25);
+
+
+INSERT INTO Basket (id, student_id) VALUES
+(1,3),(2,7),(3,9),(4,11)
