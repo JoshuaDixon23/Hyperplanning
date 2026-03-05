@@ -114,7 +114,7 @@ Professor "responsible" -d- "0..1" Promo
 Professor "responsible" -r- "0..*" Module
 Professor "1..*" -d- "*" Course
 
-LocalStudent -d-* Promo
+LocalStudent -d-o Promo
 LocalStudent "*"-d-"*" Group : form >
 
 'Module "*" -l- "*" Promo : follows <
@@ -124,13 +124,13 @@ Promo -d-"1..*" Group : divide <
 
 UFR *-l- Promo
 
-'Group "1..*" -r- "1..*" Module : follows >
+Group "1..*" -r- "1..*" Module : follows >
 
 Building *-d- Room
 Building -r-o Map
 Building "1..*" -l- "0..1" UFR : belongs > 
 
-Room -u- "*" Course
+Room "0..1"-u-"*" Course
 
 'Planning *-u- Course
 'Planning -u- "1..*" Promo : owns <
