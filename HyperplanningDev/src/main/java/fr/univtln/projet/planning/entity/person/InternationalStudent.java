@@ -1,6 +1,6 @@
 package fr.univtln.projet.planning.entity.person;
 
-import fr.univtln.projet.planning.international.Basket;
+import fr.univtln.projet.planning.entity.international.Basket;
 
 public class InternationalStudent extends Student {
     private Basket basket;
