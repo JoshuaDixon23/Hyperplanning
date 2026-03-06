@@ -3,30 +3,31 @@ package fr.univtln.projet.planning.entity.infrastructure;
 import fr.univtln.projet.planning.entity.academic.UFR;
 
 import java.time.LocalTime; // si ok ?
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 public class Building {
 
+    private String name;
     private String localisation;
-    private LocalTime openingTime; // à modifier regardier diagramme
-    private LocalTime closingTime;
+    private Map openingHours;
+
+    //private LocalTime openingTime; // à modifier regardier diagramme
+    //private LocalTime closingTime;
 
     private UFR ufr;
-    private Map map;
+    private MapUniv mapUniv;
     private final Set<Room> rooms = new HashSet<>();
 
 
     //fatcory
-    private Building(String localisation, LocalTime openingTime, LocalTime closingTime) {
+    private Building(String name, String localisation, Map openingHours) {
         this.localisation = localisation;
-        this.openingTime = openingTime;
-        this.closingTime = closingTime;
+        this.name = name;
+        this.openingHours = openingHours;
     }
 
-    public static Building BuildingFactory(String localisation, LocalTime openingTime, LocalTime closingTime) {
-        return new Building(localisation, openingTime, closingTime);
+    public static Building BuildingFactory(String name, String localisation, Map openingHours) {
+        return new Building(name, localisation,openingHours);
     }
 
     // getter setter
@@ -38,20 +39,12 @@ public class Building {
         this.localisation = localisation;
     }
 
-    public LocalTime getOpeningTime() {
-        return openingTime;
+    public Map getOpeningHours() {
+        return openingHours;
     }
 
-    public void setOpeningTime(LocalTime openingTime) {
-        this.openingTime = openingTime;
-    }
-
-    public LocalTime getClosingTime() {
-        return closingTime;
-    }
-
-    public void setClosingTime(LocalTime closingTime) {
-        this.closingTime = closingTime;
+    public void setOpeningHours(Map openingHours) {
+        this.openingHours = openingHours;
     }
 
     public UFR getUfr(){
@@ -62,12 +55,12 @@ public class Building {
         this.ufr=u;
     }
 
-    public Map getMap() {
-        return map;
+    public MapUniv getMap() {
+        return mapUniv;
     }
 
-    public void setMap(Map map) {
-        this.map = map;
+    public void setMap(MapUniv mapUniv) {
+        this.mapUniv = mapUniv;
     }
 
     public Set<Room> getRooms() {
@@ -94,5 +87,21 @@ public class Building {
             rooms.remove(r);
             r.setBuilding(null); // Room appartient à Building
         }
+    }
+
+
+    // equals hashCode
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Building building = (Building) o;
+        return Objects.equals(name, building.name) && Objects.equals(localisation, building.localisation) && Objects.equals(ufr, building.ufr);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, localisation, ufr);
     }
 }

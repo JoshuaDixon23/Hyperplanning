@@ -1,10 +1,13 @@
 package fr.univtln.projet.planning.entity.academic;
+import fr.univtln.projet.planning.entity.person.Professor;
 import fr.univtln.projet.planning.entity.person.Student;
+import fr.univtln.projet.planning.entity.planning.Course;
 import fr.univtln.projet.planning.entity.planning.Planning;
 import fr.univtln.projet.planning.entity.planning.Module;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -12,38 +15,41 @@ import java.util.Set;
  */
 public class Group {
 
+    private String name;
     private final GroupType type;
-    private final Planning planning; // à enlever et relier a cours plutot
+    //private final Planning planning; // à enlever et relier a cours plutot
     private Promo promo;
 
     private final Set<Module> modules = new HashSet<>(); // enlever
-    private final Set<Student> students = new HashSet<>();
+    private Set<Course> courses;
+    private Set<Student> students = new HashSet<>();
 
     //factory
 
-    private Group(GroupType type) {
+    private Group(String name, GroupType type) {
         this.type = type;
-        this.planning = new Planning();
     }
 
-    public static Group GroupFactory(GroupType type) {
+    public static Group GroupFactory(String name,GroupType type) {
         //conditions ??
-        return new Group(type);
+        return new Group(name,type);
     }
 
     //setter getter
+
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public GroupType getType() {
         return type;
     }
 
-    //public void setType(GroupType type) {
-    //    this.type = type;
-    //}
-
-    public Planning getPlanning() {
-        return planning;
-    }
 
     public Promo getPromo() {
         return promo;
@@ -53,15 +59,30 @@ public class Group {
         this.promo = promo;
     }
 
-    public Set<Module> getModules() {
-        return modules;
-    }
-
     public Set<Student> getStudents() {
         return students;
     }
 
+    public Set<Course> getCourses() {
+        return courses;
+    }
+
+    public void setCourses(Set<Course> courses) {
+        this.courses = courses;
+    }
+
     // manage group
+
+    public void addCourse(Course c) {
+        if (c == null) {
+            return; // throw qq chose
+        }
+        courses.add(c);
+    }
+
+    public void removeCourse(Course c) {
+        courses.remove(c);
+    }
 
     public void addModule(Module m) {
         if (m == null) {
@@ -89,14 +110,18 @@ public class Group {
     }
 
 
+    // euals and hashCode
 
 
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Group group = (Group) o;
+        return Objects.equals(name, group.name) && Objects.equals(promo, group.promo);
+    }
 
-
-
-
-
-
-
-
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, promo);
+    }
 }

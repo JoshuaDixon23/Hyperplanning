@@ -1,16 +1,19 @@
 package fr.univtln.projet.planning.entity.academic;
 
+import fr.univtln.projet.planning.entity.person.Admin;
 import fr.univtln.projet.planning.entity.person.LocalStudent;
 import fr.univtln.projet.planning.entity.academic.Group;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 public class Promo {
-
+    private final String name;
     private final int year;
     private final StudyLevel studyLevel;
+    private final Admin admin;
     private  UFR ufr; //diaman noir attention
 
     //private Professor responsible;
@@ -20,19 +23,25 @@ public class Promo {
 
     //factory
 
-    private Promo(int year, StudyLevel studyLevel) {
+    private Promo(String name,int year, StudyLevel studyLevel,Admin admin) {
+        this.name=name;
         this.year = year;
         this.studyLevel = studyLevel;
+        this.admin = admin;
     }
 
-    public static Promo PromoFactory(int year, StudyLevel studyLevel) {
+    public static Promo PromoFactory(String name,int year, StudyLevel studyLevel,Admin admin) {
 
         //conditions ??
-        return new Promo(year, studyLevel);
+        return new Promo(name, year, studyLevel,admin);
     }
 
 
     // getter setter
+
+    public String getName(){
+        return name;
+    }
 
     public int getYear() {
         return year;
@@ -58,8 +67,9 @@ public class Promo {
         this.ufr=u;
     }
 
-
-
+    public Admin getAdmin() {
+        return admin;
+    }
 
     // manage promo
 
@@ -98,11 +108,18 @@ public class Promo {
 
     }
 
+    // equals et hascode
 
 
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Promo promo = (Promo) o;
+        return year == promo.year && Objects.equals(name, promo.name) && studyLevel == promo.studyLevel && Objects.equals(ufr, promo.ufr);
+    }
 
-
-
-
-
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, year, studyLevel, ufr);
+    }
 }
