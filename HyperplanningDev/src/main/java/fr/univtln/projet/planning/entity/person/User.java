@@ -2,6 +2,7 @@ package fr.univtln.projet.planning.entity.person;
 
 import fr.univtln.projet.planning.entity.TextTransformation;
 
+import java.util.Objects;
 import java.util.function.BiFunction;
 
 public abstract class User{
@@ -54,5 +55,22 @@ public abstract class User{
                 ", lastName='" + lastName + '\'' +
                 ", emailUniv='" + emailUniv + '\'' +
                 '}';
+    }
+
+
+
+    //equals and hashCode
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return Objects.equals(emailUniv, user.emailUniv);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(emailUniv);
     }
 }

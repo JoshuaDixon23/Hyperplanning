@@ -1,13 +1,15 @@
 package fr.univtln.projet.planning.entity.person;
 
-import fr.univtln.projet.planning.entity.planning.Planning;
+import fr.univtln.projet.planning.entity.planning.Course;
+
+import java.util.Set;
+import java.util.TreeSet;
 
 public class Professor extends User{
-    private Planning planning;
+    private final Set<Course> planning =new TreeSet<>();
 
     private Professor(String name, String surname) {
         super(name, surname);
-        planning = new Planning();
     }
 
     public static Professor ProfessorFactory(String fname, String lname) {
