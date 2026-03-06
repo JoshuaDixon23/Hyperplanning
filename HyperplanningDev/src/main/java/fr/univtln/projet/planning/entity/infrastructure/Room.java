@@ -1,6 +1,10 @@
 package fr.univtln.projet.planning.entity.infrastructure;
 
+import fr.univtln.projet.planning.entity.planning.Course;
+
 import java.util.Objects;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * Ajout de cours bizarre j'ai prefe ne pas faire
@@ -12,20 +16,21 @@ public class Room {
     private int capacity;
     private RoomType type;
 
-    private Building building;
+    private final Building building;
 
-    //private Set<Course> courses;
+    private final Set<Course> courses = new TreeSet<>();
 
     //factory
 
-    private Room(String num, int capacity, RoomType type) {
+    private Room(String num, int capacity, RoomType type, Building building) {
         this.num = num;
         this.capacity = capacity;
         this.type = type;
+        this.building = building;
     }
 
-    public static Room RoomFactory(String num, int capacity, RoomType type) {
-        return new Room(num, capacity, type);
+    public static Room RoomFactory(String num, int capacity, RoomType type, Building building) {
+        return new Room(num, capacity, type, building);
     }
 
     // getter setter
@@ -58,9 +63,34 @@ public class Room {
         return building;
     }
 
-    public void setBuilding(Building building) {
-        this.building = building;
+    public Set<Course> getCourses() {
+        return courses;
     }
+    // manage room
+
+    public void addCourse(Course c) {
+        if (c == null) {
+            return; //throw ?
+        }
+        else {
+            courses.add(c);
+            c.setRoom(this);
+        }
+    }
+
+
+    public void removeCourse(Course c) {
+        if (c == null) {
+            return; //throw ?
+        }
+        else {
+            courses.remove(c);
+            c.setRoom(null);
+        }
+    }
+
+
+
 
     // equals et hashCode
 

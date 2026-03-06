@@ -1,32 +1,32 @@
 package fr.univtln.projet.planning.entity.academic;
-import fr.univtln.projet.planning.entity.person.Professor;
+import fr.univtln.projet.planning.entity.person.LocalStudent;
 import fr.univtln.projet.planning.entity.person.Student;
 import fr.univtln.projet.planning.entity.planning.Course;
-import fr.univtln.projet.planning.entity.planning.Planning;
 import fr.univtln.projet.planning.entity.planning.Module;
 
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * surement def equals etc dans bcp de choses
  */
 public class Group {
 
-    private int num;
+    private final int num;
     private final GroupType type;
     //private final Planning planning; // à enlever et relier a cours plutot
     private Promo promo;
 
     private final Set<Module> modules = new HashSet<>(); // enlever
-    private Set<Course> courses = new HashSet<>();
-    private Set<Student> students = new HashSet<>();
+    private Set<Course> planning = new TreeSet<>();
+    private Set<LocalStudent> localStudents = new HashSet<>();
 
     //factory
 
     private Group(int num, GroupType type) {
+        this.num = num;
         this.type = type;
     }
 
@@ -42,9 +42,6 @@ public class Group {
         return num;
     }
 
-    public void setNum(int num) {
-        this.num = num;
-    }
 
     public GroupType getType() {
         return type;
@@ -59,16 +56,16 @@ public class Group {
         this.promo = promo;
     }
 
-    public Set<Student> getStudents() {
-        return students;
+    public Set<LocalStudent> getStudents() {
+        return localStudents;
     }
 
-    public Set<Course> getCourses() {
-        return courses;
+    public Set<Course> getPlanning() {
+        return planning;
     }
 
-    public void setCourses(Set<Course> courses) {
-        this.courses = courses;
+    public void setPlanning(Set<Course> planning) {
+        this.planning = planning;
     }
 
     // manage group
@@ -77,11 +74,11 @@ public class Group {
         if (c == null) {
             return; // throw qq chose
         }
-        courses.add(c);
+        planning.add(c);
     }
 
     public void removeCourse(Course c) {
-        courses.remove(c);
+        planning.remove(c);
     }
 
     public void addModule(Module m) {
@@ -96,17 +93,17 @@ public class Group {
     }
 
 
-    public void addStudent(Student s) {
+    public void addLocalStudent(LocalStudent s) {
         if (s == null) {
             return; // throw qq chose
         }
         else{
-            students.add(s);
+            localStudents.add(s);
         }
     }
 
-    public void removeStudent(Student s) {
-        students.remove(s);
+    public void removeLocalStudent(LocalStudent s) {
+        localStudents.remove(s);
     }
 
 

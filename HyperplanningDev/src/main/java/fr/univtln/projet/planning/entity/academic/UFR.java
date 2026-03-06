@@ -1,6 +1,7 @@
 package fr.univtln.projet.planning.entity.academic;
 
 import fr.univtln.projet.planning.entity.infrastructure.Building;
+import fr.univtln.projet.planning.entity.infrastructure.Campus;
 import fr.univtln.projet.planning.entity.person.Admin;
 
 import java.util.Collections;
@@ -9,23 +10,22 @@ import java.util.Set;
 
 public class UFR {
     private String name;
-    private String campus;
-    private final Admin admin;
+    private Admin admin;
+    private Campus campus;
 
     // private Admin admin:
-
     private final Set<Promo> promos = new HashSet<>();
     private final Set<Building> buildings = new HashSet<>();
 
 
     // factory
-    private UFR(String name, String campus,Admin admin) {
+    private UFR(String name, Campus campus,Admin admin) {
         this.name = name;
-        this.campus = campus;
         this.admin=admin;
+        this.campus=campus;
     }
 
-    public static UFR UFRFactory(String name, String campus,Admin admin) {
+    public static UFR UFRFactory(String name, Campus campus,Admin admin) {
         return new UFR(name, campus,admin);
     }
 
@@ -35,17 +35,18 @@ public class UFR {
         return name;
     }
 
-    public String getCampus() {
+    public Campus getCampus() {
         return campus;
+    }
+
+    public void setCampus(Campus campus) {
+        this.campus = campus;
     }
 
     public void setName(String name) {
         this.name = name;
     }
 
-    public void setCampus(String campus) {
-        this.campus = campus;
-    }
 
     public Admin getAdmin() {
         return admin;
@@ -60,15 +61,18 @@ public class UFR {
     }
 
 
+
     // manage ufr
 
-    public void addPromo(Promo p) {
-        if (p == null){
+
+    // create promo
+
+    public void addPromo(String promoName, StudyLevel promoStudyLevel) {
+        if (promoName == null || promoStudyLevel == null){
             return; //throw ?
         }
         else {
-            promos.add(p);
-            p.setUfr(this); // set ufr de module à faire
+            promos.add(Promo.PromoFactory(promoName, promoStudyLevel, this));
         }
     }
 
@@ -78,7 +82,7 @@ public class UFR {
         }
         else{
             promos.remove(p);
-            p.setUfr(null);
+            //p.setUfr(null);
         }
     }
 
@@ -101,6 +105,7 @@ public class UFR {
             b.setUfr(null); // set ufr à faire
         }
     }
+
 
 
 }

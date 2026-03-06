@@ -12,7 +12,7 @@ public class Module {
     private String name;
     private Language language;
     private float ECTS; // number of credits
-    Professor responsible;
+    private Professor responsible;
     private Map<CourseType, Float> courseHours; // Dictionary for CM/TD/TP hours in module
 
     // private Set<Group> groups;

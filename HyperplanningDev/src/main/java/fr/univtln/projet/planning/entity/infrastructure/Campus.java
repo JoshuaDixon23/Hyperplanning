@@ -1,24 +1,27 @@
 package fr.univtln.projet.planning.entity.infrastructure;
 
+import fr.univtln.projet.planning.entity.academic.UFR;
+
 import java.util.HashSet;
 import java.util.Set;
 
-public class MapUniv {
+public class Campus {
 
     private String city;
     private String imageFileName; // peut être stocker l'image directement
 
     private final Set<Building> buildings = new HashSet<>();
+    private final Set<UFR> ufrs = new HashSet<>();
 
     // Factory
 
-    private MapUniv(String city, String imageFileName) {
+    private Campus(String city, String imageFileName) {
         this.city = city;
         this.imageFileName = imageFileName;
     }
 
-    public static MapUniv MapFactory(String city, String imageFileName) {
-        return new MapUniv(city, imageFileName);
+    public static Campus MapFactory(String city, String imageFileName) {
+        return new Campus(city, imageFileName);
     }
 
     // getter setter
@@ -63,6 +66,28 @@ public class MapUniv {
             b.setMapUniv(null);
         }
     }
+
+    public void addUfr(UFR u) {
+        if (u == null){
+            return; //throw ?
+        }
+        else {
+            ufrs.add(u);
+            u.setCampus(this);
+        }
+    }
+
+    public void removeUfr(UFR u) {
+        if (u == null){
+            return; //throw ?
+        }
+        else {
+            ufrs.remove(u);
+            u.setCampus(null);
+        }
+    }
+
+
 
 
 
