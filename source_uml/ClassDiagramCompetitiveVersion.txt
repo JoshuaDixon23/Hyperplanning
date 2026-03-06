@@ -1,147 +1,174 @@
 @startuml
-skinparam linetype ortho
-skinparam nodesep 140
-skinparam ranksep 130
-skinparam padding 10
 
+skinparam linetype ortho
+skinparam nodesep 90
+skinparam ranksep 90
+skinparam padding 12
+skinparam classAttributeIconSize 0
+
+' ─────────────────────────────────────────────
+'  USERS
+' ─────────────────────────────────────────────
 abstract class User {
     firstName
     lastName
     emailUniv
 }
 
-class Professor {
-    
-}
-
 abstract class Student {
     emailPersonal
 }
 
-class StaffDRI{
-}
+class Professor
+class StaffDRI
+class Admin
+class LocalStudent
+class InternationalStudent
 
-class Admin{
-}
-
-class LocalStudent{
-}
-
-class InternationalStudent{
-}
-
-Professor -u-|> User
-Student -u-|> User
-StaffDRI -u-|> User
-Admin -u-|> User
-LocalStudent -r-|> Student 
-InternationalStudent -l-|> Student 
-
-class Promo{
+' ─────────────────────────────────────────────
+'  ACADEMIC STRUCTURE
+' ─────────────────────────────────────────────
+class Promo {
     year
     Enum studyLevel
 }
 
-class Module{
+class Module {
     code
     name
     language
     ECTS
 }
 
-class UFR{
+class UFR {
     name
-    campus   
+    campus
 }
 
-class Group{
+class Group {
     Enum type - promo, TD, TP
 }
 
-class Course{
+class Course {
     date
     startTime
     duration
     courseType
 }
 
-class Building{
+' ─────────────────────────────────────────────
+'  BUILDINGS
+' ─────────────────────────────────────────────
+class Building {
     localisation
     Map openingHours
 }
 
-class Room{
+class Room {
     num
     capacity
     Enum type - TP, amphitheater etc
 }
 
-class Map{
+class Map {
     city
     image
 }
 
-'class Planning {
-'}
+' ─────────────────────────────────────────────
+'  BASKET / ENROLLMENT
+' ─────────────────────────────────────────────
+class BasketModule
+class BasketFinal
+class ModuleGroup <<association>>
 
-class Basket{
-}
+' ─────────────────────────────────────────────
+'  LAYOUT — paysage réel
+' ─────────────────────────────────────────────
 
-User -[hidden]d- Professor
+' Ligne 1 : utilisateurs bien étalés
+LocalStudent         -[hidden]r- Student
+Student              -[hidden]r- InternationalStudent
+InternationalStudent -[hidden]r- User
+User                 -[hidden]r- Professor
+Professor            -[hidden]r- Admin
+Admin                -[hidden]r- StaffDRI
 
-Professor -[hidden]r- Student
+' Ligne 2 : coeur académique horizontal
+Promo                -[hidden]r- Group
+Group                -[hidden]r- ModuleGroup
+ModuleGroup          -[hidden]r- Module
+Module               -[hidden]r- Course
+Course               -[hidden]r- UFR
+UFR                  -[hidden]r- Building
+Building             -[hidden]r- Room
+Room                 -[hidden]r- Map
 
-Promo -[hidden]r- Module
-Module-[hidden]r- UFR
+' Ligne 3 : paniers placés sous la zone centrale/droite
+BasketModule         -[hidden]r- BasketFinal
 
-Group -[hidden]r- Course
-Course -[hidden]r- Building
+' Alignements verticaux
+LocalStudent         -[hidden]d- Promo
+Student              -[hidden]d- Group
+InternationalStudent -[hidden]d- ModuleGroup
+User                 -[hidden]d- Module
+Professor            -[hidden]d- Course
+Admin                -[hidden]d- UFR
+StaffDRI             -[hidden]d- Building
 
-Room -[hidden]r- Map
-Map -[hidden]r- Basket
+Module               -[hidden]d- BasketModule
+UFR                  -[hidden]d- BasketFinal
 
-Professor -[hidden]d- Promo
-Student -[hidden]d- Module
-Module-[hidden]d- Group
-UFR -[hidden]d- Course
-Building -[hidden]d- Room
+' ─────────────────────────────────────────────
+'  INHERITANCE
+' ─────────────────────────────────────────────
+Professor            -u-|> User
+StaffDRI             -u-|> User
+Admin                -u-|> User
+Student              -u-|> User
+LocalStudent         -u-|> Student
+InternationalStudent -u-|> Student
 
-Promo -[hidden]d- Group
-'Group -[hidden]d- Planning
-'Course -[hidden]d- Planning
+' ─────────────────────────────────────────────
+'  ASSOCIATIONS
+' ─────────────────────────────────────────────
 
-Professor "responsible" -d- "0..1" Promo
-Professor "responsible" -r- "0..*" Module
-Professor "1..*" -d- "*" Course
+' Professor
+Professor "responsible 1..*" -d- "0..1" Promo
+Professor "responsible"      -d- "0..*" Module
+Professor "1..*"             -d- "*"    Course : teaches >
 
-LocalStudent -d-o Promo
-LocalStudent "*"-d-"*" Group : form >
+' LocalStudent
+LocalStudent       -d-o Promo
+LocalStudent "*"   -d-  "*" Group : form >
 
-'Module "*" -l- "*" Promo : follows <
-Module-d- "0..*" Course : describes >
+' Module / Course / Group
+Module             -d-  "0..*" Course : describes >
+Group "1..*"       -r-  "1..*" Module : follows >
+Group "*"          -r-  "*"    Course : follows >
+Promo              -d-  "1..*" Group  : divide
 
-Promo -d-"1..*" Group : divide <
+' UFR / Building
+UFR                *-l- Promo
+Building           *-d- Room
+Building           -r-o Map
+Building "1..*"    -l-  "0..1" UFR : belongs >
 
-UFR *-l- Promo
+' Room / Course
+Room "0..1"        -u- "*" Course
 
-Group "1..*" -r- "1..*" Module : follows >
+' Basket
+BasketModule       o-u- Module
+BasketModule       <-l- InternationalStudent
+BasketFinal        *--  ModuleGroup
+BasketFinal        -u-> InternationalStudent
 
-Building *-d- Room
-Building -r-o Map
-Building "1..*" -l- "0..1" UFR : belongs > 
+' ModuleGroup association class
+'(Group, Module) .. ModuleGroup
+ModuleGroup        -u- Group
+ModuleGroup        -u- Module
 
-Room "0..1"-u-"*" Course
+' UFR / Admin
+UFR                -u- Admin
 
-'Planning *-u- Course
-'Planning -u- "1..*" Promo : owns <
-'Planning -l- "1..*" Student : owns <
-'Planning -l- "1..*" Professor : owns <
-'Planning -u- Group: owns <
-Professor "*"--"*" Course : teaches >
-Group "*"--"*" Course : follows >
-
-Basket o-u- Module
-Basket -l- InternationalStudent
-
-UFR -u- Admin
 @enduml
