@@ -1,7 +1,7 @@
 package fr.univtln.projet.planning.entity.planning;
 
 import fr.univtln.projet.planning.entity.person.Professor;
-import fr.univtln.projet.planning.infrastructure.Room;
+import fr.univtln.projet.planning.entity.infrastructure.Room;
 
 import java.time.Instant;
 import java.time.Duration;
