@@ -29,7 +29,6 @@ class InternationalStudent
 '  ACADEMIC STRUCTURE
 ' ─────────────────────────────────────────────
 class Promo {
-    year
     Enum studyLevel
 }
 
@@ -42,7 +41,6 @@ class Module {
 
 class UFR {
     name
-    campus
 }
 
 class Group {
@@ -54,12 +52,14 @@ class Course {
     startTime
     duration
     courseType
+    Map courseHours
 }
 
 ' ─────────────────────────────────────────────
 '  BUILDINGS
 ' ─────────────────────────────────────────────
 class Building {
+    name
     localisation
     Map openingHours
 }
@@ -70,7 +70,7 @@ class Room {
     Enum type - TP, amphitheater etc
 }
 
-class Map {
+class Campus {
     city
     image
 }
@@ -102,7 +102,7 @@ Module               -[hidden]r- Course
 Course               -[hidden]r- UFR
 UFR                  -[hidden]r- Building
 Building             -[hidden]r- Room
-Room                 -[hidden]r- Map
+Room                 -[hidden]r- Campus
 
 ' Ligne 3 : paniers placés sous la zone centrale/droite
 BasketModule         -[hidden]r- BasketFinal
@@ -134,7 +134,7 @@ InternationalStudent -u-|> Student
 ' ─────────────────────────────────────────────
 
 ' Professor
-Professor "responsible 1..*" -d- "0..1" Promo
+Professor "responsible"      -d- "0..1" Promo
 Professor "responsible"      -d- "0..*" Module
 Professor "1..*"             -d- "*"    Course : teaches >
 
@@ -146,13 +146,14 @@ LocalStudent "*"   -d-  "*" Group : form >
 Module             -d-  "0..*" Course : describes >
 Group "1..*"       -r-  "1..*" Module : follows >
 Group "*"          -r-  "*"    Course : follows >
-Promo              -d-  "1..*" Group  : divide
+Promo              -d-  "1..*" Group  : divide <
 
 ' UFR / Building
 UFR                *-l- Promo
 Building           *-d- Room
-Building           -r-o Map
+Building           -r-* Campus
 Building "1..*"    -l-  "0..1" UFR : belongs >
+UFR             "*"- Campus : locate <
 
 ' Room / Course
 Room "0..1"        -u- "*" Course
@@ -169,6 +170,6 @@ ModuleGroup        -u- Group
 ModuleGroup        -u- Module
 
 ' UFR / Admin
-UFR                -u- Admin
+UFR                <-u- Admin
 
 @enduml
