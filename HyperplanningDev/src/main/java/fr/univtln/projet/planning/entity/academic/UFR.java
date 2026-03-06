@@ -1,6 +1,7 @@
 package fr.univtln.projet.planning.entity.academic;
 
 import fr.univtln.projet.planning.entity.infrastructure.Building;
+import fr.univtln.projet.planning.entity.person.Admin;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -9,6 +10,7 @@ import java.util.Set;
 public class UFR {
     private String name;
     private String campus;
+    private final Admin admin;
 
     // private Admin admin:
 
@@ -17,13 +19,14 @@ public class UFR {
 
 
     // factory
-    private UFR(String name, String campus) {
+    private UFR(String name, String campus,Admin admin) {
         this.name = name;
         this.campus = campus;
+        this.admin=admin;
     }
 
-    public static UFR UFRFactory(String name, String campus) {
-        return new UFR(name, campus);
+    public static UFR UFRFactory(String name, String campus,Admin admin) {
+        return new UFR(name, campus,admin);
     }
 
     // getter setter
@@ -42,6 +45,10 @@ public class UFR {
 
     public void setCampus(String campus) {
         this.campus = campus;
+    }
+
+    public Admin getAdmin() {
+        return admin;
     }
 
     public Set<Promo> getModules() {

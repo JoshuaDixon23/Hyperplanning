@@ -50,7 +50,7 @@ public class MapUniv {
         }
         else {
             buildings.add(b);
-            b.setMap(this);
+            b.setMapUniv(this);
         }
     }
 
@@ -60,10 +60,10 @@ public class MapUniv {
         }
         else {
             buildings.remove(b);
-            b.setMap(null);
+            b.setMapUniv(null);
         }
     }
 
-    
+
 
 }

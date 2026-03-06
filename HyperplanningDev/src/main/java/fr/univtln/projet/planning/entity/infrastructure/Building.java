@@ -55,11 +55,11 @@ public class Building {
         this.ufr=u;
     }
 
-    public MapUniv getMap() {
+    public MapUniv getMapUniv() {
         return mapUniv;
     }
 
-    public void setMap(MapUniv mapUniv) {
+    public void setMapUniv(MapUniv mapUniv) {
         this.mapUniv = mapUniv;
     }
 

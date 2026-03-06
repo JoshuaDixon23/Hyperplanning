@@ -15,35 +15,35 @@ import java.util.Set;
  */
 public class Group {
 
-    private String name;
+    private int num;
     private final GroupType type;
     //private final Planning planning; // à enlever et relier a cours plutot
     private Promo promo;
 
     private final Set<Module> modules = new HashSet<>(); // enlever
-    private Set<Course> courses;
+    private Set<Course> courses = new HashSet<>();
     private Set<Student> students = new HashSet<>();
 
     //factory
 
-    private Group(String name, GroupType type) {
+    private Group(int num, GroupType type) {
         this.type = type;
     }
 
-    public static Group GroupFactory(String name,GroupType type) {
+    public static Group GroupFactory(int num,GroupType type) {
         //conditions ??
-        return new Group(name,type);
+        return new Group(num,type);
     }
 
     //setter getter
 
 
-    public String getName() {
-        return name;
+    public int getNum() {
+        return num;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setNum(int num) {
+        this.num = num;
     }
 
     public GroupType getType() {
@@ -117,11 +117,11 @@ public class Group {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Group group = (Group) o;
-        return Objects.equals(name, group.name) && Objects.equals(promo, group.promo);
+        return num == group.num && type == group.type && Objects.equals(promo, group.promo);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, promo);
+        return Objects.hash(num, type, promo);
     }
 }

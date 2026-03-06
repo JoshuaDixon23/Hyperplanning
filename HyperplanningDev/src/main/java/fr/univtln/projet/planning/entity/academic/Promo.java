@@ -13,7 +13,6 @@ public class Promo {
     private final String name;
     private final int year;
     private final StudyLevel studyLevel;
-    private final Admin admin;
     private  UFR ufr; //diaman noir attention
 
     //private Professor responsible;
@@ -23,17 +22,16 @@ public class Promo {
 
     //factory
 
-    private Promo(String name,int year, StudyLevel studyLevel,Admin admin) {
+    private Promo(String name,int year, StudyLevel studyLevel) {
         this.name=name;
         this.year = year;
         this.studyLevel = studyLevel;
-        this.admin = admin;
     }
 
-    public static Promo PromoFactory(String name,int year, StudyLevel studyLevel,Admin admin) {
+    public static Promo PromoFactory(String name,int year, StudyLevel studyLevel) {
 
         //conditions ??
-        return new Promo(name, year, studyLevel,admin);
+        return new Promo(name, year, studyLevel);
     }
 
 
@@ -67,9 +65,6 @@ public class Promo {
         this.ufr=u;
     }
 
-    public Admin getAdmin() {
-        return admin;
-    }
 
     // manage promo
 
