@@ -1,0 +1,36 @@
+1. Test du projet avec Docker
+
+Pour tester les containers, il suffit normalement de taper :
+docker compose up --build
+
+Cette commande :
+-construit les images si nécessaire (--build)
+-lance les containers dans le bon ordre (mysql puis app)
+-exécute le main qui, pour l’instant, crée des entités dans la base de données.
+
+2. Configuration Java et Maven
+
+Le projet utilise Java 21, car c’est la version la plus stable pour l’utilisation de Lombok et JPA/Hibernate.
+Dans IntelliJ :
+Changer le SDK du projet :
+File → Project Structure → Project → sélectionner le SDK Java 21
+
+Changer le Language Level :
+Mettre à 21 pour correspondre au SDK.
+
+Maven :
+Assurez-vous que Maven utilise Java 21 :
+mvn -v
+La sortie doit indiquer Java 21.
+Si ce n’est pas le cas, configurez Maven pour utiliser le SDK Java 21 (ex : via JAVA_HOME ou IntelliJ Maven → Runner → JDK for Importer and Runner).
+
+3. Vérification rapide
+
+Après docker compose up --build, vous devriez voir dans les logs :
+Connecting with JDBC URL [jdbc:mysql://mysql:3306/hyperplanning_db]
+Si c’est le cas, l’application est connectée à la base et prête à fonctionner.
+
+4. Nettoyer l’environnement (facultatif)
+
+Pour arrêter et supprimer tous les containers et volumes (réinitialiser la base) :
+docker compose down -v
