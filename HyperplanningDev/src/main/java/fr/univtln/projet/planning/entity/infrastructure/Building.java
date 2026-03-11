@@ -60,11 +60,11 @@ public class Building {
         this.ufr=u;
     }
 
-    public Campus getMapUniv() {
+    public Campus getCampus() {
         return campus;
     }
 
-    public void setMapUniv(Campus campus) {
+    public void setCampus(Campus campus) {
         this.campus = campus;
     }
 
@@ -72,9 +72,13 @@ public class Building {
         return Collections.unmodifiableSet(rooms);
     }
 
-    // manage Building
+    public String getName() {
+        return name;
+    }
 
-    public void addRoom(String num, int capacity, RoomType type) {
+// manage Building
+
+    public void addRoom(int num, int capacity, RoomType type) {
         /*if (r == null) {
             return; //throw ?
         }

@@ -12,7 +12,7 @@ import java.util.TreeSet;
  */
 public class Room {
 
-    private String num;
+    private int num;
     private int capacity;
     private RoomType type;
 
@@ -22,24 +22,24 @@ public class Room {
 
     //factory
 
-    private Room(String num, int capacity, RoomType type, Building building) {
+    private Room(int num, int capacity, RoomType type, Building building) {
         this.num = num;
         this.capacity = capacity;
         this.type = type;
         this.building = building;
     }
 
-    public static Room RoomFactory(String num, int capacity, RoomType type, Building building) {
+    public static Room RoomFactory(int num, int capacity, RoomType type, Building building) {
         return new Room(num, capacity, type, building);
     }
 
     // getter setter
 
-    public String getNum() {
+    public int getNum() {
         return num;
     }
 
-    public void setNum(String num) {
+    public void setNum(int num) {
         this.num = num;
     }
 
@@ -66,6 +66,11 @@ public class Room {
     public Set<Course> getCourses() {
         return courses;
     }
+
+    public String getName(){
+        return building.getName() + this.getNum();
+    }
+
     // manage room
 
     public void addCourse(Course c) {

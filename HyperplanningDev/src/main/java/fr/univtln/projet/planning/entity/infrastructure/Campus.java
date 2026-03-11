@@ -20,7 +20,7 @@ public class Campus {
         this.imageFileName = imageFileName;
     }
 
-    public static Campus MapFactory(String city, String imageFileName) {
+    public static Campus CampusFactory(String city, String imageFileName) {
         return new Campus(city, imageFileName);
     }
 
@@ -53,7 +53,7 @@ public class Campus {
         }
         else {
             buildings.add(b);
-            b.setMapUniv(this);
+            b.setCampus(this);
         }
     }
 
@@ -63,7 +63,7 @@ public class Campus {
         }
         else {
             buildings.remove(b);
-            b.setMapUniv(null);
+            b.setCampus(null);
         }
     }
 
