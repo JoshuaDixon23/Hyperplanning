@@ -10,8 +10,6 @@ COPY pom.xml .
 COPY src ./src
 
 # Build du projet et création d'un "uber-jar" avec les dépendances
-RUN mvn clean package -DskipTests
-
 RUN mvn clean package -DskipTests && ls -l target/
 
 # ==========================
