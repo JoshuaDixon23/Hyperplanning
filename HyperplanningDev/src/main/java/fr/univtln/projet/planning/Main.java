@@ -27,6 +27,39 @@ public class Main {
         EntityManager em = emf.createEntityManager();
 
         try {
+            // suppression des tables déjà existantes
+            em.getTransaction().begin();
+
+            // 1. Supprimer la table de jointure ManyToMany
+            // em.createQuery("DELETE FROM Group_Course").executeUpdate(); // si existante
+
+            // 2. Supprimer les cours
+            em.createQuery("DELETE FROM Course").executeUpdate();
+
+            // 3. Supprimer les groupes
+            em.createQuery("DELETE FROM Group").executeUpdate();
+
+            // 4. Supprimer les promos
+            em.createQuery("DELETE FROM Promo").executeUpdate();
+
+            // 5. Supprimer les modules
+            em.createQuery("DELETE FROM Module").executeUpdate();
+
+            // 6. Supprimer les salles
+            em.createQuery("DELETE FROM Room").executeUpdate();
+
+            // 7. Supprimer les bâtiments
+            em.createQuery("DELETE FROM Building").executeUpdate();
+
+            // 8. Supprimer les UFR
+            em.createQuery("DELETE FROM UFR").executeUpdate();
+
+            // 9. Supprimer les utilisateurs
+            em.createQuery("DELETE FROM Student").executeUpdate();
+            em.createQuery("DELETE FROM Professor").executeUpdate();
+
+            em.getTransaction().commit();
+
             em.getTransaction().begin();
 
             // ==========================================
