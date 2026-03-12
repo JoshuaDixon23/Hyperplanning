@@ -139,8 +139,14 @@
                     </ScrollPane>
 
                     <StackPane fx:id="planningCard" styleClass="planning-card" HBox.hgrow="ALWAYS" maxHeight="650">
-                        <ScrollPane fx:id="planningScroll" fitToWidth="true" fitToHeight="false" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" styleClass="planning-scroll">
-                            <VBox fx:id="planningContent">
+                        <ScrollPane fx:id="planningScroll"
+                                    fitToWidth="true"
+                                    fitToHeight="false"
+                                    hbarPolicy="NEVER"
+                                    vbarPolicy="AS_NEEDED"
+                                    styleClass="planning-scroll">
+
+                            <StackPane fx:id="planningContent">
                                 <GridPane fx:id="planningGrid" styleClass="planning-grid" hgap="0" vgap="0" maxWidth="Infinity">
                                     <columnConstraints>
                                         <ColumnConstraints percentWidth="16.666" minWidth="0"/>
@@ -151,7 +157,9 @@
                                         <ColumnConstraints percentWidth="16.67" minWidth="0"/>
                                     </columnConstraints>
                                 </GridPane>
-                            </VBox>
+
+                                <Pane fx:id="coursesPane" pickOnBounds="false"/>
+                            </StackPane>
                         </ScrollPane>
                     </StackPane>
 

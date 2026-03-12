@@ -10,11 +10,15 @@ import javafx.scene.Node;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.WeekFields;
+import java.util.ArrayList;
 import java.util.Locale;
 import javafx.animation.*;
 import javafx.application.Platform;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import java.util.List;
 
 public class PlanningController {
 
@@ -28,8 +32,13 @@ public class PlanningController {
     @FXML private ToggleButton btnAutrePromo;
     @FXML private VBox timeColumn;
     @FXML private ScrollPane planningScroll;
-    @FXML private VBox planningContent;
     @FXML private ScrollPane timeScroll;
+    @FXML private Pane coursesPane;
+    @FXML private StackPane planningContent;
+
+    private static final int GRID_START_HOUR = 8;
+    private static final int SLOT_MINUTES = 30;
+    private static final double ROW_HEIGHT = 60;
 
     private final ToggleGroup viewGroup = new ToggleGroup();
 
@@ -43,6 +52,8 @@ public class PlanningController {
     private final WeekFields weekFields = WeekFields.ISO;
     private final DateTimeFormatter dayMonthFmt = DateTimeFormatter.ofPattern("d MMM", Locale.FRENCH);
 
+    private final List<VBox> sourceCourseCards = new ArrayList<>();
+
     /**
      * Called by JavaFx after the FXML file has been loaded
      * setting the displayed user name
@@ -52,17 +63,43 @@ public class PlanningController {
     public void initialize() {
         userNameLabel.setText("Thomas Dejean");
         selectedWeekMonday = mondayOf(LocalDate.now());
-        baseWeekMonday= selectedWeekMonday;
+        baseWeekMonday = selectedWeekMonday;
 
         Platform.runLater(this::applyWeeksClip);
         renderWeeksInto(weeksContainer, baseWeekMonday);
+
         buildEmptyGrid(8, 20, 1);
+
+        addCourse(0, 8, 0, 120, "Informatique", "Salle A12", "M. Dupont");
+        addCourse(0, 8, 30, 120, "Algo", "Salle B14", "Mme Martin");
+        addCourse(4, 15, 0, 180, "Maths", "Salle A12", "M. Dupont");
+        addCourse(2, 13, 30, 120, "Projet", "Salle A12", "M. Dupont");
+
         btnMonPlan.setToggleGroup(viewGroup);
         btnMaPromo.setToggleGroup(viewGroup);
         btnAutrePromo.setToggleGroup(viewGroup);
-
         btnMaPromo.setSelected(true);
+
+        coursesPane.setPickOnBounds(false);
+
+        planningGrid.widthProperty().addListener((obs, oldVal, newVal) -> layoutCoursesStacked());
+
+        coursesPane.addEventFilter(javafx.scene.input.ScrollEvent.SCROLL, event -> {
+            double deltaY = event.getDeltaY();
+            double contentHeight = planningContent.getHeight();
+            double viewportHeight = planningScroll.getViewportBounds().getHeight();
+
+            if (contentHeight > viewportHeight) {
+                double v = planningScroll.getVvalue();
+                double change = -deltaY / (contentHeight - viewportHeight);
+                planningScroll.setVvalue(Math.max(0, Math.min(1, v + change)));
+            }
+
+            event.consume();
+        });
+
         Platform.runLater(() -> {
+            layoutCoursesStacked();
             timeScroll.vvalueProperty().bindBidirectional(planningScroll.vvalueProperty());
         });
     }
@@ -184,16 +221,25 @@ public class PlanningController {
         planningGrid.getChildren().clear();
         timeColumn.getChildren().clear();
 
+
         int dayCols = 6;
-        int rows = (endHour - startHour) / stepHours;
+        int startMinutes = GRID_START_HOUR * 60;
+        int endMinutes = 20 * 60;
+        int rows = (endMinutes - startMinutes) / SLOT_MINUTES;
         double rowHeight = 60;
 
         for (int r = 0; r < rows; r++) {
 
-            int hour = startHour + (r * stepHours);
 
-            Label time = new Label(hour + " : 00");
+            int minutes = startMinutes + r * SLOT_MINUTES;
+            int hour = minutes / 60;
+            int min = minutes % 60;
+
+
+            Label time = new Label(min == 0 ? String.format("%d:00", hour) : "");
             time.getStyleClass().add("time-label");
+            time.setAlignment(Pos.TOP_RIGHT);
+            time.setPadding(new Insets(8, 12, 0, 0));
             time.setMinHeight(rowHeight);
             time.setPrefHeight(rowHeight);
             time.setMaxHeight(rowHeight);
@@ -221,11 +267,288 @@ public class PlanningController {
         }
         double totalHeight = rows * rowHeight;
 
+        coursesPane.setMinHeight(totalHeight);
+        coursesPane.setPrefHeight(totalHeight);
+        coursesPane.setMaxHeight(totalHeight);
         planningContent.setMinHeight(totalHeight);
         planningContent.setPrefHeight(totalHeight);
         planningContent.setMaxHeight(totalHeight);
 
     }
 
+    private VBox buildCourseCard(String title, String room, String teacher) {
+        VBox card = new VBox(6);
+        card.getStyleClass().add("course-card");
 
+        Label t = new Label(title);
+        t.getStyleClass().add("course-title");
+        t.setWrapText(true);
+        t.setMaxWidth(Double.MAX_VALUE);
+
+        Label r = new Label(room);
+        r.getStyleClass().add("course-meta");
+        r.setWrapText(true);
+        r.setMaxWidth(Double.MAX_VALUE);
+
+        Label te = new Label(teacher);
+        te.getStyleClass().add("course-meta");
+        te.setWrapText(true);
+        te.setMaxWidth(Double.MAX_VALUE);
+
+        Button button = new Button("More");
+        button.getStyleClass().add("button-more");
+        button.setWrapText(true);
+        button.setMaxWidth(Double.MAX_VALUE);
+
+        card.getChildren().addAll(t, r, te, button);
+
+        card.setMinWidth(0);
+        card.setMaxWidth(Double.MAX_VALUE);
+
+        return card;
+    }
+
+
+
+    private void addCourse(int dayIndex, int startHour, int startMinute, int durationMinutes,
+                           String title, String room, String teacher) {
+
+        VBox card = buildCourseCard(title, room, teacher);
+
+        card.getProperties().put("dayIndex", dayIndex);
+        card.getProperties().put("startMinutes", startHour * 60 + startMinute);
+        card.getProperties().put("endMinutes", startHour * 60 + startMinute + durationMinutes);
+        card.getProperties().put("durationMinutes", durationMinutes);
+
+        sourceCourseCards.add(card);
+    }
+
+
+    private List<List<Node>> buildOverlapGroups(List<Node> cards) {
+        List<List<Node>> groups = new ArrayList<>();
+        if (cards.isEmpty()) return groups;
+
+        List<Node> currentGroup = new ArrayList<>();
+        int currentMaxEnd = -1;
+
+        for (Node card : cards) {
+            int start = (int) card.getProperties().get("startMinutes");
+            int end = (int) card.getProperties().get("endMinutes");
+
+            if (currentGroup.isEmpty()) {
+                currentGroup.add(card);
+                currentMaxEnd = end;
+            } else if (start < currentMaxEnd) {
+                currentGroup.add(card);
+                currentMaxEnd = Math.max(currentMaxEnd, end);
+            } else {
+                groups.add(currentGroup);
+                currentGroup = new java.util.ArrayList<>();
+                currentGroup.add(card);
+                currentMaxEnd = end;
+            }
+        }
+
+        if (!currentGroup.isEmpty()) {
+            groups.add(currentGroup);
+        }
+
+        return groups;
+    }
+
+    private void placeSingleCard(VBox card, double dayWidth, int dayIndex) {
+        double horizontalPadding = 8;
+
+        int start = (int) card.getProperties().get("startMinutes");
+        int duration = (int) card.getProperties().get("durationMinutes");
+
+        double x = dayIndex * dayWidth + horizontalPadding;
+        double topMargin = (start == GRID_START_HOUR * 60) ? 12 : 0;
+        double y = ((start - GRID_START_HOUR * 60) / (double) SLOT_MINUTES) * ROW_HEIGHT + topMargin;
+        double h = (duration / (double) SLOT_MINUTES) * ROW_HEIGHT - topMargin;
+        double w = dayWidth - 2 * horizontalPadding;
+
+        card.setLayoutX(x);
+        card.setLayoutY(y);
+        card.setPrefWidth(w);
+        card.setMinWidth(w);
+        card.setMaxWidth(w);
+
+        card.setPrefHeight(h);
+        card.setMinHeight(h);
+        card.setMaxHeight(h);
+    }
+
+    private Pane buildOverlapPane(List<Node> group, double dayWidth, int dayIndex) {
+        Pane container = new Pane();
+
+        double horizontalPadding = 8;
+        double tabWidth = 18;
+        double cardWidth = dayWidth - 2 * horizontalPadding;
+
+        int minStart = group.stream()
+                .mapToInt(n -> (int) n.getProperties().get("startMinutes"))
+                .min()
+                .orElse(GRID_START_HOUR * 60);
+
+        int maxEnd = group.stream()
+                .mapToInt(n -> (int) n.getProperties().get("endMinutes"))
+                .max()
+                .orElse(minStart + 60);
+
+        double x = dayIndex * dayWidth + horizontalPadding;
+        double topMargin = (minStart == GRID_START_HOUR * 60) ? 12 : 0;
+        double y = ((minStart - GRID_START_HOUR * 60) / (double) SLOT_MINUTES) * ROW_HEIGHT + topMargin;
+        double h = ((maxEnd - minStart) / (double) SLOT_MINUTES) * ROW_HEIGHT - topMargin;
+
+        container.setLayoutX(x);
+        container.setLayoutY(y);
+        container.setPrefWidth(cardWidth + tabWidth);
+        container.setMinWidth(cardWidth);
+        container.setMaxWidth(cardWidth + tabWidth);
+
+        container.setPrefHeight(h);
+        container.setMinHeight(h);
+        container.setMaxHeight(h);
+
+        Pane cardsLayer = new Pane();
+        cardsLayer.setLayoutX(0);
+        cardsLayer.setLayoutY(0);
+        cardsLayer.setPrefSize(cardWidth, h);
+        cardsLayer.setMinSize(cardWidth, h);
+        cardsLayer.setMaxSize(cardWidth, h);
+
+        VBox selector = new VBox(4);
+        selector.setLayoutX(cardWidth);
+        selector.setLayoutY(0);
+        selector.setPrefWidth(tabWidth);
+        selector.setAlignment(Pos.TOP_LEFT);
+        selector.setMouseTransparent(false);
+
+        List<Button> tabButtons = new ArrayList<>();
+
+        for (int i = 0; i < group.size(); i++) {
+            VBox card = (VBox) group.get(i);
+
+            int start = (int) card.getProperties().get("startMinutes");
+            int duration = (int) card.getProperties().get("durationMinutes");
+
+            double innerY = ((start - minStart) / (double) SLOT_MINUTES) * ROW_HEIGHT;
+            double innerH = (duration / (double) SLOT_MINUTES) * ROW_HEIGHT;
+
+            card.getProperties().put("innerY", innerY);
+            card.getProperties().put("innerH", innerH);
+
+            card.setLayoutX(0);
+            card.setLayoutY(innerY);
+            card.setPrefWidth(cardWidth);
+            card.setMinWidth(cardWidth);
+            card.setMaxWidth(cardWidth);
+
+            card.setPrefHeight(innerH);
+            card.setMinHeight(innerH);
+            card.setMaxHeight(innerH);
+
+            if (i == 0) {
+                card.setOpacity(1.0);
+                card.setTranslateX(0);
+                card.setTranslateY(0);
+            } else {
+                card.setOpacity(0.35);
+                card.setTranslateX(6);
+                card.setTranslateY(6);
+            }
+
+            cardsLayer.getChildren().add(card);
+
+            Button indexBtn = new Button(String.valueOf(i + 1));
+            indexBtn.getStyleClass().add("overlap-tab-button");
+            indexBtn.setMinSize(tabWidth, 18);
+            indexBtn.setPrefSize(tabWidth, 18);
+            indexBtn.setMaxSize(tabWidth, 18);
+
+            final int selectedIndex = i;
+            indexBtn.setOnAction(e -> showCardInStack(cardsLayer, selector, tabButtons, group, selectedIndex));
+
+            tabButtons.add(indexBtn);
+            selector.getChildren().add(indexBtn);
+        }
+
+        container.getChildren().addAll(cardsLayer, selector);
+
+        showCardInStack(cardsLayer, selector, tabButtons, group, 0);
+
+        return container;
+    }
+
+    private void showCardInStack(Pane cardsLayer, VBox selector, List<Button> tabButtons, List<Node> group, int selectedIndex) {
+
+        cardsLayer.getChildren().clear();
+
+        for (int i = 0; i < group.size(); i++) {
+            VBox card = (VBox) group.get(i);
+
+            card.setTranslateX(0);
+            card.setTranslateY(0);
+            card.setOpacity(1.0);
+
+            if (i != selectedIndex) {
+                card.setOpacity(0.35);
+                card.setTranslateX(6);
+                card.setTranslateY(6);
+            }
+        }
+
+        for (int i = 0; i < group.size(); i++) {
+            if (i != selectedIndex) {
+                cardsLayer.getChildren().add(group.get(i));
+            }
+        }
+        cardsLayer.getChildren().add(group.get(selectedIndex));
+
+        VBox selectedCard = (VBox) group.get(selectedIndex);
+        double selectedY = (double) selectedCard.getProperties().get("innerY");
+        selector.setLayoutY(selectedY + 6);
+
+        for (int i = 0; i < tabButtons.size(); i++) {
+            Button btn = tabButtons.get(i);
+            btn.getStyleClass().removeAll("overlap-tab-active", "overlap-tab-inactive");
+            btn.getStyleClass().add(i == selectedIndex ? "overlap-tab-active" : "overlap-tab-inactive");
+        }
+    }
+
+
+
+    private void layoutCoursesStacked() {
+        if (planningGrid.getWidth() <= 0) return;
+
+        coursesPane.getChildren().clear();
+
+        int dayCols = 6;
+        double dayWidth = planningGrid.getWidth() / dayCols;
+
+        for (int day = 0; day < dayCols; day++) {
+            final int currentDay = day;
+
+            java.util.List<Node> dayCards = sourceCourseCards.stream()
+                    .filter(n -> ((int) n.getProperties().get("dayIndex")) == currentDay)
+                    .sorted(java.util.Comparator.comparingInt(n -> (int) n.getProperties().get("startMinutes")))
+                    .map(n -> (Node) n)
+                    .toList();
+
+            List<List<Node>> groups = buildOverlapGroups(dayCards);
+
+            for (List<Node> group : groups) {
+                if (group.size() == 1) {
+                    VBox card = (VBox) group.get(0);
+                    placeSingleCard(card, dayWidth, currentDay);
+                    coursesPane.getChildren().add(card);
+                } else {
+                    Pane overlapPane = buildOverlapPane(group, dayWidth, currentDay);
+                    coursesPane.getChildren().add(overlapPane);
+                }
+            }
+        }
+    }
 }
+

@@ -68,12 +68,12 @@
 }
 .planning-cell-inner {
     -fx-border-color: #cfd3da;
-    -fx-border-width: 0 0 0 1; /* trait vertical gauche */
+    -fx-border-width: 0 0 0 1;
 }
 
 .time-label {
-    -fx-alignment: center-right;
-    -fx-padding: 0 12 0 0;
+    -fx-alignment: top-right;
+    -fx-padding: 0 10 0 0;
     -fx-text-fill: #7b7f87;
 }
 
@@ -82,7 +82,7 @@
 }
 
 .nav-text-selected {
-    -fx-text-fill: #1877d2;   /* bleu */
+    -fx-text-fill: #1877d2;
     -fx-font-weight: 700;
     -fx-opacity: 1.0;
 }
@@ -107,4 +107,61 @@
     -fx-padding: 0;
 }
 
+.course-card {
+    -fx-background-color: #e9eaed;
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+    -fx-padding: 10 12 10 12;
+}
+
+.course-title {
+    -fx-font-size: 14px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #2a2a2a;
+}
+
+.course-meta {
+    -fx-font-size: 12px;
+    -fx-text-fill: #555b65;
+}
+.course-card {
+    -fx-background-color: #e9eaed;
+    -fx-background-radius: 12;
+    -fx-padding: 10 12 10 12;
+}
+
+.button-more{
+    -fx-background-color: #2f333a;
+    -fx-background-radius: 12;
+    -fx-text-fill: #e9eaed;
+    -fx-alignment: bottom-center;
+}
+
+.overlap-tab-button {
+    -fx-background-color: #2f3540;
+    -fx-text-fill: white;
+    -fx-font-size: 8px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 0 6 6 0;
+    -fx-padding: 0;
+    -fx-cursor: hand;
+}
+
+.overlap-tab-button {
+    -fx-text-fill: white;
+    -fx-font-size: 8px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 0 6 6 0;
+    -fx-padding: 0;
+    -fx-cursor: hand;
+    -fx-border-width: 0;
+}
+
+.overlap-tab-active {
+    -fx-background-color: #4f8cff;
+}
+
+.overlap-tab-inactive {
+    -fx-background-color: #2f3540;
+}
 
