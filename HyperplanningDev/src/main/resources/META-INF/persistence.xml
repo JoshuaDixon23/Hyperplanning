@@ -8,14 +8,16 @@
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
         
         <properties>
-            <property name="jakarta.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver" />
-            
-            <property name="jakarta.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/hyperplanning_db?createDatabaseIfNotExist=true" />
-            <property name="jakarta.persistence.jdbc.user" value="root" />
-            <property name="jakarta.persistence.jdbc.password" value="" />
+            <property name="jakarta.persistence.jdbc.driver" value="org.postgresql.Driver" />
 
-            <property name="hibernate.dialect" value="org.hibernate.dialect.MySQL8Dialect" />
-            <property name="hibernate.hbm2ddl.auto" value="update" />
+            <!--connection details -->
+            <property name="jakarta.persistence.jdbc.url" value="jdbc:postgresql://ep-damp-mountain-al52rs0m-pooler.c-3.eu-central-1.aws.neon.tech:5432/neondb?sslmode=require&amp;channel_binding=require" />
+            <property name="jakarta.persistence.jdbc.user" value="neondb_owner" />
+            <property name="jakarta.persistence.jdbc.password" value="npg_9imV1oGjUtnM" />
+
+            <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect" />
+            <property name="hibernate.globally_quoted_identifiers" value="true" />
+            <property name="hibernate.hbm2ddl.auto" value="none" />
             <property name="hibernate.show_sql" value="true" />
             <property name="hibernate.format_sql" value="true" />
         </properties>
