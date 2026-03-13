@@ -1,0 +1,167 @@
+.weeks-row {
+    -fx-padding: 2 0 6 0;
+}
+
+.week-arrow {
+    -fx-background-color: transparent;
+    -fx-font-size: 18px;
+    -fx-padding: 6 10 6 10;
+}
+.week-arrow:hover { -fx-cursor: hand; }
+
+.week-pill {
+    -fx-background-color: #2f333a;
+    -fx-text-fill: #e9eaed;
+    -fx-background-radius: 18;
+    -fx-padding: 8 14 8 14;
+    -fx-font-size: 12px;
+}
+
+.week-pill-active {
+    -fx-background-color: white;
+    -fx-border-color: #d5d7db;
+    -fx-border-radius: 18;
+    -fx-text-fill: #1877d2;
+    -fx-font-weight: 700;
+}
+
+
+.days-header {
+    -fx-padding: 0;
+}
+
+.days-header-row {
+    -fx-padding: 0;
+}
+
+.day-title {
+    -fx-font-size: 14px;
+    -fx-max-width: infinity;
+    -fx-font-weight: 500;
+    -fx-alignment: center;
+}
+
+.planning-grid {
+    -fx-background-color: white;
+    -fx-border-color: #dfe1e6;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-padding: 0;
+}
+
+.planning-cell {
+    -fx-border-color: #cfd3da;
+    -fx-border-width: 0 0 0 0;
+    -fx-min-height: 60px;
+}
+
+.planning-scroll {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+
+.planning-card {
+    -fx-background-color: white;
+    -fx-border-color: #dfe1e6;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+}
+.planning-cell-inner {
+    -fx-border-color: #cfd3da;
+    -fx-border-width: 0 0 0 1;
+}
+
+.time-label {
+    -fx-alignment: top-right;
+    -fx-padding: 0 10 0 0;
+    -fx-text-fill: #7b7f87;
+}
+
+.nav-item-selected {
+    -fx-background-color: #d7effc;
+}
+
+.nav-text-selected {
+    -fx-text-fill: #1877d2;
+    -fx-font-weight: 700;
+    -fx-opacity: 1.0;
+}
+
+.nav-icon-selected {
+    -fx-text-fill: #1877d2;
+    -fx-opacity: 1.0;
+}
+
+.time-column {
+    -fx-padding: 10 0 0 0;
+}
+
+.planning-block {
+    -fx-padding: 0 10 10 10;
+}
+
+.time-scroll {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+    -fx-border-color: transparent;
+    -fx-padding: 0;
+}
+
+.course-card {
+    -fx-background-color: #e9eaed;
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+    -fx-padding: 10 12 10 12;
+}
+
+.course-title {
+    -fx-font-size: 14px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #2a2a2a;
+}
+
+.course-meta {
+    -fx-font-size: 12px;
+    -fx-text-fill: #555b65;
+}
+.course-card {
+    -fx-background-color: #e9eaed;
+    -fx-background-radius: 12;
+    -fx-padding: 10 12 10 12;
+}
+
+.button-more{
+    -fx-background-color: #2f333a;
+    -fx-background-radius: 12;
+    -fx-text-fill: #e9eaed;
+    -fx-alignment: bottom-center;
+}
+
+.overlap-tab-button {
+    -fx-background-color: #2f3540;
+    -fx-text-fill: white;
+    -fx-font-size: 8px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 0 6 6 0;
+    -fx-padding: 0;
+    -fx-cursor: hand;
+}
+
+.overlap-tab-button {
+    -fx-text-fill: white;
+    -fx-font-size: 8px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 0 6 6 0;
+    -fx-padding: 0;
+    -fx-cursor: hand;
+    -fx-border-width: 0;
+}
+
+.overlap-tab-active {
+    -fx-background-color: #4f8cff;
+}
+
+.overlap-tab-inactive {
+    -fx-background-color: #2f3540;
+}
+

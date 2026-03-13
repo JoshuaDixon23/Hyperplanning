@@ -64,9 +64,9 @@ public class UFR {
     }
 
 
-    public void addPromo(String promoName, StudyLevel promoStudyLevel) {
+    public void addPromo(String promoName, int year, StudyLevel promoStudyLevel) {
         if (promoName != null && promoStudyLevel != null) {
-            Promo newPromo = Promo.PromoFactory(promoName, promoStudyLevel, this);
+            Promo newPromo = Promo.PromoFactory(promoName, year, promoStudyLevel, this);
             promos.add(newPromo);
             // newPromo.setUfr(this) is handled inside your PromoFactory
         }

@@ -36,9 +36,40 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
-public class Main {
+import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+
+public class Main extends Application {
+
+    @Override
+    public void start(Stage stage) throws Exception {
+
+        Parent root = FXMLLoader.load(
+                getClass().getResource("/view/planning-view.fxml")
+        );
+
+        Scene scene = new Scene(root, 1200, 800);
+
+        scene.getStylesheets().addAll(
+                getClass().getResource("/css/base.css").toExternalForm(),
+                getClass().getResource("/css/sidebar.css").toExternalForm(),
+                getClass().getResource("/css/components.css").toExternalForm(),
+                getClass().getResource("/css/planning.css").toExternalForm()
+        );
+
+        stage.setTitle("Hyperplanning");
+        stage.setMinWidth(1000);
+        stage.setMinHeight(700);
+        stage.setScene(scene);
+        stage.show();
+    }
+
     public static void main(String[] args) {
-        
+
+        launch();
         System.out.println("⏳ Starting Hibernate and connecting to the database...");
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("HyperplanningPU");
         EntityManager em = emf.createEntityManager();
@@ -70,14 +101,14 @@ public class Main {
 
             Map<Day, Building.Hours> hoursMap = new EnumMap<>(Day.class);
             hoursMap.put(Day.MONDAY, new Building.Hours(LocalTime.of(8, 0), LocalTime.of(20, 0)));
-            
+
             Building buildingU = Building.BuildingFactory("Bâtiment U", "Nord", hoursMap);
             campus.addBuilding(buildingU);
 
             Room roomInfo = Room.RoomFactory("U014", 30, RoomType.INFO, buildingU);
             buildingU.addRoom(roomInfo);
 
-            em.persist(campus); 
+            em.persist(campus);
 
             // ==========================================
             // 3. ACADEMIC (UFR -> Promo -> Group <-> Student)
@@ -91,7 +122,7 @@ public class Main {
 
             Group groupPromo = Group.GroupFactory(1, GroupType.PROMO);
             Group groupTP = Group.GroupFactory(1, GroupType.TP);
-            
+
             promoL3.addGroup(groupPromo);
             promoL3.addGroup(groupTP);
 
@@ -99,7 +130,7 @@ public class Main {
             localStudent.addGroup(groupPromo);
             localStudent.addGroup(groupTP);
 
-            em.persist(ufr); 
+            em.persist(ufr);
 
             // ==========================================
             // 4. PLANNING (Module -> Course <-> Group)
@@ -114,10 +145,10 @@ public class Main {
                     .build();
 
             Course courseJavaTP = Course.builder()
-                    .module(javaModule) 
+                    .module(javaModule)
                     .date(LocalDate.of(2026, 9, 15))
                     .startTime(LocalTime.of(10, 0))
-                    .duration(180) 
+                    .duration(180)
                     .courseType(CourseType.TP)
                     .room(roomInfo)
                     .professor(prof)
@@ -126,7 +157,7 @@ public class Main {
             javaModule.addCourse(courseJavaTP);
             groupTP.addCourse(courseJavaTP);
 
-            em.persist(javaModule); 
+            em.persist(javaModule);
 
             // Commit final
             em.getTransaction().commit();
@@ -138,15 +169,15 @@ public class Main {
             System.out.println("\n=====================================================");
             System.out.println("📊 VERIFYING THE DATABASE");
             System.out.println("=====================================================");
-            em.clear(); 
+            em.clear();
 
             LocalStudent savedStudent = em.createQuery(
-                "SELECT s FROM LocalStudent s WHERE s.firstName = 'Alice'", LocalStudent.class)
-                .getSingleResult();
-                
+                            "SELECT s FROM LocalStudent s WHERE s.firstName = 'Alice'", LocalStudent.class)
+                    .getSingleResult();
+
             System.out.println("\n🎓 ALICE'S ACADEMIC PROFILE:");
             System.out.println("  Promo: " + savedStudent.getPromo().getName() + " (" + savedStudent.getPromo().getStudyLevel() + ")");
-            
+
             for (Group g : savedStudent.getGroups()) {
                 System.out.println("    └ Group: " + g.getType() + " " + g.getNum());
                 for (Course c : g.getPlanning()) {

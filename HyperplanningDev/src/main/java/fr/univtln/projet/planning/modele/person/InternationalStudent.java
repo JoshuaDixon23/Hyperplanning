@@ -1,6 +1,6 @@
 package fr.univtln.projet.planning.modele.person;
 
-import fr.univtln.projet.planning.modele.international.Basket; // Assure-toi que Basket est bien dans modele
+//import fr.univtln.projet.planning.modele.international.Basket; // Assure-toi que Basket est bien dans modele
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -22,7 +22,7 @@ public class InternationalStudent extends Student {
 
     private InternationalStudent(String firstName, String lastName) {
         super(firstName, lastName);
-        this.basket = new Basket();
+        //this.basket = new Basket();
     }
 
     public static InternationalStudent InternationalStudentFactory(String fname, String lname, String emailPersonal) {
