@@ -1,16 +1,30 @@
 package fr.univtln.projet.planning;
 
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
+// Imports de l'académique
 import fr.univtln.projet.planning.modele.academic.Group;
-import fr.univtln.projet.planning.modele.planning.Module;
+import fr.univtln.projet.planning.modele.academic.GroupType;
 import fr.univtln.projet.planning.modele.academic.Promo;
-import fr.univtln.projet.planning.modele.infrastructure.Building;
-import fr.univtln.projet.planning.modele.infrastructure.Room;
+import fr.univtln.projet.planning.modele.academic.StudyLevel;
 import fr.univtln.projet.planning.modele.academic.UFR;
+
+// Imports de l'infrastructure
+import fr.univtln.projet.planning.modele.infrastructure.Building;
+import fr.univtln.projet.planning.modele.infrastructure.Campus;
+import fr.univtln.projet.planning.modele.infrastructure.Day;
+import fr.univtln.projet.planning.modele.infrastructure.Room;
+import fr.univtln.projet.planning.modele.infrastructure.RoomType;
+
+// Imports des personnes (Sans InternationalStudent)
+import fr.univtln.projet.planning.modele.person.Admin;
+import fr.univtln.projet.planning.modele.person.LocalStudent;
 import fr.univtln.projet.planning.modele.person.Professor;
-import fr.univtln.projet.planning.modele.person.Student;
+import fr.univtln.projet.planning.modele.person.User;
+
+// Imports du planning
 import fr.univtln.projet.planning.modele.planning.Course;
+import fr.univtln.projet.planning.modele.planning.CourseType;
+import fr.univtln.projet.planning.modele.planning.Language;
+import fr.univtln.projet.planning.modele.planning.Module;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
@@ -18,175 +32,130 @@ import jakarta.persistence.Persistence;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 
 public class Main {
     public static void main(String[] args) {
         
-        System.out.println("⏳ Démarrage d'Hibernate et connexion à la base de données...");
+        System.out.println("⏳ Starting Hibernate and connecting to the database...");
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("HyperplanningPU");
         EntityManager em = emf.createEntityManager();
 
         try {
-            // ==========================================
-            // PARTIE 1 : VÉRIFICATION ET PEUPLEMENT
-            // ==========================================
-            Long existingUsers = em.createQuery("select count(u) from User u", Long.class).getSingleResult();
-            if (existingUsers != null && existingUsers > 0) {
-                System.out.println("ℹ️ La base contient déjà des données. Le peuplement initial est sauté.");
-            } else {
-                System.out.println("⚠️ Base vide, insertion des données de test...");
-                em.getTransaction().begin();
-
-                UFR ufr = new UFR();
-                ufr.setName("UFR Sciences et Techniques");
-                ufr.setCampus("Campus La Garde");
-                em.persist(ufr);
-
-                Building batimentK = new Building();
-                batimentK.setName("Bâtiment K (Amphis)");
-                em.persist(batimentK);
-
-                Building batimentU = new Building();
-                batimentU.setName("Bâtiment U (Informatique)");
-                em.persist(batimentU);
-
-                Room amphiK1 = new Room();
-                amphiK1.setNumber("Amphi K1");
-                amphiK1.setCapacity(200);
-                amphiK1.setType("AMPHI");
-                amphiK1.setBuilding(batimentK);
-                em.persist(amphiK1);
-
-                Room salleTP = new Room();
-                salleTP.setNumber("U014");
-                salleTP.setCapacity(30);
-                salleTP.setType("TP");
-                salleTP.setBuilding(batimentU);
-                em.persist(salleTP);
-
-                Professor profJava = new Professor();
-                profJava.setFirstName("Alan");
-                profJava.setLastName("Turing");
-                profJava.setEmailUniv("alan.turing@univ-tln.fr");
-                em.persist(profJava);
-
-                Professor profBdd = new Professor();
-                profBdd.setFirstName("E.F.");
-                profBdd.setLastName("Codd");
-                profBdd.setEmailUniv("edgar.codd@univ-tln.fr");
-                em.persist(profBdd);
-
-                Student etudiant1 = new Student();
-                etudiant1.setFirstName("Alice");
-                etudiant1.setLastName("Liddell");
-                etudiant1.setEmailUniv("alice.liddell@etu.univ-tln.fr");
-                etudiant1.setEmailPersonal("alice@gmail.com");
-                em.persist(etudiant1);
-
-                Student etudiant2 = new Student();
-                etudiant2.setFirstName("Bob");
-                etudiant2.setLastName("L'éponge");
-                etudiant2.setEmailUniv("bob.eponge@etu.univ-tln.fr");
-                etudiant2.setEmailPersonal("bob@gmail.com");
-                em.persist(etudiant2);
-
-                Module modJava = new Module();
-                modJava.setCode("M-JAVA-01");
-                modJava.setName("Programmation Orientée Objet");
-                modJava.setLanguage("Java");
-                modJava.setEcts(6);
-                modJava.setResponsible(profJava);
-                em.persist(modJava);
-
-                Promo promoL3 = new Promo();
-                promoL3.setName("Licence 3 Informatique");
-                promoL3.setYear(2026);
-                promoL3.setUfr(ufr);
-                em.persist(promoL3);
-
-                Group groupePromoComplete = new Group();
-                groupePromoComplete.setType("CM"); 
-                groupePromoComplete.setPromo(promoL3);
-                em.persist(groupePromoComplete);
-
-                Group groupeTP1 = new Group();
-                groupeTP1.setType("TP1"); 
-                groupeTP1.setPromo(promoL3);
-                em.persist(groupeTP1);
-
-                Group groupeTP2 = new Group();
-                groupeTP2.setType("TP2"); 
-                groupeTP2.setPromo(promoL3);
-                em.persist(groupeTP2);
-
-                Course coursMagistral = new Course();
-                coursMagistral.setDate(LocalDate.of(2026, 9, 14));
-                coursMagistral.setStartTime(LocalTime.of(8, 0));
-                coursMagistral.setDuration(120); 
-                coursMagistral.setCourseType("CM");
-                coursMagistral.setRoom(amphiK1);
-                coursMagistral.setModule(modJava);
-                coursMagistral.getGroups().add(groupePromoComplete); 
-                em.persist(coursMagistral);
-
-                Course coursTP = new Course();
-                coursTP.setDate(LocalDate.of(2026, 9, 14));
-                coursTP.setStartTime(LocalTime.of(10, 30));
-                coursTP.setDuration(180); 
-                coursTP.setCourseType("TP");
-                coursTP.setRoom(salleTP);
-                coursTP.setModule(modJava);
-                coursTP.getGroups().add(groupeTP1); 
-                em.persist(coursTP);
-
-                em.getTransaction().commit();
-                System.out.println("✅ Données insérées avec succès !");
-            }
-
-            // ==========================================
-            // PARTIE 2 : LECTURE ET AFFICHAGE DES DONNÉES
-            // ==========================================
             System.out.println("\n=====================================================");
-            System.out.println("📊 INTERROGATION DE LA BASE DE DONNÉES NEON FETCH");
+            System.out.println("🌍 THE ULTIMATE TEST: CREATING THE UNIVERSITY");
             System.out.println("=====================================================");
 
-            // 1. Récupération du Planning (Les Cours)
-            List<Course> courses = em.createQuery(
-                "SELECT c FROM Course c ORDER BY c.date ASC, c.startTime ASC", Course.class)
-                .getResultList();
+            em.getTransaction().begin();
 
-            System.out.println("\n📅 PLANNING DES COURS :");
-            if (courses.isEmpty()) {
-                System.out.println("Aucun cours trouvé dans la base.");
-            } else {
-                for (Course c : courses) {
-                    System.out.println("▶ " + c.getDate() + " à " + c.getStartTime() + " (" + c.getDuration() + " min)");
-                    System.out.println("   Type   : " + c.getCourseType());
-                    System.out.println("   Module : " + c.getModule().getName() + " (Géré par " + c.getModule().getResponsible().getLastName() + ")");
-                    System.out.println("   Salle  : " + c.getRoom().getNumber() + " (Capacité: " + c.getRoom().getCapacity() + ")");
-                    System.out.println("   -------------------------------------------------");
+            // ==========================================
+            // 1. PEOPLE (Users - Sans InternationalStudent)
+            // ==========================================
+            System.out.println("1️⃣ Creating Users...");
+            Admin admin = Admin.AdminFactory("jean", "michel");
+            Professor prof = Professor.ProfessorFactory("alan", "turing");
+            LocalStudent localStudent = LocalStudent.LocalStudentFactory("alice", "liddell", "alice.perso@gmail.com");
+
+            em.persist(admin);
+            em.persist(prof);
+            em.persist(localStudent);
+
+            // ==========================================
+            // 2. INFRASTRUCTURE (Campus -> Building -> Room)
+            // ==========================================
+            System.out.println("2️⃣ Creating Infrastructure...");
+            Campus campus = Campus.CampusFactory("La Garde", "map_lagarde.png");
+
+            Map<Day, Building.Hours> hoursMap = new EnumMap<>(Day.class);
+            hoursMap.put(Day.MONDAY, new Building.Hours(LocalTime.of(8, 0), LocalTime.of(20, 0)));
+            
+            Building buildingU = Building.BuildingFactory("Bâtiment U", "Nord", hoursMap);
+            campus.addBuilding(buildingU);
+
+            Room roomInfo = Room.RoomFactory("U014", 30, RoomType.INFO, buildingU);
+            buildingU.addRoom(roomInfo);
+
+            em.persist(campus); 
+
+            // ==========================================
+            // 3. ACADEMIC (UFR -> Promo -> Group <-> Student)
+            // ==========================================
+            System.out.println("3️⃣ Creating Academic Tree...");
+            UFR ufr = UFR.UFRFactory("UFR Sciences", campus, admin);
+            campus.addUfr(ufr);
+
+            Promo promoL3 = Promo.PromoFactory("Licence Informatique", 2026, StudyLevel.L3, ufr);
+            ufr.addPromo(promoL3);
+
+            Group groupPromo = Group.GroupFactory(1, GroupType.PROMO);
+            Group groupTP = Group.GroupFactory(1, GroupType.TP);
+            
+            promoL3.addGroup(groupPromo);
+            promoL3.addGroup(groupTP);
+
+            promoL3.addStudent(localStudent);
+            localStudent.addGroup(groupPromo);
+            localStudent.addGroup(groupTP);
+
+            em.persist(ufr); 
+
+            // ==========================================
+            // 4. PLANNING (Module -> Course <-> Group)
+            // ==========================================
+            System.out.println("4️⃣ Creating Planning...");
+            Module javaModule = Module.builder()
+                    .code("m-java-01")
+                    .name("programmation orientée objet")
+                    .language(Language.FRENCH)
+                    .ects(6.0f)
+                    .responsible(prof)
+                    .build();
+
+            Course courseJavaTP = Course.builder()
+                    .module(javaModule) 
+                    .date(LocalDate.of(2026, 9, 15))
+                    .startTime(LocalTime.of(10, 0))
+                    .duration(180) 
+                    .courseType(CourseType.TP)
+                    .room(roomInfo)
+                    .professor(prof)
+                    .build();
+
+            javaModule.addCourse(courseJavaTP);
+            groupTP.addCourse(courseJavaTP);
+
+            em.persist(javaModule); 
+
+            // Commit final
+            em.getTransaction().commit();
+            System.out.println("✅ All data successfully saved to NeonDB!");
+
+            // ==========================================
+            // 5. VERIFICATION (Read from DB)
+            // ==========================================
+            System.out.println("\n=====================================================");
+            System.out.println("📊 VERIFYING THE DATABASE");
+            System.out.println("=====================================================");
+            em.clear(); 
+
+            LocalStudent savedStudent = em.createQuery(
+                "SELECT s FROM LocalStudent s WHERE s.firstName = 'Alice'", LocalStudent.class)
+                .getSingleResult();
+                
+            System.out.println("\n🎓 ALICE'S ACADEMIC PROFILE:");
+            System.out.println("  Promo: " + savedStudent.getPromo().getName() + " (" + savedStudent.getPromo().getStudyLevel() + ")");
+            
+            for (Group g : savedStudent.getGroups()) {
+                System.out.println("    └ Group: " + g.getType() + " " + g.getNum());
+                for (Course c : g.getPlanning()) {
+                    System.out.println("       └ Course: " + c.getModule().getName() + " (Room " + c.getRoom().getNumber() + ")");
                 }
             }
 
-            // 2. Récupération des Professeurs
-            List<Professor> profs = em.createQuery("SELECT p FROM Professor p", Professor.class).getResultList();
-            System.out.println("\n👨‍🏫 LISTE DES PROFESSEURS :");
-            for (Professor p : profs) {
-                System.out.println("- " + p.getFirstName() + " " + p.getLastName() + " (" + p.getEmailUniv() + ")");
-            }
-
-            // 3. Récupération des Étudiants
-            List<Student> students = em.createQuery("SELECT s FROM Student s", Student.class).getResultList();
-            System.out.println("\n🎓 LISTE DES ÉTUDIANTS :");
-            for (Student s : students) {
-                System.out.println("- " + s.getFirstName() + " " + s.getLastName() + " (" + s.getEmailUniv() + ")");
-            }
-
-            System.out.println("\n✅ Test de lecture terminé avec succès !");
-
         } catch (Exception e) {
-            System.err.println("❌ ERREUR : Un problème est survenu lors de l'exécution.");
+            System.err.println("❌ ERROR: A problem occurred during execution.");
             if (em.getTransaction().isActive()) {
                 em.getTransaction().rollback();
             }

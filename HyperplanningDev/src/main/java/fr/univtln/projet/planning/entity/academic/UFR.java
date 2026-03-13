@@ -1,8 +1,8 @@
 package fr.univtln.projet.planning.entity.academic;
 
 import fr.univtln.projet.planning.entity.infrastructure.Building;
-import fr.univtln.projet.planning.entity.infrastructure.Campus;
 import fr.univtln.projet.planning.entity.person.Admin;
+import fr.univtln.projet.planning.modele.infrastructure.Campus;
 
 import java.util.HashSet;
 import java.util.Set;

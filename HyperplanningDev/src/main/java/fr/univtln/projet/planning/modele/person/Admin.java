@@ -10,5 +10,16 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Admin extends User {
-    // Les attributs hérités de User suffisent pour le moment
+
+    protected Admin() {
+        super();
+    }
+
+    private Admin(String firstName, String lastName) {
+        super(firstName, lastName);
+    }
+
+    public static Admin AdminFactory(String fname, String lname) {
+        return UserFactory(fname, lname, Admin::new);
+    }
 }
