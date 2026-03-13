@@ -1,9 +1,9 @@
-package fr.univtln.projet.planning.dao;
+package fr.univtln.projet.planning.repository;
 
 import java.sql.SQLException;
 import java.util.List;
 
-public interface GenericDAO<T, ID> {
+public interface GenericRepository<T, ID> {
     void create(T entity) throws SQLException;
     T read(ID id) throws SQLException;
     void update(T entity) throws SQLException;
