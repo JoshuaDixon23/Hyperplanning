@@ -1,13 +1,13 @@
 package fr.univtln.projet.planning.entity.person;
 
-import fr.univtln.projet.planning.entity.international.Basket;
+import fr.univtln.projet.planning.entity.international.BasketFinal;
 
 public class InternationalStudent extends Student {
-    private Basket basket;
+    private BasketFinal basketfinal;
 
     private InternationalStudent(String fname, String lname){
         super(fname, lname);
-        this.basket = new Basket();
+        this.basketfinal = new BasketFinal();
     }
 
     public static InternationalStudent InternationalStudentFactory(String fname, String lname, String emailPersonal) {
