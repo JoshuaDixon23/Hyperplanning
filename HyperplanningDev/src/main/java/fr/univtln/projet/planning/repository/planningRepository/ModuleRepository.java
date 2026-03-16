@@ -1,4 +1,4 @@
-package fr.univtln.projet.planning.dao.planningDAO;
+package fr.univtln.projet.planning.repository.planningRepository;
 
-public class ModuleDAO {
+public class ModuleRepository {
 }

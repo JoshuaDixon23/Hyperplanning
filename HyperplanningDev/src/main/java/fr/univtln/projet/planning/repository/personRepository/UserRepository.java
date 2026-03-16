@@ -1,4 +1,4 @@
-package fr.univtln.projet.planning.dao.personDAO;
+package fr.univtln.projet.planning.repository.personRepository;
 
-public class UserDAO {
+public class UserRepository {
 }
