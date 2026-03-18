@@ -1,15 +1,26 @@
 package fr.univtln.projet.planning.modele.academic;
 
-import fr.univtln.projet.planning.modele.person.LocalStudent; // À adapter selon ton package
-import fr.univtln.projet.planning.modele.planning.Course;
-import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.util.Collections;
+import java.util.Collections; // À adapter selon ton package
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+
+import fr.univtln.projet.planning.modele.person.LocalStudent;
+import fr.univtln.projet.planning.modele.planning.Course;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "PlanningGroup")

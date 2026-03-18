@@ -1,36 +1,37 @@
 package fr.univtln.projet.planning.entity.infrastructure;
 
-import fr.univtln.projet.planning.entity.planning.Course;
-
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
+
+import fr.univtln.projet.planning.entity.planning.CourseEntity;
+import fr.univtln.projet.planning.modele.infrastructure.RoomType;
 
 /**
  * Ajout de cours bizarre j'ai prefe ne pas faire
  *
  */
-public class Room {
+public class RoomEntity {
 
     private int num;
     private int capacity;
     private RoomType type;
 
-    private final Building building;
+    private final BuildingEntity building;
 
-    private final Set<Course> courses = new TreeSet<>();
+    private final Set<CourseEntity> courses = new TreeSet<>();
 
     //factory
 
-    private Room(int num, int capacity, RoomType type, Building building) {
+    private RoomEntity(int num, int capacity, RoomType type, BuildingEntity building) {
         this.num = num;
         this.capacity = capacity;
         this.type = type;
         this.building = building;
     }
 
-    public static Room RoomFactory(int num, int capacity, RoomType type, Building building) {
-        return new Room(num, capacity, type, building);
+    public static RoomEntity RoomFactory(int num, int capacity, RoomType type, BuildingEntity building) {
+        return new RoomEntity(num, capacity, type, building);
     }
 
     // getter setter
@@ -59,11 +60,11 @@ public class Room {
         this.type = type;
     }
 
-    public Building getBuilding() {
+    public BuildingEntity getBuilding() {
         return building;
     }
 
-    public Set<Course> getCourses() {
+    public Set<CourseEntity> getCourses() {
         return courses;
     }
 
@@ -73,7 +74,7 @@ public class Room {
 
     // manage room
 
-    public void addCourse(Course c) {
+    public void addCourse(CourseEntity c) {
         if (c == null) {
             return; //throw ?
         }
@@ -84,7 +85,7 @@ public class Room {
     }
 
 
-    public void removeCourse(Course c) {
+    public void removeCourse(CourseEntity c) {
         if (c == null) {
             return; //throw ?
         }
@@ -102,7 +103,7 @@ public class Room {
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
-        Room room = (Room) o;
+        RoomEntity room = (RoomEntity) o;
         return Objects.equals(num, room.num) && Objects.equals(building, room.building);
     }
 

@@ -1,27 +1,27 @@
 package fr.univtln.projet.planning.entity.infrastructure;
 
-import fr.univtln.projet.planning.entity.academic.UFR;
+import fr.univtln.projet.planning.entity.academic.UFREntity;
 
 import java.util.HashSet;
 import java.util.Set;
 
-public class Campus {
+public class CampusEntity {
 
     private String city;
     private String imageFileName; // peut être stocker l'image directement
 
-    private final Set<Building> buildings = new HashSet<>();
-    private final Set<UFR> ufrs = new HashSet<>();
+    private final Set<BuildingEntity> buildings = new HashSet<>();
+    private final Set<UFREntity> ufrs = new HashSet<>();
 
     // Factory
 
-    private Campus(String city, String imageFileName) {
+    private CampusEntity(String city, String imageFileName) {
         this.city = city;
         this.imageFileName = imageFileName;
     }
 
-    public static Campus CampusFactory(String city, String imageFileName) {
-        return new Campus(city, imageFileName);
+    public static CampusEntity CampusFactory(String city, String imageFileName) {
+        return new CampusEntity(city, imageFileName);
     }
 
     // getter setter
@@ -41,13 +41,13 @@ public class Campus {
         this.imageFileName = imageFileName;
     }
 
-    public Set<Building> getBuildings() {
+    public Set<BuildingEntity> getBuildings() {
         return buildings;
     }
 
     //manage Building
 
-    public void addBuilding(Building b) {
+    public void addBuilding(BuildingEntity b) {
         if (b == null){
             return; //throw ?
         }
@@ -57,7 +57,7 @@ public class Campus {
         }
     }
 
-    public void removeBuilding(Building b) {
+    public void removeBuilding(BuildingEntity b) {
         if (b == null) {
             return; //throw
         }
@@ -67,7 +67,7 @@ public class Campus {
         }
     }
 
-    public void addUfr(UFR u) {
+    public void addUfr(UFREntity u) {
         if (u == null){
             return; //throw ?
         }
@@ -77,7 +77,7 @@ public class Campus {
         }
     }
 
-    public void removeUfr(UFR u) {
+    public void removeUfr(UFREntity u) {
         if (u == null){
             return; //throw ?
         }

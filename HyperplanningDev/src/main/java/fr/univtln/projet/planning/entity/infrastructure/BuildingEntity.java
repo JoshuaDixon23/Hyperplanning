@@ -1,12 +1,18 @@
 package fr.univtln.projet.planning.entity.infrastructure;
 
-import fr.univtln.projet.planning.entity.academic.UFR;
-import fr.univtln.projet.planning.modele.infrastructure.Campus;
-
 import java.time.LocalTime;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
-public class Building {
+import fr.univtln.projet.planning.entity.academic.UFREntity;
+import fr.univtln.projet.planning.modele.infrastructure.Campus;
+import fr.univtln.projet.planning.modele.infrastructure.Day;
+import fr.univtln.projet.planning.modele.infrastructure.RoomType;
+
+public class BuildingEntity {
 
     public class Hours{
         public LocalTime opening;
@@ -20,20 +26,20 @@ public class Building {
     //private LocalTime openingTime; // à modifier regarder diagramme
     //private LocalTime closingTime;
 
-    private UFR ufr; //peut être null
+    private UFREntity ufr; //peut être null
     private Campus campus;
-    private final Set<Room> rooms = new HashSet<>();
+    private final Set<RoomEntity> rooms = new HashSet<>();
 
 
     //factory
-    private Building(String name, String localisation, Map<Day,Hours> openingHours) {
+    private BuildingEntity(String name, String localisation, Map<Day,Hours> openingHours) {
         this.localisation = localisation;
         this.name = name;
         this.openingHours = openingHours;
     }
 
-    public static Building BuildingFactory(String name, String localisation, Map openingHours) {
-        return new Building(name, localisation,openingHours);
+    public static BuildingEntity BuildingFactory(String name, String localisation, Map openingHours) {
+        return new BuildingEntity(name, localisation,openingHours);
     }
 
     // getter setter
@@ -53,11 +59,11 @@ public class Building {
         this.openingHours = openingHours;
     }
 
-    public UFR getUfr(){
+    public UFREntity getUfr(){
         return ufr;
     }
 
-    public void setUfr(UFR u){
+    public void setUfr(UFREntity u){
         this.ufr=u;
     }
 
@@ -69,7 +75,7 @@ public class Building {
         this.campus = campus;
     }
 
-    public Set<Room> getRooms() {
+    public Set<RoomEntity> getRooms() {
         return Collections.unmodifiableSet(rooms);
     }
 
@@ -85,12 +91,12 @@ public class Building {
         }
 
          */
-        Room r = Room.RoomFactory(num,capacity,type,this);
+        RoomEntity r = RoomEntity.RoomFactory(num,capacity,type,this);
         rooms.add(r);
 
     }
 
-    public void removeRoom(Room r) {
+    public void removeRoom(RoomEntity r) {
         if (r == null) {
             return; //throw ?
         }
@@ -106,7 +112,7 @@ public class Building {
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
-        Building building = (Building) o;
+        BuildingEntity building = (BuildingEntity) o;
         return Objects.equals(name, building.name) && Objects.equals(localisation, building.localisation) && Objects.equals(ufr, building.ufr);
     }
 

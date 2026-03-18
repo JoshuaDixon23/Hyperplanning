@@ -1,31 +1,31 @@
 package fr.univtln.projet.planning.entity.academic;
 
-import fr.univtln.projet.planning.entity.infrastructure.Building;
-import fr.univtln.projet.planning.entity.person.Admin;
+import fr.univtln.projet.planning.entity.infrastructure.BuildingEntity;
+import fr.univtln.projet.planning.entity.person.AdminEntity;
 import fr.univtln.projet.planning.modele.infrastructure.Campus;
 
 import java.util.HashSet;
 import java.util.Set;
 
-public class UFR {
+public class UFREntity {
     private String name;
-    private Admin admin;
+    private AdminEntity admin;
     private Campus campus;
 
     // private Admin admin:
-    private final Set<Promo> promos = new HashSet<>();
-    private final Set<Building> buildings = new HashSet<>();
+    private final Set<PromoEntity> promos = new HashSet<>();
+    private final Set<BuildingEntity> buildings = new HashSet<>();
 
 
     // factory
-    private UFR(String name, Campus campus,Admin admin) {
+    private UFREntity(String name, Campus campus,AdminEntity admin) {
         this.name = name;
         this.admin=admin;
         this.campus=campus;
     }
 
-    public static UFR UFRFactory(String name, Campus campus,Admin admin) {
-        return new UFR(name, campus,admin);
+    public static UFREntity UFRFactory(String name, Campus campus,AdminEntity admin) {
+        return new UFREntity(name, campus,admin);
     }
 
     // getter setter
@@ -47,15 +47,15 @@ public class UFR {
     }
 
 
-    public Admin getAdmin() {
+    public AdminEntity getAdmin() {
         return admin;
     }
 
-    public Set<Promo> getModules() {
+    public Set<PromoEntity> getModules() {
         return promos;
     }
 
-    public Set<Building> getBuildings() {
+    public Set<BuildingEntity> getBuildings() {
         return buildings;
     }
 
@@ -71,11 +71,11 @@ public class UFR {
             return; //throw ?
         }
         else {
-            promos.add(Promo.PromoFactory(promoName, promoStudyLevel, this));
+            promos.add(PromoEntity.PromoFactory(promoName, promoStudyLevel, this));
         }
     }
 
-    public void removePromo(Promo p) {
+    public void removePromo(PromoEntity p) {
         if (p == null) {
             return; //throw
         }
@@ -85,7 +85,7 @@ public class UFR {
         }
     }
 
-    public void addBuilding(Building b) {
+    public void addBuilding(BuildingEntity b) {
         if (b == null) {
             return;
         }
@@ -95,7 +95,7 @@ public class UFR {
         }
     }
 
-    public void removeBuilding(Building b) {
+    public void removeBuilding(BuildingEntity b) {
         if (b == null) {
             return;
         }

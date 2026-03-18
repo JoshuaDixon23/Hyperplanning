@@ -1,38 +1,38 @@
 package fr.univtln.projet.planning.entity.academic;
-import fr.univtln.projet.planning.entity.person.LocalStudent;
-import fr.univtln.projet.planning.entity.person.Student;
-import fr.univtln.projet.planning.entity.planning.Course;
-import fr.univtln.projet.planning.entity.planning.Module;
-
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 
+import fr.univtln.projet.planning.entity.person.LocalStudentEntity;
+import fr.univtln.projet.planning.entity.planning.CourseEntity;
+import fr.univtln.projet.planning.entity.planning.ModuleEntity;
+import fr.univtln.projet.planning.modele.academic.GroupType;
+
 /**
  * surement def equals etc dans bcp de choses
  */
-public class Group {
+public class GroupEntity {
 
     private final int num;
     private final GroupType type;
     //private final Planning planning; // à enlever et relier a cours plutôt
-    private Promo promo;
+    private PromoEntity promo;
 
-    private final Set<Module> modules = new HashSet<>(); // enlever
-    private Set<Course> planning = new TreeSet<>();
-    private Set<LocalStudent> localStudents = new HashSet<>();
+    private Set<ModuleEntity> modules = new HashSet<>();
+    private Set<CourseEntity> planning = new TreeSet<>();
+    private Set<LocalStudentEntity> localStudents = new HashSet<>();
 
     //factory
 
-    private Group(int num, GroupType type) {
+    private GroupEntity(int num, GroupType type) {
         this.num = num;
         this.type = type;
     }
 
-    public static Group GroupFactory(int num,GroupType type) {
+    public static GroupEntity GroupFactory(int num,GroupType type) {
         //conditions ??
-        return new Group(num,type);
+        return new GroupEntity(num,type);
     }
 
     //setter getter
@@ -48,52 +48,52 @@ public class Group {
     }
 
 
-    public Promo getPromo() {
+    public PromoEntity getPromo() {
         return promo;
     }
 
-    public void setPromo(Promo promo) {
+    public void setPromo(PromoEntity promo) {
         this.promo = promo;
     }
 
-    public Set<LocalStudent> getStudents() {
+    public Set<LocalStudentEntity> getStudents() {
         return localStudents;
     }
 
-    public Set<Course> getPlanning() {
+    public Set<CourseEntity> getPlanning() {
         return planning;
     }
 
-    public void setPlanning(Set<Course> planning) {
+    public void setPlanning(Set<CourseEntity> planning) {
         this.planning = planning;
     }
 
     // manage group
 
-    public void addCourse(Course c) {
+    public void addCourse(CourseEntity c) {
         if (c == null) {
             return; // throw qq chose
         }
         planning.add(c);
     }
 
-    public void removeCourse(Course c) {
+    public void removeCourse(CourseEntity c) {
         planning.remove(c);
     }
 
-    public void addModule(Module m) {
+    public void addModule(ModuleEntity m) {
         if (m == null) {
             return; // throw qq chose
         }
         modules.add(m);
     }
 
-    public void removeModule(Module m) {
+    public void removeModule(ModuleEntity m) {
         modules.remove(m);
     }
 
 
-    public void addLocalStudent(LocalStudent s) {
+    public void addLocalStudent(LocalStudentEntity s) {
         if (s == null) {
             return; // throw qq chose
         }
@@ -102,7 +102,7 @@ public class Group {
         }
     }
 
-    public void removeLocalStudent(LocalStudent s) {
+    public void removeLocalStudent(LocalStudentEntity s) {
         localStudents.remove(s);
     }
 
@@ -113,7 +113,7 @@ public class Group {
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
-        Group group = (Group) o;
+        GroupEntity group = (GroupEntity) o;
         return num == group.num && type == group.type && Objects.equals(promo, group.promo);
     }
 

@@ -12,7 +12,7 @@ public class AdminTest {
         String lastName = "VIA";
 
         // Act (action)
-        Admin admin = Admin.AdminFactory(firstName, lastName);
+        AdminEntity admin = AdminEntity.AdminFactory(firstName, lastName);
 
         // Assert (vérification)
         assertEquals("Thierry", admin.getFirstName());

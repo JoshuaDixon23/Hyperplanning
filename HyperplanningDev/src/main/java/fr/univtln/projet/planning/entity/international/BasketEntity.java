@@ -1,4 +1,4 @@
 package fr.univtln.projet.planning.entity.international;
 
-public class Basket {
+public class BasketEntity {
 }

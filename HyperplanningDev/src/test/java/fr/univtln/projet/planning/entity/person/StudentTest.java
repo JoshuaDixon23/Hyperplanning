@@ -13,7 +13,7 @@ public class StudentTest {
         String emailPersonal = "rodygin.nikita2005@gmail.com";
 
         // Act (action)
-        LocalStudent student = LocalStudent.LocalStudentFactory(firstName, lastName, emailPersonal);
+        LocalStudentEntity student = LocalStudentEntity.LocalStudentFactory(firstName, lastName, emailPersonal);
 
         // Assert (vérification)
         assertEquals("Nikita", student.getFirstName());
@@ -30,7 +30,7 @@ public class StudentTest {
         String emailPersonal = "rodygin.nikita2005@gmail.com";
 
         // Act (action)
-        InternationalStudent student = InternationalStudent.InternationalStudentFactory(firstName, lastName, emailPersonal);
+        InternationalStudentEntity student = InternationalStudentEntity.InternationalStudentFactory(firstName, lastName, emailPersonal);
 
         // Assert (vérification)
         assertEquals("Nikita", student.getFirstName());

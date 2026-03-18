@@ -1,6 +1,6 @@
 package fr.univtln.projet.planning.entity.planning;
 
-import fr.univtln.projet.planning.entity.person.Professor;
+import fr.univtln.projet.planning.entity.person.ProfessorEntity;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -12,9 +12,9 @@ public class ModuleTest {
         String lastName = "MurisAsco";
 
         // Act (action)
-        Professor professor = Professor.ProfessorFactory(firstName, lastName);
+        ProfessorEntity professor = ProfessorEntity.ProfessorFactory(firstName, lastName);
 
-        Module m = Module.builder()
+        ModuleEntity m = ModuleEntity.builder()
                 .code("UE123")
                 .name("developpement avancé")
                 .ECTS(1)
@@ -23,7 +23,7 @@ public class ModuleTest {
 
         assertEquals("UE123", m.getCode());
         assertEquals("Developpement avancé", m.getName());
-        assertEquals(Language.FRENCH, m.getLanguage());
+        assertEquals(LanguageEntity.FRENCH, m.getLanguage());
         assertEquals(1, m.getECTS());
     }
 }

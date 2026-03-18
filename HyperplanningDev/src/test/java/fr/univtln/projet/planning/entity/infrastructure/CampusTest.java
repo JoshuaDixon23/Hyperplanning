@@ -1,8 +1,8 @@
 package fr.univtln.projet.planning.entity.infrastructure;
 
-import fr.univtln.projet.planning.entity.academic.UFR;
-import fr.univtln.projet.planning.entity.infrastructure.Campus;
-import fr.univtln.projet.planning.entity.person.Admin;
+import fr.univtln.projet.planning.entity.academic.UFREntity;
+import fr.univtln.projet.planning.entity.infrastructure.CampusEntity;
+import fr.univtln.projet.planning.entity.person.AdminEntity;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -14,7 +14,7 @@ public class CampusTest {
         //création UFR
         String city ="city";
         String imageFileName = "imageFileName";
-        Campus campus = Campus.CampusFactory(city,imageFileName);
+        CampusEntity campus = CampusEntity.CampusFactory(city,imageFileName);
 
 
 
