@@ -12,7 +12,7 @@ import java.util.TreeSet;
 @Table(name = "Professor")
 @Getter
 @Setter
-public class Professor extends User {
+public class Professor extends UserEntity {
 
     // @Transient indique à JPA de ne pas créer de colonne ou de table pour cet attribut
     @Transient

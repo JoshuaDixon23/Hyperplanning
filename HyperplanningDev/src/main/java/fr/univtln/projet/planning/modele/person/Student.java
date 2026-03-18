@@ -9,7 +9,7 @@ import lombok.Setter;
 @Table(name = "Student")
 @Getter
 @Setter
-public class Student extends User {
+public class Student extends UserEntity {
 
     private String emailPersonal;
 

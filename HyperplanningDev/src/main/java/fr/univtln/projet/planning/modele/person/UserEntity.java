@@ -13,7 +13,7 @@ import java.util.function.BiFunction;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Getter 
 @Setter
-public abstract class User {
+public abstract class UserEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,18 +28,18 @@ public abstract class User {
     @Column(unique = true, nullable = false)
     protected String emailUniv;
 
-    @Transient 
+    @Transient
     protected static final EmailCreate functionUnivMail = new EmailCreate();
 
-    protected User() {
+    protected UserEntity() {
     }
 
-    protected User(String firstName, String lastName) {
+    protected UserEntity(String firstName, String lastName) {
         this.firstName = firstName;
         this.lastName = lastName;
     }
 
-    protected static <T extends User> T UserFactory(String fname, String lname, BiFunction<String, String, T> constructor) {
+    protected static <T extends UserEntity> T UserFactory(String fname, String lname, BiFunction<String, String, T> constructor) {
         String formattedFname = TextTransformation.capitalize(fname);
         String formattedLname = lname.toUpperCase();
 
@@ -63,7 +63,7 @@ public abstract class User {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        User user = (User) o;
+        UserEntity user = (UserEntity) o;
         return Objects.equals(emailUniv, user.emailUniv);
     }
 
