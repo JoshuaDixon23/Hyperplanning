@@ -16,6 +16,10 @@ public class LocalStudentEntity extends StudentEntity {
         this.groups = new ArrayList<GroupEntity>();
     }
 
+    public LocalStudentEntity(String firstName, String lastName, String emailUniv, String emailPersonal) {
+        super(firstName, lastName, emailUniv, emailPersonal);
+    }
+
     public static LocalStudentEntity LocalStudentFactory(String fname, String lname, /*Promo promo,*/ String emailPersonal) {
         LocalStudentEntity s =  UserFactory(fname, lname, LocalStudentEntity::new);
         s.setEmailPersonal(emailPersonal.toLowerCase());

@@ -5,17 +5,17 @@ import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
 import org.junit.jupiter.api.Test;
 
-public class UserRepositoryTest {
+public class LocalStudentRepositoryTest {
 
     @Test
     void testFindByLastName() {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("HyperplanningPU");
         EntityManager em = emf.createEntityManager();
-        UserRepository ur = new UserRepository(em);
+        LocalStudentRepository lsr = new LocalStudentRepository(em);
         // verification of connexion to DB
-        ur.findByLastName(0, 10, "MICHEl").forEach(System.out::println);
+        //lsr.findAll(0, 10).forEach(System.out::println);
+        lsr.findByPromo(0, 10, 1).forEach(System.out::println);
         em.close();
         emf.close();
     }
-
 }

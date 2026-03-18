@@ -7,6 +7,11 @@ public abstract class StudentEntity extends UserEntity {
         super(firstName, lastName);
     }
 
+    public StudentEntity(String firstName, String lastName, String emailUniv, String emailPersonal) {
+        super(firstName, lastName, emailUniv);
+        this.emailPersonal = emailPersonal;
+    }
+
     public void setEmailPersonal(String emailPersonal) {
         this.emailPersonal = emailPersonal;
     }

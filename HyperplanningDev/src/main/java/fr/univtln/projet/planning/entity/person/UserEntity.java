@@ -18,6 +18,12 @@ public abstract class UserEntity {
         this.lastName = lastName;
     }
 
+    public UserEntity(String firstName, String lastName, String emailUniv) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.emailUniv = emailUniv;
+    }
+
     protected static <T extends UserEntity> T UserFactory(String fname, String lname, BiFunction<String, String, T> constructor) {
         // verification of entries to do !!!
 

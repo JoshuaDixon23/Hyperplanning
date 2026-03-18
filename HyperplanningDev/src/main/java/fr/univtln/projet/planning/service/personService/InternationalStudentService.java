@@ -1,6 +1,6 @@
-package fr.univtln.projet.planning.service.person;
+package fr.univtln.projet.planning.service.personService;
 
 
-public class InternationalStudentService extends StudentService {
+public class InternationalStudentService{
 
 }
