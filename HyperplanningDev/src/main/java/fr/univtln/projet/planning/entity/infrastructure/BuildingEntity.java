@@ -27,7 +27,7 @@ public class BuildingEntity {
     //private LocalTime closingTime;
 
     private UFREntity ufr; //peut être null
-    private Campus campus;
+    private CampusEntity campus;
     private final Set<RoomEntity> rooms = new HashSet<>();
 
 
@@ -67,11 +67,11 @@ public class BuildingEntity {
         this.ufr=u;
     }
 
-    public Campus getCampus() {
+    public CampusEntity getCampus() {
         return campus;
     }
 
-    public void setCampus(Campus campus) {
+    public void setCampus(CampusEntity campus) {
         this.campus = campus;
     }
 

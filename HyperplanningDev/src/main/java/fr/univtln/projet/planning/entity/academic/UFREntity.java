@@ -1,7 +1,9 @@
 package fr.univtln.projet.planning.entity.academic;
 
 import fr.univtln.projet.planning.entity.infrastructure.BuildingEntity;
+import fr.univtln.projet.planning.entity.infrastructure.CampusEntity;
 import fr.univtln.projet.planning.entity.person.AdminEntity;
+import fr.univtln.projet.planning.modele.academic.StudyLevel;
 import fr.univtln.projet.planning.modele.infrastructure.Campus;
 
 import java.util.HashSet;
@@ -10,7 +12,7 @@ import java.util.Set;
 public class UFREntity {
     private String name;
     private AdminEntity admin;
-    private Campus campus;
+    private CampusEntity campus;
 
     // private Admin admin:
     private final Set<PromoEntity> promos = new HashSet<>();
@@ -18,13 +20,13 @@ public class UFREntity {
 
 
     // factory
-    private UFREntity(String name, Campus campus,AdminEntity admin) {
+    private UFREntity(String name, CampusEntity campus,AdminEntity admin) {
         this.name = name;
         this.admin=admin;
         this.campus=campus;
     }
 
-    public static UFREntity UFRFactory(String name, Campus campus,AdminEntity admin) {
+    public static UFREntity UFRFactory(String name, CampusEntity campus,AdminEntity admin) {
         return new UFREntity(name, campus,admin);
     }
 
@@ -34,11 +36,11 @@ public class UFREntity {
         return name;
     }
 
-    public Campus getCampus() {
+    public CampusEntity getCampus() {
         return campus;
     }
 
-    public void setCampus(Campus campus) {
+    public void setCampus(CampusEntity campus) {
         this.campus = campus;
     }
 

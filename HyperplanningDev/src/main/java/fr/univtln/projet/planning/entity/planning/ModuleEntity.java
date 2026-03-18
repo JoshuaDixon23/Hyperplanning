@@ -2,7 +2,8 @@ package fr.univtln.projet.planning.entity.planning;
 
 import fr.univtln.projet.planning.entity.TextTransformation;
 import fr.univtln.projet.planning.entity.person.ProfessorEntity;
-import fr.univtln.projet.planning.modele.planning.*;
+import fr.univtln.projet.planning.modele.planning.Language;
+import fr.univtln.projet.planning.modele.planning.CourseType;
 
 import java.util.HashMap;
 import java.util.Map;

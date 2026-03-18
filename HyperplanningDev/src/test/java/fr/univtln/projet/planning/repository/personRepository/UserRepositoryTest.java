@@ -1,6 +1,5 @@
 package fr.univtln.projet.planning.repository.personRepository;
 
-import fr.univtln.projet.planning.modele.person.UserEntity;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;

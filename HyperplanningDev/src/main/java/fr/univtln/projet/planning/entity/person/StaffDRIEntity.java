@@ -1,6 +1,6 @@
 package fr.univtln.projet.planning.entity.person;
 
-public class StaffDRIEntity extends UserEntity{
+public class StaffDRIEntity extends UserEntity {
 
     private StaffDRIEntity(String name, String surname) {
         super(name, surname);

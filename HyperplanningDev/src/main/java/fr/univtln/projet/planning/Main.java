@@ -18,7 +18,6 @@ import fr.univtln.projet.planning.modele.infrastructure.RoomType;
 import fr.univtln.projet.planning.modele.person.Admin;
 import fr.univtln.projet.planning.modele.person.LocalStudent;
 import fr.univtln.projet.planning.modele.person.Professor;
-import fr.univtln.projet.planning.modele.person.User;
 
 // Imports du planning
 import fr.univtln.projet.planning.modele.planning.Course;
@@ -33,14 +32,7 @@ import jakarta.persistence.Persistence;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.EnumMap;
-import java.util.List;
 import java.util.Map;
-
-import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.stage.Stage;
 
 public class Main /*extends Application*/ {
 

@@ -3,6 +3,7 @@ package fr.univtln.projet.planning.entity.infrastructure;
 import fr.univtln.projet.planning.entity.academic.UFREntity;
 import fr.univtln.projet.planning.entity.infrastructure.CampusEntity;
 import fr.univtln.projet.planning.entity.person.AdminEntity;
+import fr.univtln.projet.planning.modele.infrastructure.RoomType;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
@@ -18,7 +19,7 @@ public class RoomTest {
         //création UFR
         int num = 006;
         int capacity = 30;
-        RoomTypeEntity type = RoomTypeEntity.AMPHITHEATER;
+        RoomType type = RoomType.AMPHITHEATER;
 
         Map<String,String> hours = new HashMap<>();
         hours.put("Monday", "9h-17h");

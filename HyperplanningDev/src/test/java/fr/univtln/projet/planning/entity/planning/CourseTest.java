@@ -1,6 +1,7 @@
 package fr.univtln.projet.planning.entity.planning;
 
 import fr.univtln.projet.planning.entity.person.ProfessorEntity;
+import fr.univtln.projet.planning.modele.planning.CourseType;
 import org.junit.jupiter.api.Test;
 
 import java.time.Duration;

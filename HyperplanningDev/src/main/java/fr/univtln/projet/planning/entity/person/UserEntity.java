@@ -6,7 +6,7 @@ import fr.univtln.projet.planning.modele.person.*;
 import java.util.Objects;
 import java.util.function.BiFunction;
 
-public abstract class UserEntity{
+public abstract class UserEntity {
     private final String firstName;
     private final String lastName;
     protected String emailUniv;

@@ -2,6 +2,7 @@ package fr.univtln.projet.planning.entity.academic;
 
 import fr.univtln.projet.planning.entity.infrastructure.CampusEntity;
 import fr.univtln.projet.planning.entity.person.AdminEntity;
+import fr.univtln.projet.planning.modele.academic.StudyLevel;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

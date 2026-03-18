@@ -1,6 +1,6 @@
 package fr.univtln.projet.planning.entity.person;
 
-public abstract class StudentEntity extends UserEntity{
+public abstract class StudentEntity extends UserEntity {
     private String emailPersonal;
 
     protected StudentEntity(String firstName, String lastName) {

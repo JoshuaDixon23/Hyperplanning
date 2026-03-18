@@ -1,6 +1,6 @@
 package fr.univtln.projet.planning.entity.person;
 
-public class AdminEntity extends UserEntity{
+public class AdminEntity extends UserEntity {
     private AdminEntity(String name, String surname) {
         super(name, surname);
     }

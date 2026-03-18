@@ -4,6 +4,8 @@ import fr.univtln.projet.planning.entity.person.ProfessorEntity;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
+import fr.univtln.projet.planning.modele.planning.Language;
+
 public class ModuleTest {
 
     @Test
@@ -23,7 +25,7 @@ public class ModuleTest {
 
         assertEquals("UE123", m.getCode());
         assertEquals("Developpement avancé", m.getName());
-        assertEquals(LanguageEntity.FRENCH, m.getLanguage());
+        assertEquals(Language.FRENCH, m.getLanguage());
         assertEquals(1, m.getECTS());
     }
 }

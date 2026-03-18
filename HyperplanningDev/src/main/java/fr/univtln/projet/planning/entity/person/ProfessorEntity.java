@@ -5,7 +5,7 @@ import java.util.TreeSet;
 
 import fr.univtln.projet.planning.entity.planning.CourseEntity;
 
-public class ProfessorEntity extends UserEntity{
+public class ProfessorEntity extends UserEntity {
     private final Set<CourseEntity> planning =new TreeSet<>();
 
     private ProfessorEntity(String name, String surname) {
