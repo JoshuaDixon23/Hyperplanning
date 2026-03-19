@@ -6,7 +6,8 @@ import fr.univtln.projet.planning.repository.JpaRepository;
 import jakarta.persistence.EntityManager;
 
 public class BuildingRepository extends JpaRepository<Building, Long > {
-    protected BuildingRepository(Class<Building> entityClass, EntityManager entityManager) {
-        super(entityClass, entityManager);
+
+    protected BuildingRepository(EntityManager entityManager) {
+        super(Building.class, entityManager);
     }
 }

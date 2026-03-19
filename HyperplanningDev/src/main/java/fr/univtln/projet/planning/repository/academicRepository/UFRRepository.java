@@ -7,8 +7,8 @@ import jakarta.persistence.EntityManager;
 
 public class UFRRepository extends JpaRepository<UFR, Long > {
 
-    protected UFRRepository(Class<UFR> entityClass, EntityManager entityManager) {
-        super(entityClass, entityManager);
+    protected UFRRepository(EntityManager entityManager) {
+        super(UFR.class, entityManager);
     }
 
 

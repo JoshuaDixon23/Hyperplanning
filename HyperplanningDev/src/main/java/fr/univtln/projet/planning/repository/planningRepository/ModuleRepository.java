@@ -7,10 +7,9 @@ import jakarta.persistence.EntityManager;
 
 
 public class ModuleRepository extends JpaRepository<Module, Long > {
-    protected ModuleRepository(Class<Module> entityClass, EntityManager entityManager) {
-        super(entityClass, entityManager);
+
+
+    protected ModuleRepository(EntityManager entityManager) {
+        super(Module.class, entityManager);
     }
-
-
-
 }

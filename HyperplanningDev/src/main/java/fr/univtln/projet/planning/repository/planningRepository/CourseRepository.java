@@ -21,8 +21,8 @@ public class CourseRepository extends JpaRepository<Course, Long >  {
 
 
     //constructeur
-    protected CourseRepository(Class<Course> entityClass, EntityManager entityManager) {
-        super(entityClass, entityManager);
+    protected CourseRepository(EntityManager entityManager) {
+        super(Course.class, entityManager);
 
     }
 
