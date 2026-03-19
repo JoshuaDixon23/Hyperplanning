@@ -8,13 +8,12 @@ import java.util.Objects;
 import java.util.Set;
 
 import fr.univtln.projet.planning.entity.academic.UFREntity;
-import fr.univtln.projet.planning.modele.infrastructure.Campus;
 import fr.univtln.projet.planning.modele.infrastructure.Day;
 import fr.univtln.projet.planning.modele.infrastructure.RoomType;
 
 public class BuildingEntity {
 
-    public class Hours{
+    public static class Hours{
         public LocalTime opening;
         public LocalTime closing;
     }

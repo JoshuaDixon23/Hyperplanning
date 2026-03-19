@@ -1,13 +1,12 @@
 package fr.univtln.projet.planning.entity.academic;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import fr.univtln.projet.planning.entity.infrastructure.BuildingEntity;
 import fr.univtln.projet.planning.entity.infrastructure.CampusEntity;
 import fr.univtln.projet.planning.entity.person.AdminEntity;
 import fr.univtln.projet.planning.modele.academic.StudyLevel;
-import fr.univtln.projet.planning.modele.infrastructure.Campus;
-
-import java.util.HashSet;
-import java.util.Set;
 
 public class UFREntity {
     private String name;
