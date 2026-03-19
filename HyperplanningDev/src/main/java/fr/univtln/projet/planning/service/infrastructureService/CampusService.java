@@ -6,15 +6,20 @@ import java.util.stream.Collectors;             // Modèle JPA (BDD)
 import fr.univtln.projet.planning.entity.infrastructure.CampusEntity;       // Modèle Métier (DTO)
 import fr.univtln.projet.planning.modele.infrastructure.Campus;
 import fr.univtln.projet.planning.repository.infrastructureRepository.CampusRepository;
+import fr.univtln.projet.planning.service.academicService.UFRService;
 
 public class CampusService {
 
     private final CampusRepository campusRepository;
+    private final BuildingService buildingService;
+    private final UFRService ufrService;
 
-    public CampusService(CampusRepository campusRepository) {
+        /// Constructeur
+    public CampusService(CampusRepository campusRepository, BuildingService buildingService, UFRService ufrService) {
         this.campusRepository = campusRepository;
+        this.buildingService = buildingService;
+        this.ufrService = ufrService;
     }
-
     // --- MÉTHODES MÉTIER ---
 
     public CampusEntity createCampus(CampusEntity domainCampus) {
@@ -35,39 +40,30 @@ public class CampusService {
                 .collect(Collectors.toList());
     }
 
-    // --- MÉTHODES DE MAPPING (Traduction) ---
-
-    /**
-     * Convertit le modèle JPA (Base de données) vers l'objet Métier (CampusEntity)
-     */
+    // --- MAPPINGS ---
     private CampusEntity toDomainEntity(Campus jpaCampus) {
         if (jpaCampus == null) return null;
+        CampusEntity domainCampus = CampusEntity.CampusFactory(jpaCampus.getCity(), jpaCampus.getImageFileName());
 
-        CampusEntity domainCampus = CampusEntity.CampusFactory(
-            jpaCampus.getCity(), 
-            jpaCampus.getImageFileName()
-        );
-
-        // TODO: Boucler sur jpaCampus.getBuildings() pour les convertir et les ajouter à domainCampus
-        // TODO: Boucler sur jpaCampus.getUfrs() pour les convertir et les ajouter à domainCampus
-
+        if (jpaCampus.getBuildings() != null) {
+            jpaCampus.getBuildings().forEach(b -> domainCampus.addBuilding(buildingService.toDomainEntity(b)));
+        }
+        if (jpaCampus.getUfrs() != null) {
+            jpaCampus.getUfrs().forEach(u -> domainCampus.addUfr(ufrService.toDomainEntity(u)));
+        }
         return domainCampus;
     }
 
-    /**
-     * Convertit l'objet Métier (CampusEntity) vers le modèle JPA (Base de données)
-     */
     private Campus toJpaModel(CampusEntity domainCampus) {
         if (domainCampus == null) return null;
+        Campus jpaCampus = Campus.CampusFactory(domainCampus.getCity(), domainCampus.getImageFileName());
 
-        Campus jpaCampus = Campus.CampusFactory(
-            domainCampus.getCity(), 
-            domainCampus.getImageFileName()
-        );
-
-        // TODO: Boucler sur domainCampus.getBuildings() pour les convertir et les ajouter à jpaCampus
-        // TODO: Boucler sur domainCampus.getUfrs() (quand le getter sera créé) pour les convertir et les ajouter à jpaCampus
-
+        if (domainCampus.getBuildings() != null) {
+            domainCampus.getBuildings().forEach(b -> jpaCampus.addBuilding(buildingService.toJpaModel(b)));
+        }
+        if (domainCampus.getUfrs() != null) {
+            domainCampus.getUfrs().forEach(u -> jpaCampus.addUfr(ufrService.toJpaModel(u)));
+        }
         return jpaCampus;
     }
 }

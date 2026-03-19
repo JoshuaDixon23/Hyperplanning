@@ -1,18 +1,25 @@
 package fr.univtln.projet.planning.service.infrastructureService;
 
 import java.util.List;
-import java.util.stream.Collectors;             // Modèle JPA (BDD)
+import java.util.stream.Collectors;
 
-import fr.univtln.projet.planning.entity.infrastructure.RoomEntity;       // Modèle Métier (DTO)
+import fr.univtln.projet.planning.entity.infrastructure.BuildingEntity;
+import fr.univtln.projet.planning.entity.infrastructure.RoomEntity;
+import fr.univtln.projet.planning.modele.infrastructure.Building;
 import fr.univtln.projet.planning.modele.infrastructure.Room;
 import fr.univtln.projet.planning.repository.infrastructureRepository.RoomRepository;
+import fr.univtln.projet.planning.service.planningService.CourseService;
 
 public class RoomService {
 
     private final RoomRepository roomRepository;
+    private final BuildingService buildingService;
+    private final CourseService courseService;
 
-    public RoomService(RoomRepository roomRepository) {
+    public RoomService(RoomRepository roomRepository, BuildingService buildingService, CourseService courseService) {
         this.roomRepository = roomRepository;
+        this.buildingService = buildingService;
+        this.courseService = courseService;
     }
 
     // --- MÉTHODES MÉTIER ---
@@ -35,54 +42,31 @@ public class RoomService {
                 .collect(Collectors.toList());
     }
 
-    // --- MÉTHODES DE MAPPING (Traduction) ---
-
-    /**
-     * Convertit le modèle JPA (Base de données) vers l'objet Métier (RoomEntity)
-     */
+    // --- MAPPINGS ---
     private RoomEntity toDomainEntity(Room jpaRoom) {
         if (jpaRoom == null) return null;
+        int numSalle = jpaRoom.getNumber() != null ? Integer.parseInt(jpaRoom.getNumber()) : 0;
 
-        // Gestion de la conversion String (JPA) -> int (Métier)
-        int numSalle = 0;
-        try {
-            if (jpaRoom.getNumber() != null) {
-                numSalle = Integer.parseInt(jpaRoom.getNumber());
-            }
-        } catch (NumberFormatException e) {
-            System.err.println("Attention: Le numéro de salle JPA n'est pas un entier valide : " + jpaRoom.getNumber());
+        BuildingEntity domainBuilding = buildingService.toDomainEntity(jpaRoom.getBuilding());
+        
+        RoomEntity domainRoom = RoomEntity.RoomFactory(numSalle, jpaRoom.getCapacity(), jpaRoom.getType(), domainBuilding);
+
+        if (jpaRoom.getPlanning() != null) {
+            jpaRoom.getPlanning().forEach(c -> domainRoom.addCourse(courseService.toDomainEntity(c)));
         }
-
-        RoomEntity domainRoom = RoomEntity.RoomFactory(
-            numSalle, 
-            jpaRoom.getCapacity(), 
-            jpaRoom.getType(), 
-            null // Placeholder : TODO Gérer la conversion de jpaRoom.getBuilding() vers BuildingEntity
-        );
-
-        // TODO: Boucler sur jpaRoom.getPlanning() pour convertir et ajouter les CourseEntity à domainRoom
-
         return domainRoom;
     }
 
-    /**
-     * Convertit l'objet Métier (RoomEntity) vers le modèle JPA (Base de données)
-     */
     private Room toJpaModel(RoomEntity domainRoom) {
         if (domainRoom == null) return null;
 
-        // Gestion de la conversion int (Métier) -> String (JPA)
-        String stringNumber = String.valueOf(domainRoom.getNum());
+        Building jpaBuilding = buildingService.toJpaModel(domainRoom.getBuilding());
 
-        Room jpaRoom = Room.RoomFactory(
-            stringNumber, 
-            domainRoom.getCapacity(), 
-            domainRoom.getType(), 
-            null // Placeholder : TODO Gérer la conversion de domainRoom.getBuilding() vers Building JPA
-        );
+        Room jpaRoom = Room.RoomFactory(String.valueOf(domainRoom.getNum()), domainRoom.getCapacity(), domainRoom.getType(), jpaBuilding);
 
-        // TODO: Boucler sur domainRoom.getCourses() pour convertir et ajouter les Course JPA à jpaRoom
-
+        if (domainRoom.getCourses() != null) {
+            domainRoom.getCourses().forEach(c -> jpaRoom.addCourse(courseService.toJpaModel(c)));
+        }
         return jpaRoom;
     }
 }

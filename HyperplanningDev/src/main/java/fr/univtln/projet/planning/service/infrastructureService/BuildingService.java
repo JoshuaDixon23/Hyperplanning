@@ -9,13 +9,20 @@ import fr.univtln.projet.planning.entity.infrastructure.BuildingEntity;
 import fr.univtln.projet.planning.modele.infrastructure.Building;
 import fr.univtln.projet.planning.modele.infrastructure.Day;
 import fr.univtln.projet.planning.repository.infrastructureRepository.BuildingRepository;
+import fr.univtln.projet.planning.service.academicService.UFRService;
 
 public class BuildingService {
 
     private final BuildingRepository buildingRepository;
+    private final CampusService campusService;
+    private final UFRService ufrService;
+    private final RoomService roomService;
 
-    public BuildingService(BuildingRepository buildingRepository) {
+    public BuildingService(BuildingRepository buildingRepository, CampusService campusService, UFRService ufrService, RoomService roomService) {
         this.buildingRepository = buildingRepository;
+        this.campusService = campusService;
+        this.ufrService = ufrService;
+        this.roomService = roomService;
     }
 
     // --- MÉTHODES MÉTIER ---
@@ -43,29 +50,28 @@ public class BuildingService {
     private BuildingEntity toDomainEntity(Building jpaBuilding) {
         if (jpaBuilding == null) return null;
 
-        // 1. Traduction de la Map des horaires (JPA -> Métier)
         Map<Day, BuildingEntity.Hours> domainHoursMap = new EnumMap<>(Day.class);
         
         if (jpaBuilding.getOpeningHours() != null) {
             for (Map.Entry<Day, Building.Hours> entry : jpaBuilding.getOpeningHours().entrySet()) {
-                BuildingEntity.Hours domainHours = new BuildingEntity.Hours(); // Nécessite que Hours soit 'static' dans BuildingEntity
+                BuildingEntity.Hours domainHours = new BuildingEntity.Hours(); 
                 domainHours.opening = entry.getValue().getOpening();
                 domainHours.closing = entry.getValue().getClosing();
                 domainHoursMap.put(entry.getKey(), domainHours);
             }
         }
 
-        // 2. Création de l'objet Métier
-        BuildingEntity domainBuilding = BuildingEntity.BuildingFactory(
-            jpaBuilding.getName(), 
-            jpaBuilding.getLocalisation(), 
-            domainHoursMap
-        );
+        BuildingEntity domainBuilding = BuildingEntity.BuildingFactory(jpaBuilding.getName(), jpaBuilding.getLocalisation(), domainHoursMap);
 
-        // TODO: Gérer la conversion de jpaBuilding.getUfr() vers UFREntity
-        // TODO: Gérer la conversion de jpaBuilding.getCampus() vers CampusEntity
-        // TODO: Boucler sur jpaBuilding.getRooms() pour les ajouter à domainBuilding
-
+        domainBuilding.setCampus(campusService.toDomainEntity(jpaBuilding.getCampus()));
+        domainBuilding.setUfr(ufrService.toDomainEntity(jpaBuilding.getUfr()));
+        
+        if (jpaBuilding.getRooms() != null) {
+            jpaBuilding.getRooms().forEach(r -> {
+                // Ta RoomEntity se crée via la BuildingEntity existante
+                domainBuilding.addRoom(Integer.parseInt(r.getNumber()), r.getCapacity(), r.getType());
+            });
+        }
         return domainBuilding;
     }
 
@@ -95,10 +101,12 @@ public class BuildingService {
             jpaHoursMap
         );
 
-        // TODO: Gérer la conversion de domainBuilding.getUfr() vers UFR JPA
-        // TODO: Gérer la conversion de domainBuilding.getCampus() vers Campus JPA
-        // TODO: Boucler sur domainBuilding.getRooms() pour les ajouter à jpaBuilding
+        jpaBuilding.setCampus(campusService.toJpaModel(domainBuilding.getCampus()));
+        jpaBuilding.setUfr(ufrService.toJpaModel(domainBuilding.getUfr()));
 
+        if (domainBuilding.getRooms() != null) {
+             domainBuilding.getRooms().forEach(r -> jpaBuilding.addRoom(roomService.toJpaModel(r)));
+        }
         return jpaBuilding;
     }
 }

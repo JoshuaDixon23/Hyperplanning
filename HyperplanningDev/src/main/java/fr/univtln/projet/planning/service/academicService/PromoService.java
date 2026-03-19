@@ -1,22 +1,25 @@
 package fr.univtln.projet.planning.service.academicService;
 
-import fr.univtln.projet.planning.repository.academicRepository.PromoRepository;
-
-import fr.univtln.projet.planning.modele.academic.Promo;             // Modèle JPA (BDD)
-import fr.univtln.projet.planning.entity.academic.PromoEntity;       // Modèle Métier (DTO)
-// On aura aussi besoin des modèles UFR plus tard pour le mapping :
-// import fr.univtln.projet.planning.modele.academic.UFR;
-// import fr.univtln.projet.planning.entity.academic.UFREntity;
-
 import java.util.List;
 import java.util.stream.Collectors;
+
+import fr.univtln.projet.planning.entity.academic.PromoEntity;             // Modèle JPA (BDD)
+import fr.univtln.projet.planning.modele.academic.Promo;       // Modèle Métier (DTO)
+import fr.univtln.projet.planning.repository.academicRepository.PromoRepository;
+import fr.univtln.projet.planning.service.personService.LocalStudentService;
 
 public class PromoService {
 
     private final PromoRepository promoRepository;
+    private final UFRService ufrService;
+    private final GroupService groupService;
+    private final LocalStudentService localStudentService;
 
-    public PromoService(PromoRepository promoRepository) {
+    public PromoService(PromoRepository promoRepository, UFRService ufrService, GroupService groupService, LocalStudentService localStudentService) {
         this.promoRepository = promoRepository;
+        this.ufrService = ufrService;
+        this.groupService = groupService;
+        this.localStudentService = localStudentService;
     }
 
     // --- MÉTHODES MÉTIER ---
@@ -44,50 +47,41 @@ public class PromoService {
                 .collect(Collectors.toList());
     }
 
-    // --- MÉTHODES DE MAPPING (Traduction) ---
-
-    /**
-     * Convertit le modèle JPA (Base de données) vers l'objet Métier (PromoEntity)
-     */
+    // --- MAPPINGS ---
     private PromoEntity toDomainEntity(Promo jpaPromo) {
         if (jpaPromo == null) return null;
 
-        // TODO: Mapper l'UFR JPA vers l'UFREntity métier
-        // UFREntity ufrEntity = ufrMapper.toDomainEntity(jpaPromo.getUfr());
-        
         PromoEntity domainPromo = PromoEntity.PromoFactory(
             jpaPromo.getName(), 
             jpaPromo.getStudyLevel(), 
-            null // ufrEntity (Remplacer null quand l'UFR sera géré)
+            ufrService.toDomainEntity(jpaPromo.getUfr())
         );
-        
 
-
+        if (jpaPromo.getGroups() != null) {
+            jpaPromo.getGroups().forEach(g -> domainPromo.addGroup(groupService.toDomainEntity(g)));
+        }
+        if (jpaPromo.getLocalStudents() != null) {
+            jpaPromo.getLocalStudents().forEach(s -> domainPromo.addStudent(localStudentService.toDomainEntity(s)));
+        }
         return domainPromo;
     }
 
-    /**
-     * Convertit l'objet Métier (PromoEntity) vers le modèle JPA (Base de données)
-     */
     private Promo toJpaModel(PromoEntity domainPromo) {
         if (domainPromo == null) return null;
 
-        // TODO: Mapper l'UFREntity métier vers l'UFR JPA
-        // UFR jpaUfr = ufrMapper.toJpaModel(domainPromo.getUfr());
-
-        // Attention : il manque 'year' dans PromoEntity. On met 0 en attendant.
-        int anneeTemporaire = 0;
-
         Promo jpaPromo = Promo.PromoFactory(
             domainPromo.getName(), 
-            anneeTemporaire, // TODO: à lier avec un futur domainPromo.getYear()
+            0, // year temporaire
             domainPromo.getStudyLevel(), 
-            null // jpaUfr (Remplacer null quand l'UFR sera géré)
+            ufrService.toJpaModel(domainPromo.getUfr())
         );
 
-        // TODO: Boucler sur domainPromo.getGroups() pour les ajouter à jpaPromo
-        // TODO: Boucler sur domainPromo.getLocalStudent() pour les ajouter à jpaPromo
-
+        if (domainPromo.getGroups() != null) {
+            domainPromo.getGroups().forEach(g -> jpaPromo.addGroup(groupService.toJpaModel(g)));
+        }
+        if (domainPromo.getLocalStudent() != null) {
+            domainPromo.getLocalStudent().forEach(s -> jpaPromo.addStudent(localStudentService.toJpaModel(s)));
+        }
         return jpaPromo;
     }
 }

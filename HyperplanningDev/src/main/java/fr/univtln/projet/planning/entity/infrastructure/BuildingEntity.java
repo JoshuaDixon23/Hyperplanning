@@ -50,7 +50,7 @@ public class BuildingEntity {
         this.localisation = localisation;
     }
 
-    public Map getOpeningHours() {
+    public Map<Day,Hours> getOpeningHours() {
         return openingHours;
     }
 

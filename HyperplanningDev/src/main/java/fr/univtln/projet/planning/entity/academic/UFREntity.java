@@ -76,6 +76,14 @@ public class UFREntity {
         }
     }
 
+    public void addPromo(PromoEntity p) {
+        if (p == null) {
+            return; // throw une exception métier personnalisée plus tard ?
+        } else {
+            promos.add(p);
+        }
+    }
+
     public void removePromo(PromoEntity p) {
         if (p == null) {
             return; //throw

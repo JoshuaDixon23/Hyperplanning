@@ -5,14 +5,22 @@ import java.util.stream.Collectors;
 
 import fr.univtln.projet.planning.entity.academic.GroupEntity;
 import fr.univtln.projet.planning.modele.academic.Group;
-import fr.univtln.projet.planning.repository.academicRepository.GroupRepository; 
+import fr.univtln.projet.planning.repository.academicRepository.GroupRepository;
+import fr.univtln.projet.planning.service.personService.LocalStudentService;
+import fr.univtln.projet.planning.service.planningService.CourseService; 
 
 public class GroupService {
 
     private final GroupRepository groupRepository;
+    private final PromoService promoService;
+    private final CourseService courseService;
+    private final LocalStudentService localStudentService;
 
-    public GroupService(GroupRepository groupRepository) {
+    public GroupService(GroupRepository groupRepository, PromoService promoService, CourseService courseService, LocalStudentService localStudentService) {
         this.groupRepository = groupRepository;
+        this.promoService = promoService;
+        this.courseService = courseService;
+        this.localStudentService = localStudentService;
     }
 
     // --- MÉTHODES MÉTIER ---
@@ -35,32 +43,34 @@ public class GroupService {
                 .collect(Collectors.toList());
     }
 
-    // --- MÉTHODES DE MAPPING (Traduction) ---
-
-    /**
-     * Convertit le modèle JPA (Base de données) vers l'objet Métier (PromoEntity)
-     */
+    // --- MAPPINGS ---
     private GroupEntity toDomain(Group jpaEntity) {
         if (jpaEntity == null) return null;
 
         GroupEntity domainGroup = GroupEntity.GroupFactory(jpaEntity.getNum(), jpaEntity.getType());
-        
+        domainGroup.setPromo(promoService.toDomainEntity(jpaEntity.getPromo()));
 
-        // depend de StudentRepository ...
-        
+        if (jpaEntity.getStudents() != null) {
+            jpaEntity.getStudents().forEach(s -> domainGroup.addLocalStudent(localStudentService.toDomainEntity(s)));
+        }
+        if (jpaEntity.getPlanning() != null) {
+            jpaEntity.getPlanning().forEach(c -> domainGroup.addCourse(courseService.toDomainEntity(c)));
+        }
         return domainGroup;
     }
 
-    /**
-     * Convertit l'objet Métier (PromoEntity) vers le modèle JPA (Base de données)
-     */
     private Group toEntity(GroupEntity domainGroup) {
         if (domainGroup == null) return null;
 
         Group jpaEntity = Group.GroupFactory(domainGroup.getNum(), domainGroup.getType());
+        jpaEntity.setPromo(promoService.toJpaModel(domainGroup.getPromo()));
 
-        // depend de StudentRepository ...
-        
+        if (domainGroup.getStudents() != null) {
+            domainGroup.getStudents().forEach(s -> jpaEntity.addLocalStudent(localStudentService.toJpaModel(s)));
+        }
+        if (domainGroup.getPlanning() != null) {
+            domainGroup.getPlanning().forEach(c -> jpaEntity.addCourse(courseService.toJpaModel(c)));
+        }
         return jpaEntity;
     }
 }

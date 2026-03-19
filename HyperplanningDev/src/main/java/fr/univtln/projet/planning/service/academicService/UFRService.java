@@ -6,13 +6,24 @@ import java.util.stream.Collectors;             // Modèle JPA
 import fr.univtln.projet.planning.entity.academic.UFREntity;       // Modèle Métier (DTO)
 import fr.univtln.projet.planning.modele.academic.UFR;
 import fr.univtln.projet.planning.repository.academicRepository.UFRRepository;
+import fr.univtln.projet.planning.service.infrastructureService.BuildingService;
+import fr.univtln.projet.planning.service.infrastructureService.CampusService;
+import fr.univtln.projet.planning.service.personService.AdminService;
 
 public class UFRService {
 
     private final UFRRepository ufrRepository;
+    private final CampusService campusService;
+    private final AdminService adminService;
+    private final BuildingService buildingService;
+    private final PromoService promoService;
 
-    public UFRService(UFRRepository ufrRepository) {
+    public UFRService(UFRRepository ufrRepository, CampusService campusService, AdminService adminService, BuildingService buildingService, PromoService promoService) {
         this.ufrRepository = ufrRepository;
+        this.campusService = campusService;
+        this.adminService = adminService;
+        this.buildingService = buildingService;
+        this.promoService = promoService;
     }
 
     // --- MÉTHODES MÉTIER ---
@@ -35,47 +46,40 @@ public class UFRService {
                 .collect(Collectors.toList());
     }
 
-    // --- MÉTHODES DE MAPPING (Traduction) ---
-
-    /**
-     * Convertit le modèle JPA (Base de données) vers l'objet Métier (UFREntity)
-     */
+    // --- MAPPINGS ---
     private UFREntity toDomainEntity(UFR jpaUfr) {
         if (jpaUfr == null) return null;
 
-        // TODO: Gérer la conversion de jpaUfr.getCampus() vers CampusEntity
-        // TODO: Gérer la conversion de jpaUfr.getAdmin() vers AdminEntity
-
         UFREntity domainUfr = UFREntity.UFRFactory(
             jpaUfr.getName(), 
-            null, // Placeholder pour le CampusEntity
-            null  // Placeholder pour l'AdminEntity
+            campusService.toDomainEntity(jpaUfr.getCampus()),
+            adminService.toDomainEntity(jpaUfr.getAdmin())
         );
 
-        // TODO: Boucler sur jpaUfr.getPromos() pour les ajouter à domainUfr
-        // TODO: Boucler sur jpaUfr.getBuildings() pour les ajouter à domainUfr
-
+        if (jpaUfr.getPromos() != null) {
+            jpaUfr.getPromos().forEach(p -> domainUfr.addPromo(promoService.toDomainEntity(p))); 
+        }
+        if (jpaUfr.getBuildings() != null) {
+            jpaUfr.getBuildings().forEach(b -> domainUfr.addBuilding(buildingService.toDomainEntity(b)));
+        }
         return domainUfr;
     }
 
-    /**
-     * Convertit l'objet Métier (UFREntity) vers le modèle JPA (Base de données)
-     */
     private UFR toJpaModel(UFREntity domainUfr) {
         if (domainUfr == null) return null;
 
-        // TODO: Gérer la conversion de domainUfr.getCampus() vers Campus JPA
-        // TODO: Gérer la conversion de domainUfr.getAdmin() vers Admin JPA
-
         UFR jpaUfr = UFR.UFRFactory(
             domainUfr.getName(), 
-            null, // Placeholder pour le Campus JPA
-            null  // Placeholder pour l'Admin JPA
+            campusService.toJpaModel(domainUfr.getCampus()), 
+            adminService.toJpaModel(domainUfr.getAdmin())
         );
 
-        // TODO: Boucler sur domainUfr.getModules() (ou getPromos()) pour les ajouter à jpaUfr
-        // TODO: Boucler sur domainUfr.getBuildings() pour les ajouter à jpaUfr
-
+        if (domainUfr.getModules() != null) { // getModules() correspond à tes promos
+            domainUfr.getModules().forEach(p -> jpaUfr.addPromo(promoService.toJpaModel(p)));
+        }
+        if (domainUfr.getBuildings() != null) {
+            domainUfr.getBuildings().forEach(b -> jpaUfr.addBuilding(buildingService.toJpaModel(b)));
+        }
         return jpaUfr;
     }
 }
