@@ -35,7 +35,7 @@ public class Module {
     private Professor responsible;
 
     @OneToMany(mappedBy = "module", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Course> courses = new ArrayList<>();
+    private List<Course> planning = new ArrayList<>();
     
     protected Module() {
     }
@@ -46,16 +46,16 @@ public class Module {
         this.language = b.language;
         this.ects = b.ects;
         this.responsible = b.responsible;
-        this.courses = b.courses;
+        this.planning = b.courses;
     }
 
     public void addCourse(Course course) {
-        courses.add(course);
+        planning.add(course);
         course.setModule(this);
     }
 
     public void removeCourse(Course course) {
-        courses.remove(course);
+        planning.remove(course);
         course.setModule(null);
     }
 

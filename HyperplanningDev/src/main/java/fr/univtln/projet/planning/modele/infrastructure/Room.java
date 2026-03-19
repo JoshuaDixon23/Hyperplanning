@@ -35,7 +35,7 @@ public class Room {
     private Building building;
 
     @OneToMany(mappedBy = "room")
-    private Set<Course> courses = new HashSet<>(); 
+    private Set<Course> planning = new HashSet<>();
 
 
     protected Room() {
@@ -58,21 +58,21 @@ public class Room {
 
     public void addCourse(Course c) {
         if (c != null) {
-            courses.add(c);
+            planning.add(c);
             c.setRoom(this);
         }
     }
 
     public void removeCourse(Course c) {
         if (c != null) {
-            courses.remove(c);
+            planning.remove(c);
             c.setRoom(null); 
         }
     }
 
 
-    public Set<Course> getCourses() {
-        return Collections.unmodifiableSet(courses);
+    public Set<Course> getPlanning() {
+        return Collections.unmodifiableSet(planning);
     }
 
     @Override
