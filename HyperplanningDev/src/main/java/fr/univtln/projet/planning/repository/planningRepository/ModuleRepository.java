@@ -11,4 +11,7 @@ public class ModuleRepository extends JpaRepository<Module, Long > {
         super(entityClass, entityManager);
     }
 
+
+
+
 }
