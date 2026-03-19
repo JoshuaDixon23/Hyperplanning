@@ -21,7 +21,7 @@ public class CourseRepositoryTest {
         EntityManager em = emf.createEntityManager();
         Class<Course>  entityClass = Course.class;
 
-        CourseRepository cr = new CourseRepository(em);
+        CourseRepository cr = new CourseRepository(entityClass,em);
         // verification of connexion to DB
         Instant beginning = Instant.parse("2026-09-14T00:00:00Z");
         Instant end = Instant.parse("2026-09-16T00:00:00Z");
@@ -42,7 +42,7 @@ public class CourseRepositoryTest {
         EntityManager em = emf.createEntityManager();
         Class<Course>  entityClass = Course.class;
 
-        CourseRepository cr = new CourseRepository(em);
+        CourseRepository cr = new CourseRepository(entityClass,em);
         // verification of connexion to DB
         Instant beginning = Instant.parse("2026-09-14T00:00:00Z");
         Instant end = Instant.parse("2026-09-16T00:00:00Z");
@@ -64,7 +64,7 @@ public class CourseRepositoryTest {
         EntityManager em = emf.createEntityManager();
         Class<Course>  entityClass = Course.class;
 
-        CourseRepository cr = new CourseRepository(em);
+        CourseRepository cr = new CourseRepository(entityClass,em);
         // verification of connexion to DB
         Instant beginning = Instant.parse("2026-09-14T00:00:00Z");
         Instant end = Instant.parse("2026-09-16T00:00:00Z");

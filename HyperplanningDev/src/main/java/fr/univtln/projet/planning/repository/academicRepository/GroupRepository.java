@@ -12,8 +12,8 @@ import jakarta.persistence.TypedQuery;
 public class GroupRepository extends JpaRepository<Group, Long > {
 
 
-    protected GroupRepository(EntityManager entityManager) {
-        super(Group.class, entityManager);
+    protected GroupRepository(Class<Group> entityClass, EntityManager entityManager) {
+        super(entityClass, entityManager);
     }
 
     // Sauvegarder ou mettre à jour un groupe

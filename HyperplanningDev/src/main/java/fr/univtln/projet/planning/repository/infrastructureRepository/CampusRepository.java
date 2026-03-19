@@ -3,9 +3,16 @@ package fr.univtln.projet.planning.repository.infrastructureRepository;
 import java.util.List;
 import java.util.Optional;
 
-public class CampusRepository extends JpaRepository<Campus, Long > {
-    protected CampusRepository(EntityManager entityManager) {
-        super(Campus.class, entityManager);
+import fr.univtln.projet.planning.modele.infrastructure.Campus;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.TypedQuery;
+
+public class CampusRepository {
+
+    private final EntityManager entityManager;
+
+    public CampusRepository(EntityManager entityManager) {
+        this.entityManager = entityManager;
     }
 
     // Sauvegarder ou mettre à jour un campus
