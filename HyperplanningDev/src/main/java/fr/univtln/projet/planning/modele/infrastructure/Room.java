@@ -88,4 +88,15 @@ public class Room {
     public int hashCode() {
         return Objects.hash(number, building);
     }
+
+    @Override
+    public String toString() {
+        return "Room{" +
+                "idRoom=" + idRoom +
+                ", number='" + number + '\'' +
+                ", capacity=" + capacity +
+                ", type=" + type +
+                ", building=" + building +
+                '}';
+    }
 }

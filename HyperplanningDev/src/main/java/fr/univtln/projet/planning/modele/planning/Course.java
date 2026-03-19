@@ -150,4 +150,20 @@ public class Course implements Comparable<Course> {
     public int hashCode() {
         return Objects.hash(date, startTime, duration, module, room, courseType);
     }
+
+
+    @Override
+    public String toString() {
+        return "Course{" +
+                "courseId=" + courseId +
+                ", date=" + date +
+                ", startTime=" + startTime +
+                ", duration=" + duration +
+                ", courseType=" + courseType +
+                ", room=" + room +
+                ", module=" + module +
+                ", groups=" + groups +
+                ", professors=" + professors +
+                '}';
+    }
 }

@@ -53,7 +53,7 @@ public class CourseRepository extends JpaRepository<Course, Long >  {
         return query.getResultList();
     }
 
-    // récuperer le planning d'un module
+    // récuperer le planning d'un module par module et par id (code)
     public List<Course> getPlanningByModule(Module module, LocalDate beginningDate, LocalDate endDate) {
         String jpql = "SELECT c FROM Module m JOIN m.planning c " +
                 "WHERE m = :module " +
@@ -66,15 +66,27 @@ public class CourseRepository extends JpaRepository<Course, Long >  {
         return query.getResultList();
     }
 
-    // récuperer le planning d'une salle
-
-    public List<Course> getPlanningByRoom(Room room, LocalDate beginningDate, LocalDate endDate) {
-        String jpql = "SELECT c FROM Room r JOIN r.planning c " +
-                "WHERE r = :room " +
+    public List<Course> getPlanningByModule(String code, LocalDate beginningDate, LocalDate endDate) {
+        String jpql = "SELECT c FROM Module m JOIN m.planning c " +
+                "WHERE m.code = :code " +
                 "AND c.date BETWEEN :beginningDate AND :endDate";
 
         TypedQuery<Course> query = em.createQuery(jpql, Course.class);
-        query.setParameter("room", room);
+        query.setParameter("code", code);
+        query.setParameter("beginningDate", beginningDate);
+        query.setParameter("endDate", endDate);
+        return query.getResultList();
+    }
+
+    // récuperer le planning d'une salle par salle et par id
+
+    public List<Course> getPlanningByRoom(Long idRoom, LocalDate beginningDate, LocalDate endDate) {
+        String jpql = "SELECT c FROM Room r JOIN r.planning c " +
+                "WHERE r.idRoom = :idRoom " +
+                "AND c.date BETWEEN :beginningDate AND :endDate";
+
+        TypedQuery<Course> query = em.createQuery(jpql, Course.class);
+        query.setParameter("idRoom", idRoom);
         query.setParameter("beginningDate", beginningDate);
         query.setParameter("endDate", endDate);
         return query.getResultList();
