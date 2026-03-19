@@ -3,16 +3,10 @@ package fr.univtln.projet.planning.repository.infrastructureRepository;
 import java.util.List;
 import java.util.Optional;
 
-import fr.univtln.projet.planning.modele.infrastructure.Building;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.TypedQuery;
+public class BuildingRepository extends JpaRepository<Building, Long > {
 
-public class BuildingRepository {
-
-    private final EntityManager entityManager;
-
-    public BuildingRepository(EntityManager entityManager) {
-        this.entityManager = entityManager;
+    protected BuildingRepository(EntityManager entityManager) {
+        super(Building.class, entityManager);
     }
 
     public Building save(Building building) {

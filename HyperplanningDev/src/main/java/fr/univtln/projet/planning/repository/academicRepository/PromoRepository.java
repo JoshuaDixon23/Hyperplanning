@@ -11,8 +11,8 @@ import jakarta.persistence.TypedQuery;
 public class PromoRepository extends JpaRepository<Promo,Long> {
 
 
-    protected PromoRepository(Class<Promo> entityClass, EntityManager entityManager) {
-        super(entityClass, entityManager);
+    protected PromoRepository(EntityManager entityManager) {
+        super(Promo.class, entityManager);
     }
 
     // Sauvegarder ou mettre à jour une Promo

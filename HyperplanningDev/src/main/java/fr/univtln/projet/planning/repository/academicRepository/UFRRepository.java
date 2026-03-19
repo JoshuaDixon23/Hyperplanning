@@ -9,10 +9,8 @@ import jakarta.persistence.TypedQuery;
 
 public class UFRRepository {
 
-    private final EntityManager entityManager;
-
-    public UFRRepository(EntityManager entityManager) {
-        this.entityManager = entityManager;
+    protected UFRRepository(EntityManager entityManager) {
+        super(UFR.class, entityManager);
     }
 
     // Sauvegarder ou mettre à jour une UFR

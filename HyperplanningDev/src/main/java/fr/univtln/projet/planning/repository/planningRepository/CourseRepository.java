@@ -21,8 +21,8 @@ public class CourseRepository extends JpaRepository<Course, Long >  {
 
 
     //constructeur
-    protected CourseRepository(Class<Course> entityClass, EntityManager entityManager) {
-        super(entityClass, entityManager);
+    protected CourseRepository(EntityManager entityManager) {
+        super(Course.class, entityManager);
 
     }
 
@@ -91,5 +91,18 @@ public class CourseRepository extends JpaRepository<Course, Long >  {
         query.setParameter("endDate", endDate);
         return query.getResultList();
     }
+
+    public List<Course> getPlanningByRoom(Room room, LocalDate beginningDate, LocalDate endDate) {
+        String jpql = "SELECT c FROM Room r JOIN r.planning c " +
+                "WHERE r = :room " +
+                "AND c.date BETWEEN :beginningDate AND :endDate";
+
+        TypedQuery<Course> query = em.createQuery(jpql, Course.class);
+        query.setParameter("room", room);
+        query.setParameter("beginningDate", beginningDate);
+        query.setParameter("endDate", endDate);
+        return query.getResultList();
+    }
+
 
 }
