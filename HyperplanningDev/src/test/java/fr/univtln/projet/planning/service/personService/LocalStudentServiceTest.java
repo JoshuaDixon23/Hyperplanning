@@ -1,9 +1,7 @@
-package fr.univtln.projet.planning.service.person;
+package fr.univtln.projet.planning.service.personService;
 
 import fr.univtln.projet.planning.entity.person.LocalStudentEntity;
-import fr.univtln.projet.planning.entity.person.StudentEntity;
 import fr.univtln.projet.planning.repository.personRepository.LocalStudentRepository;
-import fr.univtln.projet.planning.service.personService.LocalStudentService;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;

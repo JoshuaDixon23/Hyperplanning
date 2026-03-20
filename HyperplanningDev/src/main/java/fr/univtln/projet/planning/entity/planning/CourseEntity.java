@@ -163,4 +163,18 @@ public class CourseEntity implements Comparable<CourseEntity>{
     public int compareTo(CourseEntity c) {
         return this.startTime.compareTo(c.startTime);
     }
+
+
+    @Override
+    public String toString() {
+        return "CourseEntity{" +
+                "module=" + module +
+                ", date=" + date +
+                ", startTime=" + startTime +
+                ", duration=" + duration +
+                ", professors=" + professors +
+                ", room=" + room +
+                ", courseType=" + courseType +
+                '}';
+    }
 }

@@ -2,6 +2,7 @@ package fr.univtln.projet.planning.entity.planning;
 
 import fr.univtln.projet.planning.entity.TextTransformation;
 import fr.univtln.projet.planning.entity.person.ProfessorEntity;
+import fr.univtln.projet.planning.modele.person.Professor;
 import fr.univtln.projet.planning.modele.planning.Language;
 import fr.univtln.projet.planning.modele.planning.CourseType;
 
@@ -39,6 +40,10 @@ public class ModuleEntity {
     public ProfessorEntity responsible() { return responsible; }
 
     public static Builder builder() { return new Builder(); }
+
+    public ProfessorEntity getresponsible() {
+        return responsible;
+    }
 
     public static final class Builder {
         private String code = "";

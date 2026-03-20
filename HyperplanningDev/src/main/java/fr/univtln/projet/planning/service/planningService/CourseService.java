@@ -3,6 +3,10 @@ package fr.univtln.projet.planning.service.planningService;
 import fr.univtln.projet.planning.entity.planning.CourseEntity;
 import fr.univtln.projet.planning.modele.planning.Course;
 import fr.univtln.projet.planning.repository.planningRepository.CourseRepository;
+import fr.univtln.projet.planning.repository.planningRepository.ModuleRepository;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.Persistence;
 import jakarta.transaction.Transactional;
 
 import java.time.Duration;
@@ -15,33 +19,31 @@ import java.util.Optional;
 public class CourseService {
 
     private final CourseRepository courseRepository;
+    private final ModuleRepository moduleRepository;
+    private final ModuleService moduleService;
 
-    public CourseService(CourseRepository courseRepository) {
+    public CourseService(CourseRepository courseRepository, ModuleRepository moduleRepository
+    , ModuleService moduleService) {
         this.courseRepository = courseRepository;
+        this.moduleRepository = moduleRepository;
+        this.moduleService = moduleService;
     }
 
 
     // ###################MAPPERS##################
-    // =========================
+
 
     // JPA -> Entity
     private CourseEntity toDomain(Course c) {
         if (c == null) return null;
 
+
         CourseEntity.Builder builder = CourseEntity.builder()
                 .date(c.getDate())
                 .startTime(c.getStartTime())        // pb de classe
                 .duration(c.getDuration())
-                .courseType(c.getCourseType());
-
-
-        // builder.module(...);
-
-
-        // builder.room(...);
-
-
-        // c.getProfessors().forEach(builder::professor);
+                .courseType(c.getCourseType())
+                .module(moduleService.toDomain(c.getModule()));
 
         return builder.build();
     }
@@ -50,20 +52,15 @@ public class CourseService {
     private Course toJpa(CourseEntity c) {
         if (c == null) return null;
 
+
         Course.Builder builder = Course.builder()
+                .module(moduleService.toJpa(c.getModule()))
                 .date(c.getDate())
-                .startTime(c.getStartTime())        // pb de classe
+                .startTime(c.getStartTime())
                 .duration(c.getDuration())
                 .courseType(c.getCourseType());
 
 
-        // course.setModule(...);
-
-
-        // course.setRoom(...);
-
-
-        // course.setProfessors(...);
 
         return builder.build();
     }
@@ -87,8 +84,6 @@ public class CourseService {
     @Transactional
     public CourseEntity create(CourseEntity entity) {
 
-        // Validation métier
-        validateCourse(entity);
 
         // Mapping
         Course jpa = toJpa(entity);
@@ -107,12 +102,12 @@ public class CourseService {
         courseRepository.delete(course);
     }
 
-    // =========================
+
     // PLANNING
-    // =========================
+
 
     public List<CourseEntity> getPlanningByGroup(Long groupId, LocalDate start, LocalDate end) {
-        validatePeriod(start, end);
+
 
         return courseRepository.getPlanningByGroup(groupId, start, end)
                 .stream()
@@ -121,7 +116,7 @@ public class CourseService {
     }
 
     public List<CourseEntity> getPlanningByModule(String code, LocalDate start, LocalDate end) {
-        validatePeriod(start, end);
+
 
         return courseRepository.getPlanningByModule(code, start, end)
                 .stream()
@@ -130,7 +125,7 @@ public class CourseService {
     }
 
     public List<CourseEntity> getPlanningByRoom(Long roomId, LocalDate start, LocalDate end) {
-        validatePeriod(start, end);
+
 
         return courseRepository.getPlanningByRoom(roomId, start, end)
                 .stream()
@@ -138,38 +133,11 @@ public class CourseService {
                 .toList();
     }
 
-    // =========================
+
     // VALIDATION MÉTIER
-    // =========================
 
-    private void validateCourse(CourseEntity c) {
-        if (c == null) {
-            throw new IllegalArgumentException("Course null");
-        }
 
-        if (c.getStartTime() == null) {
-            throw new IllegalArgumentException("StartTime requis");
-        }
 
-        if (c.getDuration() == null || c.getDuration().isZero()) {
-            throw new IllegalArgumentException("Duration invalide");
-        }
 
-        if (c.getCourseType() == null) {
-            throw new IllegalArgumentException("CourseType requis");
-        }
 
-        if (c.getModule() == null) {
-            throw new IllegalArgumentException("Module requis");
-        }
-    }
-
-    private void validatePeriod(LocalDate start, LocalDate end) {
-        if (start == null || end == null) {
-            throw new IllegalArgumentException("Dates nulles");
-        }
-        if (end.isBefore(start)) {
-            throw new IllegalArgumentException("Période invalide");
-        }
-    }
 }

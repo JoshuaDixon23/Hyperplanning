@@ -16,4 +16,17 @@ public class ProfessorEntity extends UserEntity {
         ProfessorEntity p =  UserFactory(fname, lname, ProfessorEntity::new);
         return p;
     }
+
+
+
+    public String getName() {
+        return super.getFirstName();
+    }
+
+
+    public String getSurname() {
+        return super.getLastName();
+    }
+
+
 }
