@@ -28,6 +28,11 @@ import fr.univtln.projet.planning.modele.planning.Module;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
+import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -35,14 +40,14 @@ import java.time.LocalTime;
 import java.util.EnumMap;
 import java.util.Map;
 
-public class Main /*extends Application*/ {
+public class Main extends Application {
 
-    /*
+
     @Override
     public void start(Stage stage) throws Exception {
 
         Parent root = FXMLLoader.load(
-                getClass().getResource("/view/planning-view.fxml")
+                getClass().getResource("/view/connexion-view.fxml")
         );
 
         Scene scene = new Scene(root, 1200, 800);
@@ -51,7 +56,7 @@ public class Main /*extends Application*/ {
                 getClass().getResource("/css/base.css").toExternalForm(),
                 getClass().getResource("/css/sidebar.css").toExternalForm(),
                 getClass().getResource("/css/components.css").toExternalForm(),
-                getClass().getResource("/css/planning.css").toExternalForm()
+                getClass().getResource("/css/connexion.css").toExternalForm()
         );
 
         stage.setTitle("Hyperplanning");
@@ -61,12 +66,12 @@ public class Main /*extends Application*/ {
         stage.show();
     }
 
-     */
+
 
     public static void main(String[] args) {
 
-        //launch();
-        System.out.println("⏳ Starting Hibernate and connecting to the database...");
+        launch();
+        /*System.out.println("⏳ Starting Hibernate and connecting to the database...");
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("HyperplanningPU");
         EntityManager em = emf.createEntityManager();
 
@@ -192,6 +197,6 @@ public class Main /*extends Application*/ {
         } finally {
             em.close();
             emf.close();
-        }
+        }*/
     }
 }
