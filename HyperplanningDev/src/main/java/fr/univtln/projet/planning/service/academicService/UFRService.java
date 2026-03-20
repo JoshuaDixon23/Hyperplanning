@@ -12,6 +12,7 @@ import fr.univtln.projet.planning.service.personService.AdminService;
 
 public class UFRService {
 
+    /*
     private final UFRRepository ufrRepository;
     private final CampusService campusService;
     private final AdminService adminService;
@@ -47,7 +48,7 @@ public class UFRService {
     }
 
     // --- MAPPINGS ---
-    private UFREntity toDomainEntity(UFR jpaUfr) {
+    UFREntity toDomainEntity(UFR jpaUfr) {
         if (jpaUfr == null) return null;
 
         UFREntity domainUfr = UFREntity.UFRFactory(
@@ -65,7 +66,7 @@ public class UFRService {
         return domainUfr;
     }
 
-    private UFR toJpaModel(UFREntity domainUfr) {
+    UFR toJpaModel(UFREntity domainUfr) {
         if (domainUfr == null) return null;
 
         UFR jpaUfr = UFR.UFRFactory(
@@ -82,4 +83,6 @@ public class UFRService {
         }
         return jpaUfr;
     }
+
+     */
 }

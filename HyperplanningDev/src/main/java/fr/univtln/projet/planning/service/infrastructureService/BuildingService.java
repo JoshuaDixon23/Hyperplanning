@@ -13,6 +13,7 @@ import fr.univtln.projet.planning.service.academicService.UFRService;
 
 public class BuildingService {
 
+    /*
     private final BuildingRepository buildingRepository;
     private final CampusService campusService;
     private final UFRService ufrService;
@@ -109,4 +110,6 @@ public class BuildingService {
         }
         return jpaBuilding;
     }
+
+     */
 }

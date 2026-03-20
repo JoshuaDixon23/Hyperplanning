@@ -1,11 +1,12 @@
 package fr.univtln.projet.planning.entity.person;
 
 import fr.univtln.projet.planning.entity.TextTransformation;
-import fr.univtln.projet.planning.modele.person.*;
+import lombok.Getter;
 
 import java.util.Objects;
 import java.util.function.BiFunction;
 
+@Getter
 public abstract class UserEntity {
     private final String firstName;
     private final String lastName;
@@ -16,12 +17,6 @@ public abstract class UserEntity {
     protected UserEntity(String firstName, String lastName) {
         this.firstName = firstName;
         this.lastName = lastName;
-    }
-
-    public UserEntity(String firstName, String lastName, String emailUniv) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.emailUniv = emailUniv;
     }
 
     protected static <T extends UserEntity> T UserFactory(String fname, String lname, BiFunction<String, String, T> constructor) {
@@ -37,22 +32,6 @@ public abstract class UserEntity {
         user.emailUniv = functionUnivMail.apply(user);
 
         return user;
-    }
-    
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setEmailUniv(String emailUniv) {
-        this.emailUniv = emailUniv;
-    }
-
-    public String getEmailUniv() {
-        return emailUniv;
     }
 
     @Override

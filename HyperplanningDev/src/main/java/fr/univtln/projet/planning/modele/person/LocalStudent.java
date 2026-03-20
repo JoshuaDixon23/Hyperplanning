@@ -16,7 +16,6 @@ import java.util.List;
 @Setter
 public class LocalStudent extends Student {
 
-
     @ManyToOne
     @JoinColumn(name = "promoId")
     private Promo promo;
@@ -30,11 +29,11 @@ public class LocalStudent extends Student {
         super();
     }
 
-    private LocalStudent(String firstName, String lastName) {
-        super(firstName, lastName);
+    public LocalStudent(String firstName, String lastName, String emailUniv, String emailPersonal) {
+        super(firstName, lastName, emailUniv, emailPersonal);
     }
 
-
+    /*
     public static LocalStudent LocalStudentFactory(String fname, String lname, String emailPersonal) {
         LocalStudent s = UserFactory(fname, lname, LocalStudent::new);
         
@@ -44,6 +43,7 @@ public class LocalStudent extends Student {
         
         return s;
     }
+     */
 
     public List<Group> getGroups() {
         return Collections.unmodifiableList(groups);

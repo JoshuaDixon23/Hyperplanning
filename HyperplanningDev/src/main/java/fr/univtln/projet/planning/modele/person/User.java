@@ -28,17 +28,19 @@ public abstract class User {
     @Column(unique = true, nullable = false)
     protected String emailUniv;
 
-    @Transient
-    protected static final EmailCreate functionUnivMail = new EmailCreate();
+    //@Transient
+    //protected static final EmailCreate functionUnivMail = new EmailCreate();
 
     protected User() {
     }
 
-    protected User(String firstName, String lastName) {
+    protected User(String firstName, String lastName, String emailUniv) {
         this.firstName = firstName;
         this.lastName = lastName;
+        this.emailUniv = emailUniv;
     }
 
+    /*
     protected static <T extends User> T UserFactory(String fname, String lname, BiFunction<String, String, T> constructor) {
         String formattedFname = TextTransformation.capitalize(fname);
         String formattedLname = lname.toUpperCase();
@@ -48,6 +50,7 @@ public abstract class User {
 
         return user;
     }
+     */
 
     @Override
     public String toString() {

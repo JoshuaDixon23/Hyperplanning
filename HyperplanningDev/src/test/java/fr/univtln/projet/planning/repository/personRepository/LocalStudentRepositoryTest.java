@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 public class LocalStudentRepositoryTest {
 
     @Test
-    void testFindByLastName() {
+    void testFindByPromo() {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("HyperplanningPU");
         EntityManager em = emf.createEntityManager();
         LocalStudentRepository lsr = new LocalStudentRepository(em);

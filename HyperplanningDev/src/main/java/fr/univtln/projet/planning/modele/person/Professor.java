@@ -22,11 +22,14 @@ public class Professor extends User {
         super();
     }
 
-    private Professor(String firstName, String lastName) {
-        super(firstName, lastName);
+    public Professor(String firstName, String lastName, String emailUniv) {
+        super(firstName, lastName, emailUniv);
     }
 
+    /*
     public static Professor ProfessorFactory(String fname, String lname) {
         return UserFactory(fname, lname, Professor::new);
     }
+
+     */
 }

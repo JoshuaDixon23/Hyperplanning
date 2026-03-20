@@ -15,11 +15,14 @@ public class Admin extends User {
         super();
     }
 
-    private Admin(String firstName, String lastName) {
-        super(firstName, lastName);
+    public Admin(String firstName, String lastName, String emailUniv) {
+        super(firstName, lastName, emailUniv);
     }
 
+    /*
     public static Admin AdminFactory(String fname, String lname) {
         return UserFactory(fname, lname, Admin::new);
     }
+
+     */
 }

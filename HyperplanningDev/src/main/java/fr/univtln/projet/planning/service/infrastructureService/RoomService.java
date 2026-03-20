@@ -12,6 +12,7 @@ import fr.univtln.projet.planning.service.planningService.CourseService;
 
 public class RoomService {
 
+    /*
     private final RoomRepository roomRepository;
     private final BuildingService buildingService;
     private final CourseService courseService;
@@ -69,4 +70,6 @@ public class RoomService {
         }
         return jpaRoom;
     }
+
+     */
 }
