@@ -1,13 +1,11 @@
 package fr.univtln.projet.planning.entity.person;
 
-import fr.univtln.projet.planning.entity.international.BasketEntity;
-
 public class InternationalStudentEntity extends StudentEntity {
-    private BasketEntity basket;
+    private BasketFinalEntity basketFinal;
 
     private InternationalStudentEntity(String fname, String lname){
         super(fname, lname);
-        this.basket = new BasketEntity();
+        this.basketFinal = new BasketFinalEntity();
     }
 
 
