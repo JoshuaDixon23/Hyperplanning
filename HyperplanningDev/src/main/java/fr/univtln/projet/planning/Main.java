@@ -29,6 +29,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.EnumMap;
@@ -130,6 +131,8 @@ public class Main /*extends Application*/ {
             // ==========================================
             // 4. PLANNING (Module -> Course <-> Group)
             // ==========================================
+
+            Duration duration = Duration.ofHours(2);
             System.out.println("4️⃣ Creating Planning...");
             Module javaModule = Module.builder()
                     .code("m-java-01")
@@ -143,7 +146,7 @@ public class Main /*extends Application*/ {
                     .module(javaModule)
                     .date(LocalDate.of(2026, 9, 15))
                     .startTime(LocalTime.of(10, 0))
-                    .duration(180)
+                    .duration(duration)
                     .courseType(CourseType.TP)
                     .room(roomInfo)
                     .professor(prof)

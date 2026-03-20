@@ -27,6 +27,15 @@ public class CourseRepository extends JpaRepository<Course, Long >  {
     }
 
 
+    //méthode findall
+
+    public List<Course> findAll() {
+        String jpql = "SELECT g FROM Course g";
+        TypedQuery<Course> query = em.createQuery(jpql, Course.class);
+        return query.getResultList();
+    }
+
+
     // récuperer le planning d'un group par id ou par group
 
     public List<Course> getPlanningByGroup(Group group, LocalDate beginningDate, LocalDate endDate) {
@@ -92,4 +101,7 @@ public class CourseRepository extends JpaRepository<Course, Long >  {
         return query.getResultList();
     }
 
+    //public Optional<Object> findAll(int pageNumber, int pageSize) {
+
+    //}
 }

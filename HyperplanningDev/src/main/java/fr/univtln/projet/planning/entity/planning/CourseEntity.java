@@ -2,6 +2,8 @@ package fr.univtln.projet.planning.entity.planning;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -12,15 +14,18 @@ import fr.univtln.projet.planning.modele.planning.CourseType;
 
 public class CourseEntity implements Comparable<CourseEntity>{
     private final ModuleEntity module;
-    private Instant startTime;
+
+    private LocalDate date;
+    private LocalTime startTime;
     private Duration duration;
     private List<ProfessorEntity> professors;
     private RoomEntity room;
     private CourseType courseType; // may be final
     // private State state; (State has to be an Enum of "annulated", "in progress"... respectively to state diagram
 
-    private CourseEntity(Builder b) {
+    public CourseEntity(Builder b) {
         module = b.module;
+        date = b.date;
         startTime = b.startTime;
         duration = b.duration;
         professors = b.professors;
@@ -30,7 +35,9 @@ public class CourseEntity implements Comparable<CourseEntity>{
 
     public ModuleEntity module() { return module; }
 
-    public Instant startTime() { return startTime; }
+    public LocalDate date() { return date; }
+
+    public LocalTime startTime() { return startTime; }
 
     public Duration duration() { return duration; }
 
@@ -44,7 +51,8 @@ public class CourseEntity implements Comparable<CourseEntity>{
 
     public static final class Builder {
         private ModuleEntity module = null;
-        private Instant startTime = null;
+        private LocalDate date = null;
+        private LocalTime startTime = null;
         private Duration duration = null;
         private List<ProfessorEntity> professors = null;
         private RoomEntity room = null;
@@ -55,7 +63,9 @@ public class CourseEntity implements Comparable<CourseEntity>{
 
         public Builder module(ModuleEntity m) { this.module = m; return this; }
 
-        public Builder startTime(Instant t) { this.startTime = t; return this; }
+        public Builder date(LocalDate date) { this.date = date; return this; }
+
+        public Builder startTime(LocalTime t) { this.startTime = t; return this; }
 
         public Builder duration(Duration d) { this.duration = d; return this; }
 
@@ -74,6 +84,7 @@ public class CourseEntity implements Comparable<CourseEntity>{
 
         public CourseEntity build() {
             Objects.requireNonNull(module, "module required");
+            Objects.requireNonNull(date, "date required");
             Objects.requireNonNull(startTime, "startTime required");
             Objects.requireNonNull(duration, "duration required");
             Objects.requireNonNull(courseType, "courseType required");
@@ -87,9 +98,14 @@ public class CourseEntity implements Comparable<CourseEntity>{
         return module;
     }
 
-    public Instant getStartTime() {
+    public LocalDate getDate() {
+        return date;
+    }
+
+    public LocalTime getStartTime() {
         return startTime;
     }
+
 
     public Duration getDuration() {
         return duration;
@@ -107,7 +123,11 @@ public class CourseEntity implements Comparable<CourseEntity>{
         return courseType;
     }
 
-    public void setStartTime(Instant startTime) {
+    public void setDate(LocalDate date) {
+        this.date = date;
+    }
+
+    public void setStartTime(LocalTime startTime) {
         this.startTime = startTime;
     }
 

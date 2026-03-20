@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.*;
@@ -20,17 +21,17 @@ public class Course implements Comparable<Course> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long courseId;
-    
+
     @Column(nullable = false)
     private LocalDate date;
-    
+
     @Column(nullable = false)
     private LocalTime startTime;
-    
+
     @Column(nullable = false)
-    private int duration; 
-    
-    @Enumerated(EnumType.STRING) 
+    private Duration duration;
+
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private CourseType courseType;
 
@@ -44,17 +45,17 @@ public class Course implements Comparable<Course> {
 
     @ManyToMany
     @JoinTable(
-        name = "Group_Course",
-        joinColumns = @JoinColumn(name = "courseId"),
-        inverseJoinColumns = @JoinColumn(name = "groupId")
+            name = "Group_Course",
+            joinColumns = @JoinColumn(name = "courseId"),
+            inverseJoinColumns = @JoinColumn(name = "groupId")
     )
     private Set<Group> groups = new HashSet<>();
 
     @ManyToMany
     @JoinTable(
-        name = "Professor_Course",
-        joinColumns = @JoinColumn(name = "courseId"),
-        inverseJoinColumns = @JoinColumn(name = "userId")
+            name = "Professor_Course",
+            joinColumns = @JoinColumn(name = "courseId"),
+            inverseJoinColumns = @JoinColumn(name = "userId")
     )
     private List<Professor> professors = new ArrayList<>();
 
@@ -72,15 +73,15 @@ public class Course implements Comparable<Course> {
         this.courseType = b.courseType;
     }
 
-    public static Builder builder() { 
-        return new Builder(); 
+    public static Builder builder() {
+        return new Builder();
     }
 
     public static final class Builder {
         private Module module = null;
         private LocalDate date = null;
         private LocalTime startTime = null;
-        private int duration = 0;
+        private Duration duration = Duration.ZERO;;
         private List<Professor> professors = new ArrayList<>();
         private Set<Group> groups = new HashSet<>();
         private Room room = null;
@@ -91,8 +92,8 @@ public class Course implements Comparable<Course> {
         public Builder module(Module m) { this.module = m; return this; }
         public Builder date(LocalDate d) { this.date = d; return this; }
         public Builder startTime(LocalTime t) { this.startTime = t; return this; }
-        public Builder duration(int d) { this.duration = d; return this; }
-        
+        public Builder duration(Duration d) { this.duration = d; return this; }
+
         // Add professors one by one
         public Builder professor(Professor p) {
             this.professors.add(p);
@@ -114,7 +115,7 @@ public class Course implements Comparable<Course> {
             Objects.requireNonNull(date, "date is required");
             Objects.requireNonNull(startTime, "startTime is required");
             Objects.requireNonNull(courseType, "courseType is required");
-            if (duration <= 0) {
+            if (duration.getSeconds() == 0) {
                 throw new IllegalArgumentException("duration must be strictly positive");
             }
 
@@ -138,12 +139,12 @@ public class Course implements Comparable<Course> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Course course = (Course) o;
-        return duration == course.duration && 
-               Objects.equals(date, course.date) && 
-               Objects.equals(startTime, course.startTime) && 
-               Objects.equals(module, course.module) && 
-               Objects.equals(room, course.room) && 
-               Objects.equals(courseType, course.courseType);
+        return duration == course.duration &&
+                Objects.equals(date, course.date) &&
+                Objects.equals(startTime, course.startTime) &&
+                Objects.equals(module, course.module) &&
+                Objects.equals(room, course.room) &&
+                Objects.equals(courseType, course.courseType);
     }
 
     @Override
