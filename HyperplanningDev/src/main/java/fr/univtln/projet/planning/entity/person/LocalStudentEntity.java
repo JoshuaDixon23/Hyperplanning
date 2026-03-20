@@ -2,7 +2,6 @@ package fr.univtln.projet.planning.entity.person;
 import fr.univtln.projet.planning.entity.academic.PromoEntity;
 import fr.univtln.projet.planning.entity.academic.GroupEntity;
 
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -17,7 +16,9 @@ public class LocalStudentEntity extends StudentEntity {
     }
 
     public LocalStudentEntity(String firstName, String lastName, String emailUniv, String emailPersonal) {
-        super(firstName, lastName, emailUniv, emailPersonal);
+        super(firstName, lastName);
+        this.emailUniv = emailUniv;
+        this.emailPersonal = emailPersonal;
     }
 
     public static LocalStudentEntity LocalStudentFactory(String fname, String lname, /*Promo promo,*/ String emailPersonal) {

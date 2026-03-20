@@ -11,6 +11,7 @@ import fr.univtln.projet.planning.service.planningService.CourseService;
 
 public class GroupService {
 
+    /*
     private final GroupRepository groupRepository;
     private final PromoService promoService;
     private final CourseService courseService;
@@ -73,4 +74,6 @@ public class GroupService {
         }
         return jpaEntity;
     }
+
+     */
 }

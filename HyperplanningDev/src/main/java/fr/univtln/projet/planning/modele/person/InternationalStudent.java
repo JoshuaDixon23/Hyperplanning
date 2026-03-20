@@ -20,11 +20,12 @@ public class InternationalStudent extends Student {
         // this.basket = new Basket(); 
     }
 
-    private InternationalStudent(String firstName, String lastName) {
-        super(firstName, lastName);
+    public InternationalStudent(String firstName, String lastName, String emailUniv, String emailPersonal) {
+        super(firstName, lastName, emailUniv, emailPersonal);
         //this.basket = new Basket();
     }
 
+    /*
     public static InternationalStudent InternationalStudentFactory(String fname, String lname, String emailPersonal) {
         
         InternationalStudent s = UserFactory(fname, lname, InternationalStudent::new);
@@ -36,4 +37,5 @@ public class InternationalStudent extends Student {
         
         return s;
     }
+     */
 }

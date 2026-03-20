@@ -9,6 +9,7 @@ import fr.univtln.projet.planning.repository.academicRepository.PromoRepository;
 import fr.univtln.projet.planning.service.personService.LocalStudentService;
 
 public class PromoService {
+    /*
 
     private final PromoRepository promoRepository;
     private final UFRService ufrService;
@@ -84,4 +85,6 @@ public class PromoService {
         }
         return jpaPromo;
     }
+
+     */
 }

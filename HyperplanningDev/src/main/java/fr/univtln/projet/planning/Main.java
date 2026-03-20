@@ -80,9 +80,9 @@ public class Main /*extends Application*/ {
             // 1. PEOPLE (Users - Sans InternationalStudent)
             // ==========================================
             System.out.println("1️⃣ Creating Users...");
-            Admin admin = Admin.AdminFactory("jean", "michel");
-            Professor prof = Professor.ProfessorFactory("alan", "turing");
-            LocalStudent localStudent = LocalStudent.LocalStudentFactory("alice", "liddell", "alice.perso@gmail.com");
+            Admin admin = new Admin("jean", "michel", "jean.michel7@univ-tln.fr");
+            Professor prof = new Professor("alan", "turing", "alan.turing3@univ-tln.fr");
+            LocalStudent localStudent = new LocalStudent("alice", "liddell", "alice-perso621@etud.univ-tln.fr", "alice.perso@gmail.com");
 
             em.persist(admin);
             em.persist(prof);
