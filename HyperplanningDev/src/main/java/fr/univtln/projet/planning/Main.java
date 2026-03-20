@@ -42,9 +42,9 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-public class Main /*extends Application*/ {
+public class Main extends Application {
 
-    /*
+
     @Override
     public void start(Stage stage) throws Exception {
 
@@ -68,11 +68,11 @@ public class Main /*extends Application*/ {
         stage.show();
     }
 
-     */
+
 
     public static void main(String[] args) {
 
-        //launch();
+        launch();
         System.out.println("⏳ Starting Hibernate and connecting to the database...");
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("HyperplanningPU");
         EntityManager em = emf.createEntityManager();

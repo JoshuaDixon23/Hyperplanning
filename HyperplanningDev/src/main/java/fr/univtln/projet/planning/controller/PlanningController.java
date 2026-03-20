@@ -1,5 +1,7 @@
 package fr.univtln.projet.planning.controller;
 
+import fr.univtln.projet.planning.entity.planning.Course;
+import fr.univtln.projet.planning.service.planningService.CourseService;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.ScrollEvent;
@@ -8,6 +10,8 @@ import javafx.scene.Scene;
 import javafx.scene.layout.*;
 import javafx.scene.Node;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.WeekFields;
 import java.util.ArrayList;
@@ -43,7 +47,7 @@ public class PlanningController {
     private final ToggleGroup viewGroup = new ToggleGroup();
 
     private boolean weeksAnimating = false;
-    private static final int WEEKS_SHOWN = 6;;
+    private int weeksShown = 6;;
 
     private LocalDate baseWeekMonday;
 
@@ -53,6 +57,7 @@ public class PlanningController {
     private final DateTimeFormatter dayMonthFmt = DateTimeFormatter.ofPattern("d MMM", Locale.FRENCH);
 
     private final List<VBox> sourceCourseCards = new ArrayList<>();
+    private final CourseService courseService = new CourseService();
 
     /**
      * Called by JavaFx after the FXML file has been loaded
@@ -69,12 +74,7 @@ public class PlanningController {
         renderWeeksInto(weeksContainer, baseWeekMonday);
 
         buildEmptyGrid(8, 20, 1);
-
-        addCourse(0, 8, 0, 120, "Informatique", "Salle A12", "M. Dupont");
-        addCourse(0, 8, 30, 120, "Algo", "Salle B14", "Mme Martin");
-        addCourse(4, 15, 0, 180, "Maths", "Salle A12", "M. Dupont");
-        addCourse(2, 13, 30, 120, "Projet", "Salle A12", "M. Dupont");
-
+        refreshPlanning();
         btnMonPlan.setToggleGroup(viewGroup);
         btnMaPromo.setToggleGroup(viewGroup);
         btnAutrePromo.setToggleGroup(viewGroup);
@@ -98,9 +98,19 @@ public class PlanningController {
             event.consume();
         });
 
+        weeksViewport.widthProperty().addListener((obs, oldVal, newVal) -> {
+            int newCount = computeWeeksShown();
+            if (newCount != weeksShown) {
+                weeksShown = newCount;
+                renderWeeksInto(weeksContainer, baseWeekMonday);
+            }
+        });
+
         Platform.runLater(() -> {
             layoutCoursesStacked();
             timeScroll.vvalueProperty().bindBidirectional(planningScroll.vvalueProperty());
+            weeksShown = computeWeeksShown();
+            renderWeeksInto(weeksContainer, baseWeekMonday);
         });
     }
 
@@ -112,15 +122,66 @@ public class PlanningController {
     }
 
     @FXML
-    private void onNextWeeks(){
+    private void onNextWeeks() {
         if (weeksAnimating) return;
+        selectedWeekMonday = selectedWeekMonday.plusWeeks(1);
         slideWeeks(true);
+        refreshPlanning();
     }
 
     @FXML
     private void onPrevWeeks() {
         if (weeksAnimating) return;
+        selectedWeekMonday = selectedWeekMonday.minusWeeks(1);
         slideWeeks(false);
+        refreshPlanning();
+    }
+
+    private int computeWeeksShown() {
+        double viewportWidth = weeksViewport.getWidth();
+
+        if (viewportWidth <= 0) {
+            return 6;
+        }
+
+        double estimatedWeekButtonWidth = 115; // plus réaliste
+        double gap = 12;
+
+        int count = (int) Math.floor((viewportWidth + gap) / (estimatedWeekButtonWidth + gap));
+
+        return Math.max(6, count);
+    }
+
+    private void loadCoursesFromService(List<Course> courses) {
+        for (Course course : courses) {
+            LocalDateTime dateTime = LocalDateTime.ofInstant(
+                    course.getStartTime(),
+                    ZoneId.of("Europe/Paris")
+            );
+
+            int dayIndex = dateTime.getDayOfWeek().getValue() - 1; // lundi = 0
+            int startHour = dateTime.getHour();
+            int startMinute = dateTime.getMinute();
+            int durationMinutes = (int) course.getDuration().toMinutes();
+
+            String moduleName = course.getModule() != null
+                    ? course.getModule().getName()
+                    : "Cours";
+
+            String courseType = course.getCourseType() != null
+                    ? course.getCourseType().name()
+                    : "Type non défini";
+
+            String teacher = (course.getProfessors() != null && !course.getProfessors().isEmpty())
+                    ? course.getProfessors().get(0).getFirstName() + " " + course.getProfessors().get(0).getLastName()
+                    : "Prof non défini";
+
+            String room = course.getRoom() != null
+                    ? course.getRoom().getName()
+                    : "Salle non définie";
+
+            addCourse(dayIndex, startHour, startMinute, durationMinutes, moduleName, courseType, teacher, room);
+        }
     }
 
     private void slideWeeks(boolean toNext) {
@@ -132,8 +193,8 @@ public class PlanningController {
         }
 
         LocalDate newBase = toNext
-                ? baseWeekMonday.plusWeeks(WEEKS_SHOWN)
-                : baseWeekMonday.minusWeeks(WEEKS_SHOWN);
+                ? baseWeekMonday.plusWeeks(weeksShown)
+                : baseWeekMonday.minusWeeks(weeksShown);
 
         HBox incoming = new HBox(12);
         incoming.setAlignment(weeksContainer.getAlignment());
@@ -172,7 +233,7 @@ public class PlanningController {
     private void renderWeeksInto(HBox container, LocalDate baseMonday) {
         container.getChildren().clear();
 
-        for (int i = 0; i < WEEKS_SHOWN; i++) {
+        for (int i = 0; i < weeksShown; i++) {
             LocalDate weekMonday = baseMonday.plusWeeks(i);
             LocalDate weekSunday = weekMonday.plusDays(6);
 
@@ -182,6 +243,10 @@ public class PlanningController {
             Button weekBtn = new Button(text);
             weekBtn.getStyleClass().add("week-pill");
 
+            weekBtn.setPrefWidth(140);
+            weekBtn.setMinWidth(140);
+            weekBtn.setMaxWidth(140);
+
             if (weekMonday.equals(selectedWeekMonday)) {
                 weekBtn.getStyleClass().add("week-pill-active");
             }
@@ -189,6 +254,7 @@ public class PlanningController {
             weekBtn.setOnAction(e -> {
                 selectedWeekMonday = weekMonday;
                 renderWeeksInto(container, baseMonday);
+                refreshPlanning();
             });
 
             container.getChildren().add(weekBtn);
@@ -276,7 +342,7 @@ public class PlanningController {
 
     }
 
-    private VBox buildCourseCard(String title, String room, String teacher) {
+    private VBox buildCourseCard(String title, String type, String teacher, String room) {
         VBox card = new VBox(6);
         card.getStyleClass().add("course-card");
 
@@ -285,22 +351,27 @@ public class PlanningController {
         t.setWrapText(true);
         t.setMaxWidth(Double.MAX_VALUE);
 
-        Label r = new Label(room);
-        r.getStyleClass().add("course-meta");
-        r.setWrapText(true);
-        r.setMaxWidth(Double.MAX_VALUE);
+        Label ty = new Label(type);
+        ty.getStyleClass().add("course-meta");
+        ty.setWrapText(true);
+        ty.setMaxWidth(Double.MAX_VALUE);
 
         Label te = new Label(teacher);
         te.getStyleClass().add("course-meta");
         te.setWrapText(true);
         te.setMaxWidth(Double.MAX_VALUE);
 
+        Label r = new Label(room);
+        r.getStyleClass().add("course-meta");
+        r.setWrapText(true);
+        r.setMaxWidth(Double.MAX_VALUE);
+
         Button button = new Button("More");
         button.getStyleClass().add("button-more");
         button.setWrapText(true);
         button.setMaxWidth(Double.MAX_VALUE);
 
-        card.getChildren().addAll(t, r, te, button);
+        card.getChildren().addAll(t, ty, te, r, button);
 
         card.setMinWidth(0);
         card.setMaxWidth(Double.MAX_VALUE);
@@ -311,9 +382,9 @@ public class PlanningController {
 
 
     private void addCourse(int dayIndex, int startHour, int startMinute, int durationMinutes,
-                           String title, String room, String teacher) {
+                           String title, String type, String teacher, String room) {
 
-        VBox card = buildCourseCard(title, room, teacher);
+        VBox card = buildCourseCard(title, type, teacher, room);
 
         card.getProperties().put("dayIndex", dayIndex);
         card.getProperties().put("startMinutes", startHour * 60 + startMinute);
@@ -356,6 +427,14 @@ public class PlanningController {
         return groups;
     }
 
+    private void refreshPlanning() {
+        sourceCourseCards.clear();
+        coursesPane.getChildren().clear();
+
+        List<Course> courses = courseService.getCoursesForWeek(selectedWeekMonday);
+        loadCoursesFromService(courses);
+        layoutCoursesStacked();
+    }
     private void placeSingleCard(VBox card, double dayWidth, int dayIndex) {
         double horizontalPadding = 8;
 

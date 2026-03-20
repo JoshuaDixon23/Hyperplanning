@@ -57,17 +57,14 @@
 
 
     <center>
-        <VBox spacing="14" styleClass="content">
-
-
+        <VBox spacing="14" styleClass="content" fillWidth="true" maxWidth="Infinity">
 
             <Label text="Planning" styleClass="page-title"/>
 
-
-            <HBox spacing="12" alignment="CENTER_LEFT" styleClass="weeks-row" >
+            <HBox spacing="12" alignment="CENTER" styleClass="weeks-row" fillHeight="true" maxWidth="Infinity" VBox.vgrow="NEVER">
                 <Button fx:id="prevWeeksBtn" text="❮" styleClass="week-arrow" onAction="#onPrevWeeks"/>
 
-                <StackPane fx:id="weeksViewport" styleClass="weeks-viewport">
+                <StackPane fx:id="weeksViewport" styleClass="weeks-viewport" HBox.hgrow="ALWAYS" maxWidth="Infinity" minWidth="0">
                     <HBox fx:id="weeksContainer" spacing="12" alignment="CENTER_LEFT"/>
                 </StackPane>
 

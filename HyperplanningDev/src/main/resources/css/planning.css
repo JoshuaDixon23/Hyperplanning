@@ -17,6 +17,10 @@
     -fx-font-size: 12px;
 }
 
+.weeks-viewport {
+    -fx-min-width: 0;
+}
+
 .week-pill-active {
     -fx-background-color: white;
     -fx-border-color: #d5d7db;

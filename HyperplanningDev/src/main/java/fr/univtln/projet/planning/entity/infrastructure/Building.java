@@ -1,7 +1,6 @@
 package fr.univtln.projet.planning.entity.infrastructure;
 
 import fr.univtln.projet.planning.entity.academic.UFR;
-import fr.univtln.projet.planning.modele.infrastructure.Campus;
 
 import java.time.LocalTime;
 import java.util.*;
