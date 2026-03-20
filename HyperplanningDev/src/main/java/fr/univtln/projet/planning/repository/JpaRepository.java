@@ -22,7 +22,6 @@ public abstract class JpaRepository<T, ID> implements GenericRepository<T, ID> {
         return Optional.ofNullable(em.find(entityClass, id));
     }
 
-    /*
     @Override
     public List<T> findAll(int pageNumber, int pageSize) {
         //Utiliser des named queries ou la criteria API
@@ -32,8 +31,6 @@ public abstract class JpaRepository<T, ID> implements GenericRepository<T, ID> {
             .setMaxResults(pageSize)
             .getResultList();
     }
-
-     */
 
     @Override
     public T save(T entity) {

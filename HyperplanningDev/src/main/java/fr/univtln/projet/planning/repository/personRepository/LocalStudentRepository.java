@@ -47,6 +47,7 @@ public class LocalStudentRepository extends JpaRepository<LocalStudent, Long> {
                 .getSingleResult();
     }
 
+    @Override
     public List<LocalStudent> findAll(int pageNumber, int pageSize) {
         //Utiliser des named queries ou la criteria API
         String jpql = "SELECT e FROM LocalStudent e ORDER BY e.userId";
