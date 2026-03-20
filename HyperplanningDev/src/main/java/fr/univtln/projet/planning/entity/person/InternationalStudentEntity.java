@@ -1,5 +1,7 @@
 package fr.univtln.projet.planning.entity.person;
 
+import fr.univtln.projet.planning.entity.international.BasketFinalEntity;
+
 public class InternationalStudentEntity extends StudentEntity {
     private BasketFinalEntity basketFinal;
 
