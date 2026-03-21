@@ -66,6 +66,7 @@ public class Main /*extends Application*/ {
     public static void main(String[] args) {
 
         //launch();
+        /*
         System.out.println("⏳ Starting Hibernate and connecting to the database...");
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("HyperplanningPU");
         EntityManager em = emf.createEntityManager();
@@ -193,5 +194,7 @@ public class Main /*extends Application*/ {
             em.close();
             emf.close();
         }
+
+         */
     }
 }

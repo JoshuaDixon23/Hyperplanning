@@ -1,13 +1,12 @@
 package fr.univtln.projet.planning.service.academicService;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import fr.univtln.projet.planning.entity.academic.GroupEntity;
 import fr.univtln.projet.planning.modele.academic.Group;
 import fr.univtln.projet.planning.repository.academicRepository.GroupRepository;
 import fr.univtln.projet.planning.service.personService.LocalStudentService;
-import fr.univtln.projet.planning.service.planningService.CourseService; 
+import fr.univtln.projet.planning.service.planningService.CourseService;
+
+import java.util.List;
 
 public class GroupService {
 
@@ -17,62 +16,80 @@ public class GroupService {
     private final CourseService courseService;
     private final LocalStudentService localStudentService;
 
-    public GroupService(GroupRepository groupRepository, PromoService promoService, CourseService courseService, LocalStudentService localStudentService) {
+    public GroupService(GroupRepository groupRepository,
+                        PromoService promoService,
+                        CourseService courseService,
+                        LocalStudentService localStudentService) {
         this.groupRepository = groupRepository;
         this.promoService = promoService;
         this.courseService = courseService;
         this.localStudentService = localStudentService;
     }
 
-    // --- MÉTHODES MÉTIER ---
+    // ------------------ MAPPERS ------------------
 
-    public GroupEntity createGroup(GroupEntity domainGroup) {
-        Group jpaEntity = toEntity(domainGroup);
-        Group savedEntity = groupRepository.save(jpaEntity);
-        return toDomain(savedEntity);
+    public GroupEntity toDomain(Group g) {
+        if (g == null) return null;
+
+        GroupEntity entity = GroupEntity.GroupFactory(
+                g.getNum(),
+                g.getType()
+        );
+
+        entity.setPromo(promoService.toDomain(g.getPromo()));
+
+        if (g.getStudents() != null) {
+            g.getStudents().forEach(s -> entity.addLocalStudent(localStudentService.toDomain(s)));
+        }
+
+        if (g.getPlanning() != null) {
+            g.getPlanning().forEach(c -> entity.addCourse(courseService.toDomain(c)));
+        }
+
+        return entity;
     }
 
-    public GroupEntity getGroupById(Long id) {
+    public Group toJpa(GroupEntity g) {
+        if (g == null) return null;
+
+        Group jpa = Group.GroupFactory(
+                g.getNum(),
+                g.getType()
+        );
+
+        jpa.setPromo(promoService.toJpa(g.getPromo()));
+
+        if (g.getStudents() != null) {
+            g.getStudents().forEach(s -> jpa.addLocalStudent(localStudentService.toJpa(s)));
+        }
+
+        if (g.getPlanning() != null) {
+            g.getPlanning().forEach(c -> jpa.addCourse(courseService.toJpa(c)));
+        }
+
+        return jpa;
+    }
+
+    // ------------------ CREATE ------------------
+
+    public GroupEntity create(GroupEntity entity) {
+        Group saved = groupRepository.save(toJpa(entity));
+        return toDomain(saved);
+    }
+
+    // ------------------ FIND ------------------
+
+    public GroupEntity findById(Long id) {
         return groupRepository.findById(id)
                 .map(this::toDomain)
                 .orElse(null);
     }
 
-    public List<GroupEntity> getAllGroups() {
-        return groupRepository.findAll().stream()
+    public List<GroupEntity> findAll() {
+        return groupRepository.findAll()
+                .stream()
                 .map(this::toDomain)
-                .collect(Collectors.toList());
-    }
-
-    // --- MAPPINGS ---
-    private GroupEntity toDomainEntity(Group jpaEntity) {
-        if (jpaEntity == null) return null;
-
-        GroupEntity domainGroup = GroupEntity.GroupFactory(jpaEntity.getNum(), jpaEntity.getType());
-        domainGroup.setPromo(promoService.toDomainEntity(jpaEntity.getPromo()));
-
-        if (jpaEntity.getStudents() != null) {
-            jpaEntity.getStudents().forEach(s -> domainGroup.addLocalStudent(localStudentService.toDomainEntity(s)));
-        }
-        if (jpaEntity.getPlanning() != null) {
-            jpaEntity.getPlanning().forEach(c -> domainGroup.addCourse(courseService.toDomainEntity(c)));
-        }
-        return domainGroup;
-    }
-
-    private Group toEntityEntity(GroupEntity domainGroup) {
-        if (domainGroup == null) return null;
-
-        Group jpaEntity = Group.GroupFactory(domainGroup.getNum(), domainGroup.getType());
-        jpaEntity.setPromo(promoService.toJpaModel(domainGroup.getPromo()));
-
-        if (domainGroup.getStudents() != null) {
-            domainGroup.getStudents().forEach(s -> jpaEntity.addLocalStudent(localStudentService.toJpaModel(s)));
-        }
-        if (domainGroup.getPlanning() != null) {
-            domainGroup.getPlanning().forEach(c -> jpaEntity.addCourse(courseService.toJpaModel(c)));
-        }
-        return jpaEntity;
+                .toList();
     }
 
      */

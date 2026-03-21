@@ -11,7 +11,9 @@ import java.util.Objects;
 import java.util.Set;
 
 @Entity
-@Table(name = "Room")
+@Table(name = "Room",
+    uniqueConstraints = @UniqueConstraint(columnNames = {"number", "idBuilding"})
+)
 @Getter
 @Setter
 public class Room {
@@ -20,8 +22,8 @@ public class Room {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idRoom;
 
-    @Column(nullable = false, length = 50)
-    private String number;
+    @Column(nullable = false)
+    private int number;
 
     @Column(nullable = false)
     private int capacity;
@@ -34,21 +36,21 @@ public class Room {
     @JoinColumn(name = "idBuilding", nullable = false)
     private Building building;
 
-    @OneToMany(mappedBy = "room")
-    private Set<Course> planning = new HashSet<>();
+    //@OneToMany(mappedBy = "room")
+    //private Set<Course> planning = new HashSet<>();
 
 
     protected Room() {
     }
 
-    private Room(String number, int capacity, RoomType type, Building building) {
+    private Room(int number, int capacity, RoomType type, Building building) {
         this.number = number;
         this.capacity = capacity;
         this.type = type;
         this.building = building;
     }
 
-    public static Room RoomFactory(String number, int capacity, RoomType type, Building building) {
+    public static Room RoomFactory(int number, int capacity, RoomType type, Building building) {
         Objects.requireNonNull(number, "Room number cannot be null");
         Objects.requireNonNull(type, "Room type cannot be null");
         Objects.requireNonNull(building, "Room must belong to a building");
@@ -56,6 +58,7 @@ public class Room {
         return new Room(number, capacity, type, building);
     }
 
+    /*
     public void addCourse(Course c) {
         if (c != null) {
             planning.add(c);
@@ -74,6 +77,8 @@ public class Room {
     public Set<Course> getPlanning() {
         return Collections.unmodifiableSet(planning);
     }
+
+     */
 
     @Override
     public boolean equals(Object o) {

@@ -16,13 +16,13 @@ public class LocalStudentService {
     //private final EntityManager entityManager;
 
     // mapper from JPA to Domain (Entity)
-    private LocalStudentEntity toDomain(LocalStudent s){
+    public LocalStudentEntity toDomain(LocalStudent s){
         if (s == null) return null;
         return new LocalStudentEntity(s.getFirstName(), s.getLastName(), s.getEmailUniv(), s.getEmailPersonal() /*,promoRepository.toDomainEntity(s.getPromo())*/);
     }
 
     // mapper from Domain (Entity) to JPA
-    private LocalStudent toJpa(LocalStudentEntity s){
+    public LocalStudent toJpa(LocalStudentEntity s){
         if (s == null) return null;
         return new LocalStudent(s.getFirstName(), s.getLastName(), s.getEmailUniv(), s.getEmailPersonal() );
     }

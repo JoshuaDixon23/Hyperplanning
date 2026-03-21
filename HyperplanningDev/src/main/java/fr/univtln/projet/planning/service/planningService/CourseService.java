@@ -34,7 +34,7 @@ public class CourseService {
 
 
     // JPA -> Entity
-    private CourseEntity toDomain(Course c) {
+    public CourseEntity toDomain(Course c) {
         if (c == null) return null;
 
 
@@ -49,7 +49,7 @@ public class CourseService {
     }
 
     // Entity -> JPA
-    private Course toJpa(CourseEntity c) {
+    public Course toJpa(CourseEntity c) {
         if (c == null) return null;
 
 

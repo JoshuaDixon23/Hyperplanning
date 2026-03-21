@@ -14,7 +14,7 @@ public class AdminService {
 
     // ------------------ MAPPERS ------------------
 
-    private AdminEntity toDomain(Admin a){
+    public AdminEntity toDomain(Admin a){
         if (a == null) return null;
         return new AdminEntity(
                 a.getFirstName(),
@@ -23,7 +23,7 @@ public class AdminService {
         );
     }
 
-    private Admin toJpa(AdminEntity a){
+    public Admin toJpa(AdminEntity a){
         if (a == null) return null;
         return new Admin(
                 a.getFirstName(),
@@ -54,28 +54,28 @@ public class AdminService {
 
     @Transactional
     public AdminEntity create(String fName, String lName) {
-
-        // même logique que LocalStudent (sans emailPersonal)
         AdminEntity entity = AdminEntity.AdminFactory(fName, lName);
-
         Admin jpa = toJpa(entity);
-
-        adminRepository.save(jpa);
-
-        return entity;
+        Admin saved = adminRepository.save(jpa);
+        return toDomain(saved);
     }
 
     // ------------------ GET ------------------
 
-    public Admin getByEmailUniv(String emailUniv) {
-        return adminRepository.findByEmailUniv(emailUniv);
+    public AdminEntity findByEmailUniv(String emailUniv) {
+        return toDomain(adminRepository.findByEmailUniv(emailUniv));
     }
 
     // ------------------ DELETE ------------------
 
     @Transactional
     public void delete(String emailUniv) {
-        Admin entity = getByEmailUniv(emailUniv);
-        adminRepository.delete(entity);
+        AdminEntity entity = findByEmailUniv(emailUniv);
+        Admin jpa = toJpa(entity);
+        adminRepository.delete(jpa);
+    }
+
+    public Admin findJpaByEmailUniv(String adminEmailUniv) {
+        return adminRepository.findByEmailUniv(adminEmailUniv);
     }
 }

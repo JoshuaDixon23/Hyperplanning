@@ -13,9 +13,8 @@ public class UFREntity {
     private AdminEntity admin;
     private CampusEntity campus;
 
-    // private Admin admin:
-    private final Set<PromoEntity> promos = new HashSet<>();
-    private final Set<BuildingEntity> buildings = new HashSet<>();
+    //private final Set<PromoEntity> promos = new HashSet<>();
+    //private final Set<BuildingEntity> buildings = new HashSet<>();
 
 
     // factory
@@ -25,8 +24,8 @@ public class UFREntity {
         this.campus=campus;
     }
 
-    public static UFREntity UFRFactory(String name, CampusEntity campus,AdminEntity admin) {
-        return new UFREntity(name, campus,admin);
+    public static UFREntity UFRFactory(String name, CampusEntity campus, AdminEntity admin) {
+        return new UFREntity(name, campus, admin);
     }
 
     // getter setter
@@ -52,6 +51,16 @@ public class UFREntity {
         return admin;
     }
 
+    @Override
+    public String toString() {
+        return "UFREntity{" +
+                "name='" + name + '\'' +
+                ", admin=" + admin +
+                ", campus=" + campus +
+                '}';
+    }
+
+    /*
     public Set<PromoEntity> getModules() {
         return promos;
     }
@@ -113,6 +122,8 @@ public class UFREntity {
             b.setUfr(null); // set ufr à faire
         }
     }
+
+     */
 
 
 

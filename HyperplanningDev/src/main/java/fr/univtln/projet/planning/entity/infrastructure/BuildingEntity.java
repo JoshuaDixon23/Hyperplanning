@@ -27,7 +27,7 @@ public class BuildingEntity {
 
     private UFREntity ufr; //peut être null
     private CampusEntity campus;
-    private final Set<RoomEntity> rooms = new HashSet<>();
+    //private final Set<RoomEntity> rooms = new HashSet<>();
 
 
     //factory
@@ -74,22 +74,35 @@ public class BuildingEntity {
         this.campus = campus;
     }
 
+    /*
     public Set<RoomEntity> getRooms() {
         return Collections.unmodifiableSet(rooms);
     }
+
+     */
 
     public String getName() {
         return name;
     }
 
-// manage Building
+    @Override
+    public String toString() {
+        return "BuildingEntity{" +
+                "name='" + name + '\'' +
+                ", localisation='" + localisation + '\'' +
+                ", ufr=" + ufr +
+                ", campus=" + campus +
+                '}';
+    }
 
+    // manage Building
+
+
+    /*
     public void addRoom(int num, int capacity, RoomType type) {
-        /*if (r == null) {
-            return; //throw ?
-        }
-
-         */
+//        if (r == null) {
+//            return; //throw ?
+//        }
         RoomEntity r = RoomEntity.RoomFactory(num,capacity,type,this);
         rooms.add(r);
 
@@ -103,7 +116,7 @@ public class BuildingEntity {
             rooms.remove(r);
         }
     }
-
+     */
 
     // equals hashCode
 

@@ -21,7 +21,7 @@ public class CampusRepository extends JpaRepository<Campus, Long> {
     }
 
     public Optional<Campus> findByCity(String city) {
-        String jpql = "SELECT c FROM Campus c WHERE c.city = :city";
+        String jpql = "SELECT c FROM Campus c WHERE LOWER(c.city) = LOWER(:city)";
         TypedQuery<Campus> query = em.createQuery(jpql, Campus.class);
         query.setParameter("city", city);
         
