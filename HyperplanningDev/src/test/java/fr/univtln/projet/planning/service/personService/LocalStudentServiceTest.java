@@ -1,9 +1,7 @@
-package fr.univtln.projet.planning.service.person;
+package fr.univtln.projet.planning.service.personService;
 
 import fr.univtln.projet.planning.entity.person.LocalStudentEntity;
-import fr.univtln.projet.planning.entity.person.StudentEntity;
 import fr.univtln.projet.planning.repository.personRepository.LocalStudentRepository;
-import fr.univtln.projet.planning.service.personService.LocalStudentService;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
@@ -14,11 +12,11 @@ import java.util.List;
 class LocalStudentServiceTest {
 
     @Test
-    void create_then_findAll_should_work() {
+    void create_then_findAll() {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("HyperplanningPU");
-        String firstName = "John";
-        String lastName = "Doe";
-        String email = "john.doe@gmail.com";
+        String firstName = "Nikita";
+        String lastName = "Rodyhin";
+        String email = "rodygin.nikita2005@gmail.com";
 
         EntityManager em = emf.createEntityManager();
 

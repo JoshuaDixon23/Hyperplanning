@@ -1,5 +1,6 @@
 package fr.univtln.projet.planning.service.personService;
 
+import fr.univtln.projet.planning.entity.academic.PromoEntity;
 import fr.univtln.projet.planning.entity.person.LocalStudentEntity;
 import fr.univtln.projet.planning.modele.person.LocalStudent;
 import fr.univtln.projet.planning.repository.academicRepository.PromoRepository;
@@ -53,13 +54,23 @@ public class LocalStudentService {
 
         // Step 2: Check persistence integrity
         // should be verified and managed in order to regenerate mail certain amount of times to find the unique one
-        /*
-        if (localStudentRepository.findByEmailUniv(entity.getEmailUniv()).isPresent()) {
-            throw new WebApplicationException(
-                    "Local Student with such university mail already exists",
-                    Response.Status.CONFLICT);
-        }
-         */
+
+        // Step 3: Persist and Return Entity pure Java
+        localStudentRepository.save(jpa);
+        return entity;
+    }
+
+    @Transactional
+    public LocalStudentEntity createWithPromo(String fName, String lName, String emailPersonal, PromoEntity promo) {
+        // Step 0 : Create Entity (may be omitted by using another class CreateStudentRequest or by just passing entity class
+        LocalStudentEntity entity = LocalStudentEntity.LocalStudentFactory(fName, lName, emailPersonal);
+        entity.setPromo(promo);
+
+        // Step 1: Convert Entity (pure Java) to JPA via mapper
+        LocalStudent jpa = toJpa(entity);
+
+        // Step 2: Check persistence integrity
+        // should be verified and managed in order to regenerate mail certain amount of times to find the unique one
 
         // Step 3: Persist and Return Entity pure Java
         localStudentRepository.save(jpa);

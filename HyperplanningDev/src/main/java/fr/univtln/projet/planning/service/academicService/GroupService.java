@@ -45,7 +45,7 @@ public class GroupService {
     }
 
     // --- MAPPINGS ---
-    private GroupEntity toDomain(Group jpaEntity) {
+    private GroupEntity toDomainEntity(Group jpaEntity) {
         if (jpaEntity == null) return null;
 
         GroupEntity domainGroup = GroupEntity.GroupFactory(jpaEntity.getNum(), jpaEntity.getType());
@@ -60,7 +60,7 @@ public class GroupService {
         return domainGroup;
     }
 
-    private Group toEntity(GroupEntity domainGroup) {
+    private Group toEntityEntity(GroupEntity domainGroup) {
         if (domainGroup == null) return null;
 
         Group jpaEntity = Group.GroupFactory(domainGroup.getNum(), domainGroup.getType());

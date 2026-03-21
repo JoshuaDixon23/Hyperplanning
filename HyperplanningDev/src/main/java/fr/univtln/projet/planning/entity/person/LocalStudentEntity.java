@@ -1,6 +1,7 @@
 package fr.univtln.projet.planning.entity.person;
 import fr.univtln.projet.planning.entity.academic.PromoEntity;
 import fr.univtln.projet.planning.entity.academic.GroupEntity;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,6 +9,7 @@ import java.util.Objects;
 
 public class LocalStudentEntity extends StudentEntity {
     private List<GroupEntity> groups;
+    @Setter
     private PromoEntity promo;
 
     public LocalStudentEntity(String fname, String lname) {
@@ -19,6 +21,7 @@ public class LocalStudentEntity extends StudentEntity {
         super(firstName, lastName);
         this.emailUniv = emailUniv;
         this.emailPersonal = emailPersonal;
+        this.groups = new ArrayList<GroupEntity>();
     }
 
     public static LocalStudentEntity LocalStudentFactory(String fname, String lname, /*Promo promo,*/ String emailPersonal) {
@@ -26,10 +29,6 @@ public class LocalStudentEntity extends StudentEntity {
         s.setEmailPersonal(emailPersonal.toLowerCase());
         // s.promo = promo;
         return s;
-    }
-
-    public void setPromo(PromoEntity promo) {
-        this.promo = promo;
     }
 
     public void addGroup(GroupEntity group) {

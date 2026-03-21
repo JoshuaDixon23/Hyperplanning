@@ -6,6 +6,8 @@ import org.junit.jupiter.api.Test;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -23,12 +25,15 @@ public class CourseTest {
                 .responsible(p1)
                 .build();
 
+        LocalDate date = LocalDate.now();
+        LocalTime time = LocalTime.now();
         Instant startTime = Instant.now();
         Duration duration = Duration.between(startTime, Instant.now());
 
         CourseEntity c = CourseEntity.builder()
                 .module(m)
-                .startTime(startTime)
+                .date(date)
+                .startTime(time)
                 .duration(duration)
                 .courseType(CourseType.CM)
                 .professor(p1)
