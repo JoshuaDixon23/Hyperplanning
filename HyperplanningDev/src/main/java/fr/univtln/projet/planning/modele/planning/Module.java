@@ -17,7 +17,7 @@ import java.util.Objects;
 public class Module {
 
     @Id
-    @Column(name = "code", length = 20)
+    @Column(name = "code", length = 20, unique = true)
     private String code; 
 
     @Column(nullable = false)
@@ -34,8 +34,10 @@ public class Module {
     @JoinColumn(name = "responsibleId")
     private Professor responsible;
 
+    /*
     @OneToMany(mappedBy = "module", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Course> planning = new ArrayList<>();
+     */
     
     protected Module() {
     }
@@ -46,9 +48,10 @@ public class Module {
         this.language = b.language;
         this.ects = b.ects;
         this.responsible = b.responsible;
-        this.planning = b.courses;
+        //this.planning = b.courses;
     }
 
+    /*
     public void addCourse(Course course) {
         planning.add(course);
         course.setModule(this);
@@ -58,6 +61,8 @@ public class Module {
         planning.remove(course);
         course.setModule(null);
     }
+
+     */
 
 
     public static Builder builder() { 
@@ -99,10 +104,12 @@ public class Module {
             return this; 
         }
 
+        /*
         public Builder addCourse(Course c) {
             this.courses.add(c);
             return this;
         }
+         */
 
         public Module build() {
             Objects.requireNonNull(code, "code is required for the database ID");
@@ -114,11 +121,6 @@ public class Module {
             return new Module(this);
         }
     }
-
-
-    // getter setter
-
-
 
     @Override
     public String toString() {

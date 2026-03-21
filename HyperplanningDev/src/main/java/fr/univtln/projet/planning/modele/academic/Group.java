@@ -1,7 +1,7 @@
 package fr.univtln.projet.planning.modele.academic;
 
 import java.util.Collections; // À adapter selon ton package
-import java.util.HashSet;
+import java.util.TreeSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -43,18 +43,22 @@ public class Group {
     @JoinColumn(name = "promoId")
     private Promo promo;
 
-    // Le propriétaire de cette relation est la classe Course (@JoinTable)
-    @ManyToMany(mappedBy = "groups")
-    private Set<Course> planning = new HashSet<>();
-
-    // @ManyToMany car un étudiant est dans 1 groupe CM, 1 groupe TD et 1 groupe TP.
     @ManyToMany
     @JoinTable(
-        name = "Group_Student",
-        joinColumns = @JoinColumn(name = "groupId"),
-        inverseJoinColumns = @JoinColumn(name = "studentId")
+            name = "Group_Course",
+            joinColumns = @JoinColumn(name = "idGroup"),
+            inverseJoinColumns = @JoinColumn(name = "idCourse")
     )
-    private Set<LocalStudent> localStudents = new HashSet<>();
+    private Set<Course> planning = new TreeSet<>();
+
+    // @ManyToMany car un étudiant est dans 1 groupe CM, 1 groupe TD et 1 groupe TP.
+//    @ManyToMany
+//    @JoinTable(
+//        name = "Group_Student",
+//        joinColumns = @JoinColumn(name = "groupId"),
+//        inverseJoinColumns = @JoinColumn(name = "studentId")
+//    )
+//    private Set<LocalStudent> localStudents = new HashSet<>();
 
     protected Group() {
     }
@@ -77,17 +81,18 @@ public class Group {
     public void addCourse(Course c) {
         if (c != null) {
             planning.add(c);
-            c.getGroups().add(this); 
+            //c.getGroups().add(this);
         }
     }
 
     public void removeCourse(Course c) {
         if (c != null) {
             planning.remove(c);
-            c.getGroups().remove(this);
+            //c.getGroups().remove(this);
         }
     }
 
+    /*
     public Set<LocalStudent> getStudents() {
         return Collections.unmodifiableSet(localStudents);
     }
@@ -103,6 +108,8 @@ public class Group {
             localStudents.remove(s);
         }
     }
+     */
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

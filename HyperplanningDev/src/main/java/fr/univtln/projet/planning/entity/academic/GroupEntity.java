@@ -19,9 +19,9 @@ public class GroupEntity {
     //private final Planning planning; // à enlever et relier a cours plutôt
     private PromoEntity promo;
 
-    private Set<ModuleEntity> modules = new HashSet<>();
+//    private Set<ModuleEntity> modules = new HashSet<>();
     private Set<CourseEntity> planning = new TreeSet<>();
-    private Set<LocalStudentEntity> localStudents = new HashSet<>();
+//    private Set<LocalStudentEntity> localStudents = new HashSet<>();
 
     //factory
 
@@ -56,9 +56,11 @@ public class GroupEntity {
         this.promo = promo;
     }
 
+    /*
     public Set<LocalStudentEntity> getStudents() {
         return localStudents;
     }
+    */
 
     public Set<CourseEntity> getPlanning() {
         return planning;
@@ -81,6 +83,7 @@ public class GroupEntity {
         planning.remove(c);
     }
 
+    /*
     public void addModule(ModuleEntity m) {
         if (m == null) {
             return; // throw qq chose
@@ -105,10 +108,9 @@ public class GroupEntity {
     public void removeLocalStudent(LocalStudentEntity s) {
         localStudents.remove(s);
     }
+     */
 
-
-    // euals and hashCode
-
+    // equals and hashCode
 
     @Override
     public boolean equals(Object o) {

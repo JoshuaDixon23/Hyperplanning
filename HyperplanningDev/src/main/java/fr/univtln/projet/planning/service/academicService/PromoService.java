@@ -2,6 +2,8 @@ package fr.univtln.projet.planning.service.academicService;
 
 import fr.univtln.projet.planning.entity.academic.PromoEntity;
 import fr.univtln.projet.planning.modele.academic.Promo;
+import fr.univtln.projet.planning.modele.academic.StudyLevel;
+import fr.univtln.projet.planning.modele.academic.UFR;
 import fr.univtln.projet.planning.repository.academicRepository.PromoRepository;
 import fr.univtln.projet.planning.service.personService.LocalStudentService;
 
@@ -9,69 +11,38 @@ import java.util.List;
 
 public class PromoService {
 
-    /*
     private final PromoRepository promoRepository;
     private final UFRService ufrService;
-    private final GroupService groupService;
-    private final LocalStudentService localStudentService;
 
     public PromoService(PromoRepository promoRepository,
-                        UFRService ufrService,
-                        GroupService groupService,
-                        LocalStudentService localStudentService) {
+                        UFRService ufrService) {
         this.promoRepository = promoRepository;
         this.ufrService = ufrService;
-        this.groupService = groupService;
-        this.localStudentService = localStudentService;
     }
 
     // ------------------ MAPPERS ------------------
 
     public PromoEntity toDomain(Promo p) {
         if (p == null) return null;
-
-        PromoEntity entity = PromoEntity.PromoFactory(
-                p.getName(),
-                p.getStudyLevel(),
-                ufrService.toDomain(p.getUfr())
-        );
-
-        if (p.getGroups() != null) {
-            p.getGroups().forEach(g -> entity.addGroup(groupService.toDomain(g)));
-        }
-
-        if (p.getLocalStudents() != null) {
-            p.getLocalStudents().forEach(s -> entity.addStudent(localStudentService.toDomain(s)));
-        }
-
-        return entity;
+        return PromoEntity.PromoFactory(p.getName(), p.getYear(), p.getStudyLevel(), ufrService.toDomain(p.getUfr()));
     }
 
     public Promo toJpa(PromoEntity p) {
         if (p == null) return null;
-
-        Promo jpa = Promo.PromoFactory(
-                p.getName(),
-                0,
-                p.getStudyLevel(),
-                ufrService.toJpa(p.getUfr())
-        );
-
-        if (p.getGroups() != null) {
-            p.getGroups().forEach(g -> jpa.addGroup(groupService.toJpa(g)));
-        }
-
-        if (p.getLocalStudent() != null) {
-            p.getLocalStudent().forEach(s -> jpa.addStudent(localStudentService.toJpa(s)));
-        }
-
-        return jpa;
+        return Promo.PromoFactory(p.getName(), p.getYear(), p.getStudyLevel(), ufrService.toJpa(p.getUfr()));
     }
 
     // ------------------ CREATE ------------------
 
     public PromoEntity create(PromoEntity entity) {
         Promo saved = promoRepository.save(toJpa(entity));
+        return toDomain(saved);
+    }
+
+    public PromoEntity create(String name, int year, StudyLevel studyLevel, String nameUfr) {
+        UFR ufr = ufrService.findJpaByName(nameUfr);
+        Promo promo = Promo.PromoFactory(name, year, studyLevel, ufr);
+        Promo saved = promoRepository.save(promo);
         return toDomain(saved);
     }
 
@@ -90,5 +61,7 @@ public class PromoService {
                 .toList();
     }
 
-     */
+    public Promo findJpaByNameAndStudyLevelAndYear(String name, int year, StudyLevel studyLevel) {
+        return promoRepository.findByNameAndStudyLevelAndYear(name, year, studyLevel);
+    }
 }

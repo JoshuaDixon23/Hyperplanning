@@ -3,27 +3,26 @@ package fr.univtln.projet.planning.service.academicService;
 import fr.univtln.projet.planning.entity.academic.GroupEntity;
 import fr.univtln.projet.planning.modele.academic.Group;
 import fr.univtln.projet.planning.repository.academicRepository.GroupRepository;
-import fr.univtln.projet.planning.service.personService.LocalStudentService;
 import fr.univtln.projet.planning.service.planningService.CourseService;
+import fr.univtln.projet.planning.service.planningService.ModuleService;
 
 import java.util.List;
 
 public class GroupService {
-
     /*
     private final GroupRepository groupRepository;
     private final PromoService promoService;
     private final CourseService courseService;
-    private final LocalStudentService localStudentService;
+    private final ModuleService moduleService;
 
     public GroupService(GroupRepository groupRepository,
                         PromoService promoService,
                         CourseService courseService,
-                        LocalStudentService localStudentService) {
+                        ModuleService moduleService) {
         this.groupRepository = groupRepository;
         this.promoService = promoService;
         this.courseService = courseService;
-        this.localStudentService = localStudentService;
+        this.moduleService = moduleService;
     }
 
     // ------------------ MAPPERS ------------------

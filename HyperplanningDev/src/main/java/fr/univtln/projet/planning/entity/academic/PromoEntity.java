@@ -6,47 +6,47 @@ import java.util.Set;
 
 import fr.univtln.projet.planning.entity.person.LocalStudentEntity;
 import fr.univtln.projet.planning.modele.academic.StudyLevel;
+import lombok.Getter;
+
+@Getter
 
 public class PromoEntity {
     private final String name;
     private final StudyLevel studyLevel;
+    private int year;
     private final UFREntity ufr; //diamant noir attention
 
     //private Professor responsible;
 
-    private final Set<LocalStudentEntity> localStudents = new HashSet<>();
-    private final Set<GroupEntity> groups = new HashSet<>();
+    //private final Set<LocalStudentEntity> localStudents = new HashSet<>();
+    //private final Set<GroupEntity> groups = new HashSet<>();
 
     //factory
 
-    private PromoEntity(String name, StudyLevel studyLevel,UFREntity ufr) {
+    private PromoEntity(String name, int year, StudyLevel studyLevel,UFREntity ufr) {
         this.name=name;
         this.studyLevel = studyLevel;
+        this.year = year;
         this.ufr=ufr;
     }
 
-    public static PromoEntity PromoFactory(String name, StudyLevel studyLevel,UFREntity ufr) {
+    public static PromoEntity PromoFactory(String name, int year, StudyLevel studyLevel,UFREntity ufr) {
 
         //conditions ??
-        return new PromoEntity(name, studyLevel,ufr);
+        return new PromoEntity(name, year, studyLevel, ufr);
     }
 
-
-    // getter setter
-
-    public String getName(){
-        return name;
+    @Override
+    public String toString() {
+        return "PromoEntity{" +
+                "name='" + name + '\'' +
+                ", studyLevel=" + studyLevel +
+                ", year=" + year +
+                ", ufr=" + ufr +
+                '}';
     }
 
-
-    public UFREntity getUfr(){
-        return ufr;
-    }
-
-    public StudyLevel getStudyLevel() {
-        return studyLevel;
-    }
-
+    /*
     public Set<LocalStudentEntity> getLocalStudent() {
         return localStudents;
     }
@@ -54,7 +54,6 @@ public class PromoEntity {
     public Set<GroupEntity> getGroups() {
         return groups;
     }
-
 
     // manage promo
 
@@ -92,6 +91,8 @@ public class PromoEntity {
         }
 
     }
+
+     */
 
     // equals et hascode
 

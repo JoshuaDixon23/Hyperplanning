@@ -1,7 +1,6 @@
 
 package fr.univtln.projet.planning.repository.planningRepository;
 
-import fr.univtln.projet.planning.modele.planning.Course;
 import fr.univtln.projet.planning.modele.planning.Module;
 import fr.univtln.projet.planning.repository.JpaRepository;
 import jakarta.persistence.EntityManager;
@@ -22,6 +21,10 @@ public class ModuleRepository extends JpaRepository<Module, Long > {
         return query.getResultList();
     }
 
-
+    public Module findByCode(String code) {
+        String jpql = "SELECT m FROM Module m WHERE m.code = :code";
+        TypedQuery<Module> query = em.createQuery(jpql, Module.class);
+        return query.setParameter("code", code).getSingleResult();
+    }
 
 }

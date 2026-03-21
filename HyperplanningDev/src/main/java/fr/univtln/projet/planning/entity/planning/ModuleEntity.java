@@ -18,8 +18,6 @@ public class ModuleEntity {
     private ProfessorEntity responsible;
     private Map<CourseType, Float> courseHours; // Dictionary for CM/TD/TP hours in module
 
-    // private Set<Group> groups;
-
     private ModuleEntity(Builder b){
         code = b.code;
         name = b.name;
@@ -41,7 +39,7 @@ public class ModuleEntity {
 
     public static Builder builder() { return new Builder(); }
 
-    public ProfessorEntity getresponsible() {
+    public ProfessorEntity getResponsible() {
         return responsible;
     }
 
@@ -92,5 +90,17 @@ public class ModuleEntity {
 
     public void setCourseHours(Map<CourseType, Float> courseHours) {
         this.courseHours = courseHours;
+    }
+
+    @Override
+    public String toString() {
+        return "ModuleEntity{" +
+                "code='" + code + '\'' +
+                ", name='" + name + '\'' +
+                ", language=" + language +
+                ", ECTS=" + ECTS +
+                ", responsible=" + responsible +
+                ", courseHours=" + courseHours +
+                '}';
     }
 }

@@ -18,7 +18,7 @@ public class ProfessorService {
 
     // ################### MAPPERS ##################
 
-    private ProfessorEntity toDomain(Professor professor) {
+    public ProfessorEntity toDomain(Professor professor) {
         if (professor == null) return null;
 
         ProfessorEntity entity = ProfessorEntity.ProfessorFactory(
@@ -29,7 +29,7 @@ public class ProfessorService {
         return entity;
     }
 
-    private Professor toJpa(ProfessorEntity entity) {
+    public Professor toJpa(ProfessorEntity entity) {
         if (entity == null) return null;
 
         return new Professor(
@@ -55,11 +55,8 @@ public class ProfessorService {
 
     @Transactional
     public ProfessorEntity create(ProfessorEntity entity) {
-
         Professor professor = toJpa(entity);
-
         professorRepository.save(professor);
-
         return entity;
     }
 
@@ -71,7 +68,7 @@ public class ProfessorService {
         professorRepository.delete(professor);
     }
 
-    // ################### VALIDATION ##################
-
-
+    public Professor findJpaByEmailUniv(String emailUniv) {
+        return  professorRepository.findByEmailUniv(emailUniv);
+    }
 }

@@ -9,14 +9,20 @@ import jakarta.persistence.TypedQuery;
 import java.util.List;
 
 public class ProfessorRepository extends JpaRepository<Professor, Long> {
-    protected ProfessorRepository(EntityManager entityManager) {
+    public ProfessorRepository(EntityManager entityManager) {
         super(Professor.class, entityManager);
     }
-
 
     public List<Professor> findAll() {
         String jpql = "SELECT p FROM Professor p";
         TypedQuery<Professor> query = em.createQuery(jpql, Professor.class);
         return query.getResultList();
+    }
+
+    public Professor findByEmailUniv(String emailUniv) {
+        String jpql = "SELECT p FROM Professor p WHERE p.emailUniv = :emailUniv";
+        TypedQuery<Professor> query = em.createQuery(jpql, Professor.class);
+        query.setParameter("emailUniv", emailUniv);
+        return query.getSingleResult();
     }
 }

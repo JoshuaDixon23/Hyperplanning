@@ -43,13 +43,13 @@ public class Course implements Comparable<Course> {
     @JoinColumn(name = "moduleCode", nullable = false)
     private Module module;
 
-    @ManyToMany
-    @JoinTable(
-            name = "Group_Course",
-            joinColumns = @JoinColumn(name = "courseId"),
-            inverseJoinColumns = @JoinColumn(name = "groupId")
-    )
-    private Set<Group> groups = new HashSet<>();
+//    @ManyToMany
+//    @JoinTable(
+//            name = "Group_Course",
+//            joinColumns = @JoinColumn(name = "courseId"),
+//            inverseJoinColumns = @JoinColumn(name = "groupId")
+//    )
+//    private Set<Group> groups = new HashSet<>();
 
     @ManyToMany
     @JoinTable(
@@ -68,7 +68,7 @@ public class Course implements Comparable<Course> {
         this.startTime = b.startTime;
         this.duration = b.duration;
         this.professors = b.professors;
-        this.groups = b.groups;
+        //this.groups = b.groups;
         this.room = b.room;
         this.courseType = b.courseType;
     }
@@ -163,7 +163,7 @@ public class Course implements Comparable<Course> {
                 ", courseType=" + courseType +
                 ", room=" + room +
                 ", module=" + module +
-                ", groups=" + groups +
+                /*", groups=" + groups + */
                 ", professors=" + professors +
                 '}';
     }

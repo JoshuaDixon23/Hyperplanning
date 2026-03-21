@@ -24,7 +24,7 @@ public class PromoTest {
         //création promo
         StudyLevel lvl =  StudyLevel.M1;
         String name = "Informatique";
-        PromoEntity promo = PromoEntity.PromoFactory(name, lvl,ufr);
+        PromoEntity promo = PromoEntity.PromoFactory(name, 2025, lvl, ufr);
 
         assertNotNull(promo);
         assertEquals(name, promo.getName());
