@@ -123,4 +123,13 @@ public class GroupEntity {
     public int hashCode() {
         return Objects.hash(num, type, promo);
     }
+
+    @Override
+    public String toString() {
+        return "GroupEntity{" +
+                "num=" + num +
+                ", type=" + type +
+                ", promo=" + (promo != null ? promo.getName() + "-" + promo.getYear() + "-" + promo.getStudyLevel(): "null") +
+                '}';
+    }
 }

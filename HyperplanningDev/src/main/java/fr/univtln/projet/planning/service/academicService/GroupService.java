@@ -2,6 +2,9 @@ package fr.univtln.projet.planning.service.academicService;
 
 import fr.univtln.projet.planning.entity.academic.GroupEntity;
 import fr.univtln.projet.planning.modele.academic.Group;
+import fr.univtln.projet.planning.modele.academic.GroupType;
+import fr.univtln.projet.planning.modele.academic.Promo;
+import fr.univtln.projet.planning.modele.academic.StudyLevel;
 import fr.univtln.projet.planning.repository.academicRepository.GroupRepository;
 import fr.univtln.projet.planning.service.planningService.CourseService;
 import fr.univtln.projet.planning.service.planningService.ModuleService;
@@ -9,19 +12,16 @@ import fr.univtln.projet.planning.service.planningService.ModuleService;
 import java.util.List;
 
 public class GroupService {
-    /*
+
     private final GroupRepository groupRepository;
     private final PromoService promoService;
-    private final CourseService courseService;
     private final ModuleService moduleService;
 
     public GroupService(GroupRepository groupRepository,
                         PromoService promoService,
-                        CourseService courseService,
                         ModuleService moduleService) {
         this.groupRepository = groupRepository;
         this.promoService = promoService;
-        this.courseService = courseService;
         this.moduleService = moduleService;
     }
 
@@ -29,43 +29,21 @@ public class GroupService {
 
     public GroupEntity toDomain(Group g) {
         if (g == null) return null;
-
         GroupEntity entity = GroupEntity.GroupFactory(
                 g.getNum(),
                 g.getType()
         );
-
         entity.setPromo(promoService.toDomain(g.getPromo()));
-
-        if (g.getStudents() != null) {
-            g.getStudents().forEach(s -> entity.addLocalStudent(localStudentService.toDomain(s)));
-        }
-
-        if (g.getPlanning() != null) {
-            g.getPlanning().forEach(c -> entity.addCourse(courseService.toDomain(c)));
-        }
-
         return entity;
     }
 
     public Group toJpa(GroupEntity g) {
         if (g == null) return null;
-
         Group jpa = Group.GroupFactory(
                 g.getNum(),
                 g.getType()
         );
-
         jpa.setPromo(promoService.toJpa(g.getPromo()));
-
-        if (g.getStudents() != null) {
-            g.getStudents().forEach(s -> jpa.addLocalStudent(localStudentService.toJpa(s)));
-        }
-
-        if (g.getPlanning() != null) {
-            g.getPlanning().forEach(c -> jpa.addCourse(courseService.toJpa(c)));
-        }
-
         return jpa;
     }
 
@@ -73,6 +51,14 @@ public class GroupService {
 
     public GroupEntity create(GroupEntity entity) {
         Group saved = groupRepository.save(toJpa(entity));
+        return toDomain(saved);
+    }
+
+    public GroupEntity create(int num, GroupType type, String promoName, StudyLevel promoStudyLevel, int promoYear){
+        Promo promo = promoService.findJpaByNameAndYearAndStudyLevel(promoName, promoYear, promoStudyLevel);
+        Group group = Group.GroupFactory(num, type);
+        group.setPromo(promo);
+        Group saved = groupRepository.save(group);
         return toDomain(saved);
     }
 
@@ -91,5 +77,9 @@ public class GroupService {
                 .toList();
     }
 
-     */
+    public Group findJpaByNumAndTypeAndPromo(int num, GroupType type, String promoName,
+                                                StudyLevel promoStudyLevel, int promoYear){
+        Promo promo =  promoService.findJpaByNameAndYearAndStudyLevel(promoName, promoYear, promoStudyLevel);
+        return groupRepository.findByNumAndTypeAndPromo(num, type, promo);
+    }
 }

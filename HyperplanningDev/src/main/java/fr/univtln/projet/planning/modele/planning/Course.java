@@ -13,11 +13,12 @@ import java.time.LocalTime;
 import java.util.*;
 
 @Entity
-@Table(name = "Course")
+@Table(name = "Course" /*,
+        uniqueConstraints = @UniqueConstraint(columnNames = {"module", "date", "startTime"} )*/
+)
 @Getter
 @Setter
 public class Course implements Comparable<Course> {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long courseId;
@@ -43,13 +44,13 @@ public class Course implements Comparable<Course> {
     @JoinColumn(name = "moduleCode", nullable = false)
     private Module module;
 
-//    @ManyToMany
-//    @JoinTable(
-//            name = "Group_Course",
-//            joinColumns = @JoinColumn(name = "courseId"),
-//            inverseJoinColumns = @JoinColumn(name = "groupId")
-//    )
-//    private Set<Group> groups = new HashSet<>();
+    @ManyToMany
+    @JoinTable(
+            name = "Group_Course",
+            joinColumns = @JoinColumn(name = "courseId"),
+            inverseJoinColumns = @JoinColumn(name = "groupId")
+    )
+    private Set<Group> groups = new HashSet<>();
 
     @ManyToMany
     @JoinTable(
@@ -68,7 +69,7 @@ public class Course implements Comparable<Course> {
         this.startTime = b.startTime;
         this.duration = b.duration;
         this.professors = b.professors;
-        //this.groups = b.groups;
+        this.groups = b.groups;
         this.room = b.room;
         this.courseType = b.courseType;
     }
@@ -134,6 +135,7 @@ public class Course implements Comparable<Course> {
         return this.startTime.compareTo(c.startTime);
     }
 
+    /*
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -150,6 +152,21 @@ public class Course implements Comparable<Course> {
     @Override
     public int hashCode() {
         return Objects.hash(date, startTime, duration, module, room, courseType);
+    }
+
+     */
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Course)) return false;
+        Course c = (Course) o;
+        return courseId != null && courseId.equals(c.courseId);
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
     }
 
 

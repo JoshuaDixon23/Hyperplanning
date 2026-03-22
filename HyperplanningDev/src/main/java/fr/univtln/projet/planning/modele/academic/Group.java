@@ -1,9 +1,6 @@
 package fr.univtln.projet.planning.modele.academic;
 
-import java.util.Collections; // À adapter selon ton package
-import java.util.TreeSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 import fr.univtln.projet.planning.modele.person.LocalStudent;
 import fr.univtln.projet.planning.modele.planning.Course;
@@ -43,13 +40,8 @@ public class Group {
     @JoinColumn(name = "promoId")
     private Promo promo;
 
-    @ManyToMany
-    @JoinTable(
-            name = "Group_Course",
-            joinColumns = @JoinColumn(name = "idGroup"),
-            inverseJoinColumns = @JoinColumn(name = "idCourse")
-    )
-    private Set<Course> planning = new TreeSet<>();
+    @ManyToMany(mappedBy = "groups")
+    private Set<Course> planning = new HashSet<>();
 
     // @ManyToMany car un étudiant est dans 1 groupe CM, 1 groupe TD et 1 groupe TP.
 //    @ManyToMany
@@ -81,14 +73,14 @@ public class Group {
     public void addCourse(Course c) {
         if (c != null) {
             planning.add(c);
-            //c.getGroups().add(this);
+            c.getGroups().add(this);
         }
     }
 
     public void removeCourse(Course c) {
         if (c != null) {
             planning.remove(c);
-            //c.getGroups().remove(this);
+            c.getGroups().remove(this);
         }
     }
 

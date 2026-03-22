@@ -5,7 +5,6 @@ import fr.univtln.projet.planning.modele.academic.Promo;
 import fr.univtln.projet.planning.modele.academic.StudyLevel;
 import fr.univtln.projet.planning.modele.academic.UFR;
 import fr.univtln.projet.planning.repository.academicRepository.PromoRepository;
-import fr.univtln.projet.planning.service.personService.LocalStudentService;
 
 import java.util.List;
 
@@ -61,7 +60,7 @@ public class PromoService {
                 .toList();
     }
 
-    public Promo findJpaByNameAndStudyLevelAndYear(String name, int year, StudyLevel studyLevel) {
-        return promoRepository.findByNameAndStudyLevelAndYear(name, year, studyLevel);
+    public Promo findJpaByNameAndYearAndStudyLevel(String name, int year, StudyLevel studyLevel) {
+        return promoRepository.findByNameAndYearAndStudyLevel(name, year, studyLevel);
     }
 }

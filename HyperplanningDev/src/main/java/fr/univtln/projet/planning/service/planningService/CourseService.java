@@ -2,48 +2,57 @@ package fr.univtln.projet.planning.service.planningService;
 
 import fr.univtln.projet.planning.entity.planning.CourseEntity;
 import fr.univtln.projet.planning.modele.planning.Course;
+import fr.univtln.projet.planning.modele.planning.CourseType;
 import fr.univtln.projet.planning.repository.planningRepository.CourseRepository;
 import fr.univtln.projet.planning.repository.planningRepository.ModuleRepository;
+import fr.univtln.projet.planning.service.infrastructureService.RoomService;
+import fr.univtln.projet.planning.service.personService.ProfessorService;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
 import jakarta.transaction.Transactional;
 
-import java.time.Duration;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.ZoneId;
+import java.time.*;
 import java.util.List;
 import java.util.Optional;
 
+import static java.util.Arrays.stream;
+
 public class CourseService {
 
+    /*
     private final CourseRepository courseRepository;
-    private final ModuleRepository moduleRepository;
     private final ModuleService moduleService;
+    private final RoomService roomService;
+    private final ProfessorService professorService;
 
-    public CourseService(CourseRepository courseRepository, ModuleRepository moduleRepository
-    , ModuleService moduleService) {
+    public CourseService(CourseRepository courseRepository, ModuleService moduleService,
+    RoomService roomService, ProfessorService professorService) {
         this.courseRepository = courseRepository;
-        this.moduleRepository = moduleRepository;
         this.moduleService = moduleService;
+        this.roomService = roomService;
+        this.professorService = professorService;
     }
 
-
     // ###################MAPPERS##################
-
 
     // JPA -> Entity
     public CourseEntity toDomain(Course c) {
         if (c == null) return null;
 
-
         CourseEntity.Builder builder = CourseEntity.builder()
                 .date(c.getDate())
-                .startTime(c.getStartTime())        // pb de classe
+                .startTime(c.getStartTime())        // pb de classe - quoi ?
                 .duration(c.getDuration())
                 .courseType(c.getCourseType())
-                .module(moduleService.toDomain(c.getModule()));
+                .module(moduleService.toDomain(c.getModule()))
+                .room(roomService.toDomain(c.getRoom()));
+
+        if (c.getProfessors() != null) {
+            c.getProfessors().forEach(prof ->
+                    builder.professor(professorService.toDomain(prof))
+            );
+        }
 
         return builder.build();
     }
@@ -58,8 +67,14 @@ public class CourseService {
                 .date(c.getDate())
                 .startTime(c.getStartTime())
                 .duration(c.getDuration())
-                .courseType(c.getCourseType());
+                .courseType(c.getCourseType())
+                .room(roomService.toJpa(c.getRoom()));
 
+        if (c.getProfessors() != null) {
+            c.getProfessors().forEach(prof ->
+                    builder.professor(professorService.toJpa(prof))
+            );
+        }
 
 
         return builder.build();
@@ -73,7 +88,7 @@ public class CourseService {
         return courseRepository.findById(id)
                 .map(this::toDomain);
     }
-    //findAll à definir dans courses repo
+
     public List<CourseEntity> findAll(int pageNumber, int pageSize) {
         return courseRepository.findAll()
                 .stream()
@@ -83,8 +98,19 @@ public class CourseService {
 
     @Transactional
     public CourseEntity create(CourseEntity entity) {
+        // Mapping
+        Course jpa = toJpa(entity);
 
+        // Save
+        courseRepository.save(jpa);
 
+        return entity;
+    }
+
+    // create course with no room and no
+    @Transactional
+    public CourseEntity create(LocalDate date, LocalTime startTime, Duration duration, CourseType courseType,
+                               String codeModule) {
         // Mapping
         Course jpa = toJpa(entity);
 
@@ -105,7 +131,7 @@ public class CourseService {
 
     // PLANNING
 
-
+    /*
     public List<CourseEntity> getPlanningByGroup(Long groupId, LocalDate start, LocalDate end) {
 
 
@@ -133,8 +159,10 @@ public class CourseService {
                 .toList();
     }
 
+     */
 
     // VALIDATION MÉTIER
+
 
 
 

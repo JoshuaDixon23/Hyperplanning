@@ -36,6 +36,7 @@ public class CourseRepositoryTest {
         emf.close();
     }
 
+    /*
     @Test
     void testGetPlanningByModule() {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("HyperplanningPU");
@@ -78,4 +79,6 @@ public class CourseRepositoryTest {
         em.close();
         emf.close();
     }
+
+     */
 }

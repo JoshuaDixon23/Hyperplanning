@@ -27,7 +27,7 @@ public class PromoRepository extends JpaRepository<Promo, Long> {
         return query.getResultList();
     }
 
-    public Promo findByNameAndStudyLevelAndYear(String name, int year, StudyLevel studyLevel){
+    public Promo findByNameAndYearAndStudyLevel(String name, int year, StudyLevel studyLevel){
         String jpql = "SELECT p FROM Promo p WHERE p.name = :name AND  p.studyLevel = :studyLevel AND p.year = :year";
         TypedQuery<Promo> query = em.createQuery(jpql, Promo.class);
         query.setParameter("name", name);
