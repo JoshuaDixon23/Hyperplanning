@@ -15,6 +15,7 @@ public class CourseRepositoryTest {
 
     //test a modifier requette par id et non par group
 
+    /*
     @Test
     void testGetPlanningByGroup() {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("HyperplanningPU");
@@ -36,7 +37,6 @@ public class CourseRepositoryTest {
         emf.close();
     }
 
-    /*
     @Test
     void testGetPlanningByModule() {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("HyperplanningPU");

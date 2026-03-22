@@ -58,7 +58,7 @@ public class Course implements Comparable<Course> {
             joinColumns = @JoinColumn(name = "courseId"),
             inverseJoinColumns = @JoinColumn(name = "userId")
     )
-    private List<Professor> professors = new ArrayList<>();
+    private Set<Professor> professors = new HashSet<>();
 
     protected Course() {
     }
@@ -83,7 +83,7 @@ public class Course implements Comparable<Course> {
         private LocalDate date = null;
         private LocalTime startTime = null;
         private Duration duration = Duration.ZERO;;
-        private List<Professor> professors = new ArrayList<>();
+        private Set<Professor> professors = new HashSet<>();
         private Set<Group> groups = new HashSet<>();
         private Room room = null;
         private CourseType courseType = null;
@@ -183,5 +183,19 @@ public class Course implements Comparable<Course> {
                 /*", groups=" + groups + */
                 ", professors=" + professors +
                 '}';
+    }
+
+    public void addGroup(Group g) {
+        if (g != null && !groups.contains(g)) {
+            groups.add(g);
+            g.getPlanning().add(this);
+        }
+    }
+
+    public void addProfessor(Professor p) {
+        if (p != null && !professors.contains(p)) {
+            professors.add(p);
+            p.getPlanning().add(this);
+        }
     }
 }

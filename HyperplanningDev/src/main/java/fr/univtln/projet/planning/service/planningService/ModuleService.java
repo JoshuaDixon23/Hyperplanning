@@ -65,6 +65,14 @@ public class ModuleService {
                 .toList();
     }
 
+    public ModuleEntity findByCode(String code) {
+        return toDomain(moduleRepository.findByCode(code));
+    }
+
+    public Module findJpaByCode(String code) {
+        return moduleRepository.findByCode(code);
+    }
+
     @Transactional
     public ModuleEntity create(ModuleEntity entity) {
         Module module = toJpa(entity);
