@@ -5,10 +5,15 @@ import fr.univtln.projet.planning.entity.person.ProfessorEntity;
 import fr.univtln.projet.planning.modele.person.Professor;
 import fr.univtln.projet.planning.modele.planning.Language;
 import fr.univtln.projet.planning.modele.planning.CourseType;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+
+@Getter
+@Setter
 
 public class ModuleEntity {
     private String code; // code may be not unique and depend on promo ?, a dictionary may be a solution
@@ -70,26 +75,6 @@ public class ModuleEntity {
 
             return new ModuleEntity(this);
         }
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public Language getLanguage() {
-        return language;
-    }
-
-    public float getECTS() {
-        return ECTS;
-    }
-
-    public void setCourseHours(Map<CourseType, Float> courseHours) {
-        this.courseHours = courseHours;
     }
 
     @Override

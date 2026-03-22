@@ -1,10 +1,12 @@
 package fr.univtln.projet.planning.service.academicService;
 
 import fr.univtln.projet.planning.entity.academic.GroupEntity;
+import fr.univtln.projet.planning.entity.planning.ModuleEntity;
 import fr.univtln.projet.planning.modele.academic.Group;
 import fr.univtln.projet.planning.modele.academic.GroupType;
 import fr.univtln.projet.planning.modele.academic.Promo;
 import fr.univtln.projet.planning.modele.academic.StudyLevel;
+import fr.univtln.projet.planning.modele.planning.Module;
 import fr.univtln.projet.planning.repository.academicRepository.GroupRepository;
 import fr.univtln.projet.planning.service.planningService.CourseService;
 import fr.univtln.projet.planning.service.planningService.ModuleService;
@@ -81,5 +83,13 @@ public class GroupService {
                                                 StudyLevel promoStudyLevel, int promoYear){
         Promo promo =  promoService.findJpaByNameAndYearAndStudyLevel(promoName, promoYear, promoStudyLevel);
         return groupRepository.findByNumAndTypeAndPromo(num, type, promo);
+    }
+
+    // is not tested, may require change of signature in ordrer to have comfortable insertion
+    public void addModuleToGroup(Long groupId, ModuleEntity moduleEntity) {
+        Group group = groupRepository.findById(groupId).orElseThrow();
+        Module module = moduleService.toJpa(moduleEntity);
+        group.addModule(module);
+        groupRepository.save(group);
     }
 }

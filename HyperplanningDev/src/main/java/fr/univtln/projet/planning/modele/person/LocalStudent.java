@@ -34,8 +34,9 @@ public class LocalStudent extends Student {
         super();
     }
 
-    public LocalStudent(String firstName, String lastName, String emailUniv, String emailPersonal) {
+    public LocalStudent(String firstName, String lastName, String emailUniv, String emailPersonal, Promo promo) {
         super(firstName, lastName, emailUniv, emailPersonal);
+        this.promo = promo;
     }
 
     /*
@@ -50,7 +51,6 @@ public class LocalStudent extends Student {
     }
      */
 
-    /*
     public List<Group> getGroups() {
         return Collections.unmodifiableList(groups);
     }
@@ -68,6 +68,4 @@ public class LocalStudent extends Student {
             group.getLocalStudents().remove(this);
         }
     }
-
-     */
 }

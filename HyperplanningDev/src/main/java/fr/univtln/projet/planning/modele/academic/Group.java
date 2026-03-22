@@ -3,6 +3,7 @@ package fr.univtln.projet.planning.modele.academic;
 import java.util.*;
 
 import fr.univtln.projet.planning.modele.person.LocalStudent;
+import fr.univtln.projet.planning.modele.planning.Module;
 import fr.univtln.projet.planning.modele.planning.Course;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -20,7 +21,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table(name = "PlanningGroup")
+@Table(name = "PlanningGroup") // doubtable name of table
 @Setter
 @Getter
 public class Group {
@@ -44,13 +45,44 @@ public class Group {
     private Set<Course> planning = new HashSet<>();
 
     // @ManyToMany car un étudiant est dans 1 groupe CM, 1 groupe TD et 1 groupe TP.
-//    @ManyToMany
-//    @JoinTable(
-//        name = "Group_Student",
-//        joinColumns = @JoinColumn(name = "groupId"),
-//        inverseJoinColumns = @JoinColumn(name = "studentId")
-//    )
-//    private Set<LocalStudent> localStudents = new HashSet<>();
+    @ManyToMany(mappedBy = "groups")
+    private Set<LocalStudent> localStudents = new HashSet<>();
+
+    public void addLocalStudent(LocalStudent s) {
+        if (s != null && !localStudents.contains(s)) {
+            localStudents.add(s);
+            s.getGroups().add(this); // synchronisation côté propriétaire
+        }
+    }
+
+    public void removeLocalStudent(LocalStudent s) {
+        if (s != null && localStudents.contains(s)) {
+            localStudents.remove(s);
+            s.getGroups().remove(this);
+        }
+    }
+
+    @ManyToMany
+    @JoinTable(
+            name = "Group_Module",
+            joinColumns = @JoinColumn(name = "groupId"),
+            inverseJoinColumns = @JoinColumn(name = "moduleCode")
+    )
+    private Set<Module> modules = new HashSet<>();
+
+    public void addModule(Module m) {
+        if (m != null) {
+            modules.add(m);
+            m.getGroups().add(this);
+        }
+    }
+
+    public void removeModule(Module m) {
+        if (m != null) {
+            modules.remove(m);
+            m.getGroups().remove(this);
+        }
+    }
 
     protected Group() {
     }
@@ -83,24 +115,6 @@ public class Group {
             c.getGroups().remove(this);
         }
     }
-
-    /*
-    public Set<LocalStudent> getStudents() {
-        return Collections.unmodifiableSet(localStudents);
-    }
-
-    public void addLocalStudent(LocalStudent s) {
-        if (s != null) {
-            localStudents.add(s);
-        }
-    }
-
-    public void removeLocalStudent(LocalStudent s) {
-        if (s != null) {
-            localStudents.remove(s);
-        }
-    }
-     */
 
     @Override
     public boolean equals(Object o) {

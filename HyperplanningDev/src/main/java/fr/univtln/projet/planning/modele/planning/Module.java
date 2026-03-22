@@ -1,14 +1,13 @@
 package fr.univtln.projet.planning.modele.planning;
 
 import fr.univtln.projet.planning.entity.TextTransformation; // Adjust package if needed
+import fr.univtln.projet.planning.modele.academic.Group;
 import fr.univtln.projet.planning.modele.person.Professor;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Entity
 @Table(name = "Module")
@@ -33,6 +32,9 @@ public class Module {
     @ManyToOne
     @JoinColumn(name = "responsibleId")
     private Professor responsible;
+
+    @ManyToMany(mappedBy = "modules")
+    private Set<Group> groups = new HashSet<>();
 
     /*
     @OneToMany(mappedBy = "module", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -131,5 +133,9 @@ public class Module {
                 ", ects=" + ects +
                 ", responsible=" + responsible +
                 '}';
+    }
+
+    public Set<Group> getGroups() {
+        return groups;
     }
 }
