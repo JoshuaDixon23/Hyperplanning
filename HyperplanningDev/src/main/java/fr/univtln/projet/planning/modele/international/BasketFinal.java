@@ -1,10 +1,12 @@
 package fr.univtln.projet.planning.modele.international;
 
-import fr.univtln.projet.planning.entity.academic.GroupEntity;
-import fr.univtln.projet.planning.entity.planning.ModuleEntity;
+import fr.univtln.projet.planning.modele.academic.Group;
+import fr.univtln.projet.planning.modele.planning.Module;
+
 import jakarta.persistence.*;
-import java.util.HashMap;
-import java.util.Map;
+
+        import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class BasketFinal {
@@ -13,57 +15,38 @@ public class BasketFinal {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Map Module -> Groupe
-    @ManyToMany
-    @MapKeyJoinColumn(name = "module_id")
-    @JoinTable(
-            name = "basket_module_group",
-            joinColumns = @JoinColumn(name = "basket_id"),
-            inverseJoinColumns = @JoinColumn(name = "group_id")
-    )
-    private Map<ModuleEntity, GroupEntity> moduleGroup = new HashMap<>();
+    // 🔥 relation principale
+    @OneToMany(mappedBy = "basket", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<BasketEntry> entries = new ArrayList<>();
 
-    // Map Groupe -> Module
-    @ManyToMany
-    @MapKeyJoinColumn(name = "group_id")
-    @JoinTable(
-            name = "basket_planning",
-            joinColumns = @JoinColumn(name = "basket_id"),
-            inverseJoinColumns = @JoinColumn(name = "module_id")
-    )
-    private Map<GroupEntity, ModuleEntity> planning = new HashMap<>();
-
-    // ✅ constructeur obligatoire JPA
-    public BasketFinal() {
+    // ✅ constructeur JPA obligatoire
+    protected BasketFinal() {
     }
 
     // ====== LOGIQUE MÉTIER ======
 
-    public Map<ModuleEntity, GroupEntity> getModuleGroup() {
-        return moduleGroup;
+    public void addModuleGroup(Module module, Group group) {
+        BasketEntry entry = new BasketEntry(this, module, group);
+        entries.add(entry);
     }
 
-    public void addModuleGroup(ModuleEntity module, GroupEntity groupEntity) {
-        moduleGroup.put(module, groupEntity);
+    public Group getGroup(Module module) {
+        return entries.stream()
+                .filter(e -> e.getModule().equals(module))
+                .map(BasketEntry::getGroup)
+                .findFirst()
+                .orElse(null);
     }
 
-    public GroupEntity getGroup(ModuleEntity module) {
-        return moduleGroup.get(module);
+    public void removeModule(Module module) {
+        entries.removeIf(e -> e.getModule().equals(module));
     }
 
-    public void removeModule(ModuleEntity module) {
-        moduleGroup.remove(module);
+    public List<BasketEntry> getEntries() {
+        return entries;
     }
 
     public Long getId() {
         return id;
-    }
-
-    @Override
-    public String toString() {
-        return "BasketFinal{" +
-                "id=" + id +
-                ", moduleGroup=" + moduleGroup +
-                '}';
     }
 }
