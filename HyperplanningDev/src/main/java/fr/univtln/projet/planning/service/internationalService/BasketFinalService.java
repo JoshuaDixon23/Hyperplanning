@@ -4,6 +4,7 @@ package fr.univtln.projet.planning.service.internationalService;
 import fr.univtln.projet.planning.modele.international.BasketFinal;
 import fr.univtln.projet.planning.entity.academic.GroupEntity;
 import fr.univtln.projet.planning.entity.planning.ModuleEntity;
+import fr.univtln.projet.planning.modele.planning.Module;
 import fr.univtln.projet.planning.repository.internationalRepository.BasketFinalRepository;
 
 import java.util.Optional;
@@ -28,7 +29,7 @@ public class BasketFinalService {
     }
 
     // ajout de module
-    public BasketFinal addModule(Long id, ModuleEntity module, GroupEntity group) {
+    public BasketFinal addModule(Long id, Module module, GroupEntity group) {
         Optional<BasketFinal> opt = basketFinalRepository.findWithAll(id);
         if (opt.isEmpty()) return null;
 

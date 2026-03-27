@@ -1,13 +1,17 @@
 package fr.univtln.projet.planning.modele.international;
 
+import fr.univtln.projet.planning.entity.academic.GroupEntity;
+import fr.univtln.projet.planning.entity.planning.ModuleEntity;
 import fr.univtln.projet.planning.modele.academic.Group;
 import fr.univtln.projet.planning.modele.planning.Module;
 
 import jakarta.persistence.*;
+import lombok.Getter;
 
-        import java.util.ArrayList;
+import java.util.ArrayList;
 import java.util.List;
 
+@Getter
 @Entity
 public class BasketFinal {
 
@@ -20,12 +24,12 @@ public class BasketFinal {
     private List<BasketEntry> entries = new ArrayList<>();
 
     // ✅ constructeur JPA obligatoire
-    protected BasketFinal() {
+    public BasketFinal() {
     }
 
     // ====== LOGIQUE MÉTIER ======
 
-    public void addModuleGroup(Module module, Group group) {
+    public void addModuleGroup(Module module, GroupEntity group) {
         BasketEntry entry = new BasketEntry(this, module, group);
         entries.add(entry);
     }
@@ -38,15 +42,8 @@ public class BasketFinal {
                 .orElse(null);
     }
 
-    public void removeModule(Module module) {
+    public void removeModule(ModuleEntity module) {
         entries.removeIf(e -> e.getModule().equals(module));
     }
 
-    public List<BasketEntry> getEntries() {
-        return entries;
-    }
-
-    public Long getId() {
-        return id;
-    }
 }

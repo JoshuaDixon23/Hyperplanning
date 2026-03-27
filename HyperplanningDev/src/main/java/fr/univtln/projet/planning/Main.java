@@ -40,10 +40,10 @@ import java.time.LocalTime;
 import java.util.EnumMap;
 import java.util.Map;
 
-public class Main /*extends Application */{
+public class Main extends Application {
 
 
-   /* @Override
+    @Override
     public void start(Stage stage) throws Exception {
 
         Parent root = FXMLLoader.load(
@@ -66,12 +66,12 @@ public class Main /*extends Application */{
         stage.show();
     }
 
-*/
+
 
     public static void main(String[] args) {
 
-        /*launch();*/
-        System.out.println("⏳ Starting Hibernate and connecting to the database...");
+        launch();
+       /* System.out.println("⏳ Starting Hibernate and connecting to the database...");
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("HyperplanningPU");
         EntityManager em = emf.createEntityManager();
 
@@ -198,5 +198,5 @@ public class Main /*extends Application */{
             em.close();
             emf.close();
         }
-    }
-}
+    }*/
+}}
