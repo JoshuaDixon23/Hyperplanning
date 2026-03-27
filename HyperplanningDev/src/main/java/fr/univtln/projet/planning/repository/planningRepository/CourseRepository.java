@@ -6,7 +6,6 @@ import fr.univtln.projet.planning.modele.person.Professor;
 import fr.univtln.projet.planning.modele.planning.Course;
 import fr.univtln.projet.planning.repository.JpaRepository;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.TypedQuery;
 
 import java.time.LocalDate;
 import java.util.List;

@@ -7,7 +7,6 @@ import fr.univtln.projet.planning.modele.academic.Group;
 import fr.univtln.projet.planning.modele.academic.Promo;
 import fr.univtln.projet.planning.modele.academic.StudyLevel;
 import fr.univtln.projet.planning.modele.person.LocalStudent;
-import fr.univtln.projet.planning.repository.academicRepository.PromoRepository;
 import fr.univtln.projet.planning.repository.personRepository.LocalStudentRepository;
 import fr.univtln.projet.planning.service.academicService.GroupService;
 import fr.univtln.projet.planning.service.academicService.PromoService;

@@ -2,7 +2,6 @@ package fr.univtln.projet.planning.entity.planning;
 
 import fr.univtln.projet.planning.entity.TextTransformation;
 import fr.univtln.projet.planning.entity.person.ProfessorEntity;
-import fr.univtln.projet.planning.modele.person.Professor;
 import fr.univtln.projet.planning.modele.planning.Language;
 import fr.univtln.projet.planning.modele.planning.CourseType;
 import lombok.Getter;

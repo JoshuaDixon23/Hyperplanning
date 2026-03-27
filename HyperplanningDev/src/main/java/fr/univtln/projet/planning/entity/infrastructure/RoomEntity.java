@@ -1,10 +1,7 @@
 package fr.univtln.projet.planning.entity.infrastructure;
 
 import java.util.Objects;
-import java.util.Set;
-import java.util.TreeSet;
 
-import fr.univtln.projet.planning.entity.planning.CourseEntity;
 import fr.univtln.projet.planning.modele.infrastructure.RoomType;
 import lombok.Getter;
 

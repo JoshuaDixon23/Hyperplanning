@@ -1,10 +1,8 @@
 package fr.univtln.projet.planning.entity.infrastructure;
 
-import fr.univtln.projet.planning.entity.academic.UFREntity;
+
 import lombok.Getter;
 
-import java.util.HashSet;
-import java.util.Set;
 
 @Getter
 public class CampusEntity {

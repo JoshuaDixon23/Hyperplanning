@@ -3,7 +3,6 @@ package fr.univtln.projet.planning.controller;
 import fr.univtln.projet.planning.service.planningService.CourseService;
 import javafx.fxml.FXML;
 import javafx.geometry.Bounds;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.Node;

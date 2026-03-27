@@ -1,20 +1,16 @@
 package fr.univtln.projet.planning.service.planningService;
 
-import fr.univtln.projet.planning.entity.infrastructure.RoomEntity;
 import fr.univtln.projet.planning.entity.planning.CourseEntity;
-import fr.univtln.projet.planning.entity.planning.ModuleEntity;
+
 import fr.univtln.projet.planning.modele.academic.Group;
 import fr.univtln.projet.planning.modele.person.Professor;
 import fr.univtln.projet.planning.modele.planning.Course;
-import fr.univtln.projet.planning.modele.planning.CourseType;
+
 import fr.univtln.projet.planning.repository.planningRepository.CourseRepository;
-import fr.univtln.projet.planning.repository.planningRepository.ModuleRepository;
-import fr.univtln.projet.planning.service.academicService.GroupService;
+
 import fr.univtln.projet.planning.service.infrastructureService.RoomService;
 import fr.univtln.projet.planning.service.personService.ProfessorService;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.Persistence;
+
 import jakarta.transaction.Transactional;
 
 import java.time.*;

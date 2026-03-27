@@ -1,10 +1,8 @@
 package fr.univtln.projet.planning.entity.academic;
 
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
 
-import fr.univtln.projet.planning.entity.person.LocalStudentEntity;
+import java.util.Objects;
+
 import fr.univtln.projet.planning.modele.academic.StudyLevel;
 import lombok.Getter;
 

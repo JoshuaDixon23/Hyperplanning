@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.Objects;
-import java.util.function.BiFunction;
 
 @Entity
 @Table(name = "User") // Toujours conseillé d'éviter "User" qui est un mot-clé SQL

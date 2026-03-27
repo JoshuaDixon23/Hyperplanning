@@ -6,7 +6,6 @@ import java.util.TreeSet;
 
 import fr.univtln.projet.planning.entity.person.LocalStudentEntity;
 import fr.univtln.projet.planning.entity.planning.CourseEntity;
-import fr.univtln.projet.planning.entity.planning.ModuleEntity;
 import fr.univtln.projet.planning.modele.academic.GroupType;
 import lombok.Getter;
 import lombok.Setter;
