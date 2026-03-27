@@ -16,13 +16,17 @@ import java.util.List;
 @Setter
 public class LocalStudent extends Student {
 
-
     @ManyToOne
     @JoinColumn(name = "promoId")
     private Promo promo;
 
     // "localStudents" correspond au nom exact de l'attribut dans ta classe Group
-    @ManyToMany(mappedBy = "localStudents")
+    @ManyToMany
+    @JoinTable(
+            name = "Student_Group",
+            joinColumns = @JoinColumn(name = "idStudent"),
+            inverseJoinColumns = @JoinColumn(name = "idGroup")
+    )
     private List<Group> groups = new ArrayList<>();
 
 
@@ -30,11 +34,12 @@ public class LocalStudent extends Student {
         super();
     }
 
-    private LocalStudent(String firstName, String lastName) {
-        super(firstName, lastName);
+    public LocalStudent(String firstName, String lastName, String emailUniv, String emailPersonal, Promo promo) {
+        super(firstName, lastName, emailUniv, emailPersonal);
+        this.promo = promo;
     }
 
-
+    /*
     public static LocalStudent LocalStudentFactory(String fname, String lname, String emailPersonal) {
         LocalStudent s = UserFactory(fname, lname, LocalStudent::new);
         
@@ -44,6 +49,7 @@ public class LocalStudent extends Student {
         
         return s;
     }
+     */
 
     public List<Group> getGroups() {
         return Collections.unmodifiableList(groups);

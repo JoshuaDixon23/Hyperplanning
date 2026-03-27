@@ -12,7 +12,7 @@ public class StaffDRITest {
         String lastName = "Boucand";
 
         // Act (action)
-        StaffDRI staffDRI = StaffDRI.StaffDRIFactory(firstName, lastName);
+        StaffDRIEntity staffDRI = StaffDRIEntity.StaffDRIFactory(firstName, lastName);
 
         // Assert (vérification)
         assertEquals("Brigitte", staffDRI.getFirstName());

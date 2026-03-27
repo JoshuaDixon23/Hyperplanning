@@ -1,6 +1,6 @@
 package fr.univtln.projet.planning.modele.person;
 
-import fr.univtln.projet.planning.entity.TextTransformation; 
+import fr.univtln.projet.planning.entity.TextTransformation;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,7 +11,7 @@ import java.util.function.BiFunction;
 @Entity
 @Table(name = "User") // Toujours conseillé d'éviter "User" qui est un mot-clé SQL
 @Inheritance(strategy = InheritanceType.JOINED)
-@Getter 
+@Getter
 @Setter
 public abstract class User {
 
@@ -28,17 +28,19 @@ public abstract class User {
     @Column(unique = true, nullable = false)
     protected String emailUniv;
 
-    @Transient 
-    protected static final EmailCreate functionUnivMail = new EmailCreate();
+    //@Transient
+    //protected static final EmailCreate functionUnivMail = new EmailCreate();
 
     protected User() {
     }
 
-    protected User(String firstName, String lastName) {
+    protected User(String firstName, String lastName, String emailUniv) {
         this.firstName = firstName;
         this.lastName = lastName;
+        this.emailUniv = emailUniv;
     }
 
+    /*
     protected static <T extends User> T UserFactory(String fname, String lname, BiFunction<String, String, T> constructor) {
         String formattedFname = TextTransformation.capitalize(fname);
         String formattedLname = lname.toUpperCase();
@@ -48,6 +50,7 @@ public abstract class User {
 
         return user;
     }
+     */
 
     @Override
     public String toString() {

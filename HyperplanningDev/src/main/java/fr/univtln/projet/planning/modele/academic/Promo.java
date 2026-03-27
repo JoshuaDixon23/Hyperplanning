@@ -11,7 +11,9 @@ import java.util.Objects;
 import java.util.Set;
 
 @Entity
-@Table(name = "Promo")
+@Table(name = "Promo",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"name", "studyLevel", "year"})
+)
 @Getter
 @Setter
 public class Promo {
@@ -34,11 +36,11 @@ public class Promo {
     @JoinColumn(name = "idUFR", nullable = false)
     private UFR ufr;
 
-    @OneToMany(mappedBy = "promo", cascade = CascadeType.ALL)
-    private Set<LocalStudent> localStudents = new HashSet<>();
+    //@OneToMany(mappedBy = "promo", cascade = CascadeType.ALL)
+    //private Set<LocalStudent> localStudents = new HashSet<>();
 
-    @OneToMany(mappedBy = "promo", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Group> groups = new HashSet<>();
+    //@OneToMany(mappedBy = "promo", cascade = CascadeType.ALL, orphanRemoval = true)
+    //private Set<Group> groups = new HashSet<>();
 
     protected Promo() {
     }
@@ -58,6 +60,7 @@ public class Promo {
         return new Promo(name, year, studyLevel, ufr);
     }
 
+    /*
     public Set<LocalStudent> getLocalStudents() {
         return Collections.unmodifiableSet(localStudents);
     }
@@ -93,6 +96,8 @@ public class Promo {
             g.setPromo(null);
         }
     }
+
+     */
 
     @Override
     public boolean equals(Object o) {

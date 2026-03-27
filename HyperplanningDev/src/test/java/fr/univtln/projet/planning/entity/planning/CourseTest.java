@@ -1,10 +1,13 @@
 package fr.univtln.projet.planning.entity.planning;
 
-import fr.univtln.projet.planning.entity.person.Professor;
+import fr.univtln.projet.planning.entity.person.ProfessorEntity;
+import fr.univtln.projet.planning.modele.planning.CourseType;
 import org.junit.jupiter.api.Test;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -12,22 +15,25 @@ public class CourseTest {
 
     @Test
     public void testCreationCourse() {
-        Professor p1 = Professor.ProfessorFactory("ElisAbetH", "MurisAsco");
-        Professor p2 = Professor.ProfessorFactory("Valérie", "Gillot");
+        ProfessorEntity p1 = ProfessorEntity.ProfessorFactory("ElisAbetH", "MurisAsco");
+        ProfessorEntity p2 = ProfessorEntity.ProfessorFactory("Valérie", "Gillot");
 
-        Module m = Module.builder()
+        ModuleEntity m = ModuleEntity.builder()
                 .code("UE123")
                 .name("developpement avancé")
                 .ECTS(1)
                 .responsible(p1)
                 .build();
 
+        LocalDate date = LocalDate.now();
+        LocalTime time = LocalTime.now();
         Instant startTime = Instant.now();
         Duration duration = Duration.between(startTime, Instant.now());
 
-        Course c = Course.builder()
+        CourseEntity c = CourseEntity.builder()
                 .module(m)
-                .startTime(startTime)
+                .date(date)
+                .startTime(time)
                 .duration(duration)
                 .courseType(CourseType.CM)
                 .professor(p1)

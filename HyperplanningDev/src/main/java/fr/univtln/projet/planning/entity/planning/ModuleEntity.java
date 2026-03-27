@@ -1,23 +1,29 @@
 package fr.univtln.projet.planning.entity.planning;
 
 import fr.univtln.projet.planning.entity.TextTransformation;
-import fr.univtln.projet.planning.entity.person.Professor;
+import fr.univtln.projet.planning.entity.person.ProfessorEntity;
+import fr.univtln.projet.planning.modele.person.Professor;
+import fr.univtln.projet.planning.modele.planning.Language;
+import fr.univtln.projet.planning.modele.planning.CourseType;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public class Module {
+@Getter
+@Setter
+
+public class ModuleEntity {
     private String code; // code may be not unique and depend on promo ?, a dictionary may be a solution
     private String name;
     private Language language;
     private float ECTS; // number of credits
-    private Professor responsible;
+    private ProfessorEntity responsible;
     private Map<CourseType, Float> courseHours; // Dictionary for CM/TD/TP hours in module
 
-    // private Set<Group> groups;
-
-    private Module(Builder b){
+    private ModuleEntity(Builder b){
         code = b.code;
         name = b.name;
         language = b.language;
@@ -34,16 +40,20 @@ public class Module {
 
     public float ECTS() { return ECTS; }
 
-    public Professor responsible() { return responsible; }
+    public ProfessorEntity responsible() { return responsible; }
 
     public static Builder builder() { return new Builder(); }
+
+    public ProfessorEntity getResponsible() {
+        return responsible;
+    }
 
     public static final class Builder {
         private String code = "";
         private String name = "";
         private Language language = Language.FRENCH;
         private float ECTS = 0;
-        private Professor responsible = null;
+        private ProfessorEntity responsible = null;
         // the representation of number of hours for CM, TD, TP predefined to think about
 
         public Builder() {
@@ -57,33 +67,25 @@ public class Module {
 
         public Builder ECTS(float ec)  { this.ECTS = ec; return this; }
 
-        public Builder responsible(Professor p) { this.responsible = p; return this; }
+        public Builder responsible(ProfessorEntity p) { this.responsible = p; return this; }
 
-        public Module build() {
+        public ModuleEntity build() {
             Objects.requireNonNull(name, "name required");
             Objects.requireNonNull(ECTS, "ECTS required");
 
-            return new Module(this);
+            return new ModuleEntity(this);
         }
     }
 
-    public String getCode() {
-        return code;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public Language getLanguage() {
-        return language;
-    }
-
-    public float getECTS() {
-        return ECTS;
-    }
-
-    public void setCourseHours(Map<CourseType, Float> courseHours) {
-        this.courseHours = courseHours;
+    @Override
+    public String toString() {
+        return "ModuleEntity{" +
+                "code='" + code + '\'' +
+                ", name='" + name + '\'' +
+                ", language=" + language +
+                ", ECTS=" + ECTS +
+                ", responsible=" + responsible +
+                ", courseHours=" + courseHours +
+                '}';
     }
 }

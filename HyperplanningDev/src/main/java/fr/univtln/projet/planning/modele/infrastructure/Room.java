@@ -11,7 +11,9 @@ import java.util.Objects;
 import java.util.Set;
 
 @Entity
-@Table(name = "Room")
+@Table(name = "Room",
+    uniqueConstraints = @UniqueConstraint(columnNames = {"number", "idBuilding"})
+)
 @Getter
 @Setter
 public class Room {
@@ -20,7 +22,7 @@ public class Room {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idRoom;
 
-    @Column(nullable = false, length = 50)
+    @Column(nullable = false)
     private String number;
 
     @Column(nullable = false)
@@ -34,8 +36,8 @@ public class Room {
     @JoinColumn(name = "idBuilding", nullable = false)
     private Building building;
 
-    @OneToMany(mappedBy = "room")
-    private Set<Course> courses = new HashSet<>(); 
+    //@OneToMany(mappedBy = "room")
+    //private Set<Course> planning = new HashSet<>();
 
 
     protected Room() {
@@ -56,24 +58,27 @@ public class Room {
         return new Room(number, capacity, type, building);
     }
 
+    /*
     public void addCourse(Course c) {
         if (c != null) {
-            courses.add(c);
+            planning.add(c);
             c.setRoom(this);
         }
     }
 
     public void removeCourse(Course c) {
         if (c != null) {
-            courses.remove(c);
+            planning.remove(c);
             c.setRoom(null); 
         }
     }
 
 
-    public Set<Course> getCourses() {
-        return Collections.unmodifiableSet(courses);
+    public Set<Course> getPlanning() {
+        return Collections.unmodifiableSet(planning);
     }
+
+     */
 
     @Override
     public boolean equals(Object o) {
@@ -87,5 +92,16 @@ public class Room {
     @Override
     public int hashCode() {
         return Objects.hash(number, building);
+    }
+
+    @Override
+    public String toString() {
+        return "Room{" +
+                "idRoom=" + idRoom +
+                ", number='" + number + '\'' +
+                ", capacity=" + capacity +
+                ", type=" + type +
+                ", building=" + building +
+                '}';
     }
 }

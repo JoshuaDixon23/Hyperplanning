@@ -1,5 +1,6 @@
-package fr.univtln.projet.planning.service.person;
+package fr.univtln.projet.planning.service.personService;
 
-public class StudentService extends UserService {
+// à supprimer peut-être
+public class StudentService{
 
 }

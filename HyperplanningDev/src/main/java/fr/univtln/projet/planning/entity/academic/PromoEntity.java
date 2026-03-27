@@ -1,63 +1,63 @@
 package fr.univtln.projet.planning.entity.academic;
 
-import fr.univtln.projet.planning.entity.person.LocalStudent;
-
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-public class Promo {
+import fr.univtln.projet.planning.entity.person.LocalStudentEntity;
+import fr.univtln.projet.planning.modele.academic.StudyLevel;
+import lombok.Getter;
+
+@Getter
+
+public class PromoEntity {
     private final String name;
     private final StudyLevel studyLevel;
-    private final UFR ufr; //diamant noir attention
+    private int year;
+    private final UFREntity ufr; //diamant noir attention
 
     //private Professor responsible;
 
-    private final Set<LocalStudent> localStudents = new HashSet<>();
-    private final Set<Group> groups = new HashSet<>();
+    //private final Set<LocalStudentEntity> localStudents = new HashSet<>();
+    //private final Set<GroupEntity> groups = new HashSet<>();
 
     //factory
 
-    private Promo(String name, StudyLevel studyLevel,UFR ufr) {
+    private PromoEntity(String name, int year, StudyLevel studyLevel,UFREntity ufr) {
         this.name=name;
         this.studyLevel = studyLevel;
+        this.year = year;
         this.ufr=ufr;
     }
 
-    static Promo PromoFactory(String name, StudyLevel studyLevel,UFR ufr) {
+    public static PromoEntity PromoFactory(String name, int year, StudyLevel studyLevel,UFREntity ufr) {
 
         //conditions ??
-        return new Promo(name, studyLevel,ufr);
+        return new PromoEntity(name, year, studyLevel, ufr);
     }
 
-
-    // getter setter
-
-    public String getName(){
-        return name;
+    @Override
+    public String toString() {
+        return "PromoEntity{" +
+                "name='" + name + '\'' +
+                ", studyLevel=" + studyLevel +
+                ", year=" + year +
+                ", ufr=" + ufr +
+                '}';
     }
 
-
-    public UFR getUfr(){
-        return ufr;
-    }
-
-    public StudyLevel getStudyLevel() {
-        return studyLevel;
-    }
-
-    public Set<LocalStudent> getLocalStudent() {
+    /*
+    public Set<LocalStudentEntity> getLocalStudent() {
         return localStudents;
     }
 
-    public Set<Group> getGroups() {
+    public Set<GroupEntity> getGroups() {
         return groups;
     }
 
-
     // manage promo
 
-    public void addStudent(LocalStudent s) {
+    public void addStudent(LocalStudentEntity s) {
         if (s == null) return; //throw ?
         else {
             localStudents.add(s);
@@ -65,7 +65,7 @@ public class Promo {
         }
     }
 
-    public void removeStudent(LocalStudent s) {
+    public void removeStudent(LocalStudentEntity s) {
         if (s == null) return; //throw ?
         else {
             localStudents.remove(s);
@@ -74,7 +74,7 @@ public class Promo {
     }
 
 
-    public void addGroup(Group g) {
+    public void addGroup(GroupEntity g) {
         if (g == null) return; //throw ?
         else  {
             groups.add(g);
@@ -83,7 +83,7 @@ public class Promo {
 
 
     }
-    public void removeGroup(Group g) {
+    public void removeGroup(GroupEntity g) {
         if (g == null) return; //throw??
         else  {
             groups.remove(g);
@@ -92,13 +92,15 @@ public class Promo {
 
     }
 
+     */
+
     // equals et hascode
 
 
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
-        Promo promo = (Promo) o;
+        PromoEntity promo = (PromoEntity) o;
         return Objects.equals(name, promo.name) && studyLevel == promo.studyLevel && Objects.equals(ufr, promo.ufr);
     }
 

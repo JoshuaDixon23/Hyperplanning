@@ -1,18 +1,15 @@
 package fr.univtln.projet.planning.controller;
 
-import fr.univtln.projet.planning.entity.planning.Course;
 import fr.univtln.projet.planning.service.planningService.CourseService;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
-import javafx.scene.input.ScrollEvent;
 import javafx.geometry.Bounds;
 import javafx.scene.Scene;
+import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.Node;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.time.temporal.WeekFields;
 import java.util.ArrayList;
 import java.util.Locale;
@@ -23,6 +20,8 @@ import javafx.util.Duration;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import java.util.List;
+import javafx.scene.control.OverrunStyle;
+import fr.univtln.projet.planning.entity.planning.CourseEntity;
 
 public class PlanningController {
 
@@ -57,7 +56,8 @@ public class PlanningController {
     private final DateTimeFormatter dayMonthFmt = DateTimeFormatter.ofPattern("d MMM", Locale.FRENCH);
 
     private final List<VBox> sourceCourseCards = new ArrayList<>();
-    private final CourseService courseService = new CourseService();
+    private CourseService courseService;
+    private PlanningContext planningContext;
 
     /**
      * Called by JavaFx after the FXML file has been loaded
@@ -74,7 +74,7 @@ public class PlanningController {
         renderWeeksInto(weeksContainer, baseWeekMonday);
 
         buildEmptyGrid(8, 20, 1);
-        refreshPlanning();
+
         btnMonPlan.setToggleGroup(viewGroup);
         btnMaPromo.setToggleGroup(viewGroup);
         btnAutrePromo.setToggleGroup(viewGroup);
@@ -114,6 +114,8 @@ public class PlanningController {
         });
     }
 
+
+
     private void applyWeeksClip(){
         Rectangle clip = new Rectangle();
         clip.widthProperty().bind(weeksViewport.widthProperty());
@@ -152,16 +154,25 @@ public class PlanningController {
         return Math.max(6, count);
     }
 
-    private void loadCoursesFromService(List<Course> courses) {
-        for (Course course : courses) {
-            LocalDateTime dateTime = LocalDateTime.ofInstant(
-                    course.getStartTime(),
-                    ZoneId.of("Europe/Paris")
-            );
+    public void loadPlanning(PlanningContext planningContext) {
+        this.planningContext = planningContext;
+        refreshPlanning();
+    }
 
-            int dayIndex = dateTime.getDayOfWeek().getValue() - 1; // lundi = 0
-            int startHour = dateTime.getHour();
-            int startMinute = dateTime.getMinute();
+    private void loadCoursesFromService(List<CourseEntity> courses) {
+        List<CourseEntity> uniqueCourses = courses.stream()
+                .distinct()
+                .toList();
+
+        for (CourseEntity course : uniqueCourses) {
+            int dayIndex = (int) ChronoUnit.DAYS.between(selectedWeekMonday, course.getDate());
+
+            if (dayIndex < 0 || dayIndex >= 6) {
+                continue;
+            }
+
+            int startHour = course.getStartTime().getHour();
+            int startMinute = course.getStartTime().getMinute();
             int durationMinutes = (int) course.getDuration().toMinutes();
 
             String moduleName = course.getModule() != null
@@ -173,7 +184,8 @@ public class PlanningController {
                     : "Type non défini";
 
             String teacher = (course.getProfessors() != null && !course.getProfessors().isEmpty())
-                    ? course.getProfessors().get(0).getFirstName() + " " + course.getProfessors().get(0).getLastName()
+                    ? course.getProfessors().iterator().next().getFirstName() + " " +
+                    course.getProfessors().iterator().next().getLastName()
                     : "Prof non défini";
 
             String room = course.getRoom() != null
@@ -183,6 +195,14 @@ public class PlanningController {
             addCourse(dayIndex, startHour, startMinute, durationMinutes, moduleName, courseType, teacher, room);
         }
     }
+
+
+
+
+    public void setCourseService(CourseService courseService) {
+        this.courseService = courseService;
+    }
+
 
     private void slideWeeks(boolean toNext) {
         weeksAnimating = true;
@@ -345,39 +365,49 @@ public class PlanningController {
     private VBox buildCourseCard(String title, String type, String teacher, String room) {
         VBox card = new VBox(6);
         card.getStyleClass().add("course-card");
+        card.setFillWidth(true);
+        card.setAlignment(Pos.TOP_LEFT);
+        card.setMinWidth(0);
 
-        Label t = new Label(title);
-        t.getStyleClass().add("course-title");
-        t.setWrapText(true);
-        t.setMaxWidth(Double.MAX_VALUE);
-
-        Label ty = new Label(type);
-        ty.getStyleClass().add("course-meta");
-        ty.setWrapText(true);
-        ty.setMaxWidth(Double.MAX_VALUE);
-
-        Label te = new Label(teacher);
-        te.getStyleClass().add("course-meta");
-        te.setWrapText(true);
-        te.setMaxWidth(Double.MAX_VALUE);
-
-        Label r = new Label(room);
-        r.getStyleClass().add("course-meta");
-        r.setWrapText(true);
-        r.setMaxWidth(Double.MAX_VALUE);
+        Label t = createSingleLineLabel(title, "course-title");
+        Label ty = createSingleLineLabel(type, "course-meta");
+        Label te = createSingleLineLabel(teacher, "course-meta");
+        Label r = createSingleLineLabel(room, "course-meta");
 
         Button button = new Button("More");
         button.getStyleClass().add("button-more");
-        button.setWrapText(true);
         button.setMaxWidth(Double.MAX_VALUE);
+        button.setMinHeight(34);
+        button.setPrefHeight(34);
+        button.setFocusTraversable(false);
+
+        t.setTooltip(new Tooltip(title));
+        ty.setTooltip(new Tooltip(type));
+        te.setTooltip(new Tooltip(teacher));
+        r.setTooltip(new Tooltip(room));
 
         card.getChildren().addAll(t, ty, te, r, button);
 
-        card.setMinWidth(0);
-        card.setMaxWidth(Double.MAX_VALUE);
-
         return card;
     }
+    private Label createSingleLineLabel(String text, String styleClass) {
+        Label label = new Label(text);
+        label.getStyleClass().add(styleClass);
+        label.setWrapText(false);
+        label.setTextOverrun(OverrunStyle.ELLIPSIS);
+        label.setEllipsisString("...");
+        label.setMinWidth(0);
+        label.setMaxWidth(Double.MAX_VALUE);
+        return label;
+    }
+
+    private void setManagedVisible(Node node, boolean visible) {
+        node.setVisible(visible);
+        node.setManaged(visible);
+    }
+
+
+
 
 
 
@@ -428,42 +458,52 @@ public class PlanningController {
     }
 
     private void refreshPlanning() {
+        if (courseService == null || planningContext == null) return;
+
         sourceCourseCards.clear();
         coursesPane.getChildren().clear();
 
-        List<Course> courses = courseService.getCoursesForWeek(selectedWeekMonday);
+        LocalDate start = selectedWeekMonday;
+        LocalDate end = selectedWeekMonday.plusDays(6);
+
+        List<CourseEntity> courses = switch (planningContext.getType()) {
+            case STUDENT -> courseService.findPlanningByStudentId(planningContext.getId(), start, end);
+            case PROFESSOR -> courseService.findPlanningByProfessorId(planningContext.getId(), start, end);
+            case GROUP -> courseService.findPlanningByGroupId(planningContext.getId(), start, end);
+            case PROMO -> courseService.findPlanningByPromoId(planningContext.getId(), start, end);
+            case ROOM -> courseService.findPlanningByRoomId(planningContext.getId(), start, end);
+        };
+
         loadCoursesFromService(courses);
         layoutCoursesStacked();
     }
-    private void placeSingleCard(VBox card, double dayWidth, int dayIndex) {
+
+    private void placeSingleCard(VBox card, int dayIndex) {
         double horizontalPadding = 8;
 
         int start = (int) card.getProperties().get("startMinutes");
         int duration = (int) card.getProperties().get("durationMinutes");
 
-        double x = dayIndex * dayWidth + horizontalPadding;
-        double topMargin = (start == GRID_START_HOUR * 60) ? 12 : 0;
-        double y = ((start - GRID_START_HOUR * 60) / (double) SLOT_MINUTES) * ROW_HEIGHT + topMargin;
-        double h = (duration / (double) SLOT_MINUTES) * ROW_HEIGHT - topMargin;
-        double w = dayWidth - 2 * horizontalPadding;
+        int rowIndex = (start - GRID_START_HOUR * 60) / SLOT_MINUTES;
 
-        card.setLayoutX(x);
-        card.setLayoutY(y);
-        card.setPrefWidth(w);
-        card.setMinWidth(w);
-        card.setMaxWidth(w);
+        Bounds cellBounds = getCellBoundsInCoursesPane(dayIndex, rowIndex);
+        if (cellBounds == null) return;
 
-        card.setPrefHeight(h);
-        card.setMinHeight(h);
-        card.setMaxHeight(h);
+        double x = cellBounds.getMinX() + horizontalPadding;
+        double y = ((start - GRID_START_HOUR * 60) / (double) SLOT_MINUTES) * ROW_HEIGHT;
+
+        double w = cellBounds.getWidth() - 2 * horizontalPadding;
+        double h = (duration / (double) SLOT_MINUTES) * ROW_HEIGHT;
+
+        card.resizeRelocate(x, y, w, h);
     }
 
-    private Pane buildOverlapPane(List<Node> group, double dayWidth, int dayIndex) {
+    private Pane buildOverlapPane(List<Node> group, int dayIndex) {
         Pane container = new Pane();
 
         double horizontalPadding = 8;
         double tabWidth = 18;
-        double cardWidth = dayWidth - 2 * horizontalPadding;
+        double gap = 4;
 
         int minStart = group.stream()
                 .mapToInt(n -> (int) n.getProperties().get("startMinutes"))
@@ -475,16 +515,23 @@ public class PlanningController {
                 .max()
                 .orElse(minStart + 60);
 
-        double x = dayIndex * dayWidth + horizontalPadding;
-        double topMargin = (minStart == GRID_START_HOUR * 60) ? 12 : 0;
-        double y = ((minStart - GRID_START_HOUR * 60) / (double) SLOT_MINUTES) * ROW_HEIGHT + topMargin;
-        double h = ((maxEnd - minStart) / (double) SLOT_MINUTES) * ROW_HEIGHT - topMargin;
+        int baseRow = (minStart - GRID_START_HOUR * 60) / SLOT_MINUTES;
+
+        Bounds cellBounds = getCellBoundsInCoursesPane(dayIndex, baseRow);
+        if (cellBounds == null) return new Pane();
+
+        double totalWidth = cellBounds.getWidth() - 2 * horizontalPadding;
+        double cardWidth = totalWidth - tabWidth - gap;
+
+        double x = cellBounds.getMinX() + horizontalPadding;
+        double y = ((minStart - GRID_START_HOUR * 60) / (double) SLOT_MINUTES) * ROW_HEIGHT;
+        double h = ((maxEnd - minStart) / (double) SLOT_MINUTES) * ROW_HEIGHT;
 
         container.setLayoutX(x);
         container.setLayoutY(y);
-        container.setPrefWidth(cardWidth + tabWidth);
-        container.setMinWidth(cardWidth);
-        container.setMaxWidth(cardWidth + tabWidth);
+        container.setPrefWidth(totalWidth);
+        container.setMinWidth(totalWidth);
+        container.setMaxWidth(totalWidth);
 
         container.setPrefHeight(h);
         container.setMinHeight(h);
@@ -498,9 +545,11 @@ public class PlanningController {
         cardsLayer.setMaxSize(cardWidth, h);
 
         VBox selector = new VBox(4);
-        selector.setLayoutX(cardWidth);
+        selector.setLayoutX(cardWidth + gap);
         selector.setLayoutY(0);
         selector.setPrefWidth(tabWidth);
+        selector.setMinWidth(tabWidth);
+        selector.setMaxWidth(tabWidth);
         selector.setAlignment(Pos.TOP_LEFT);
         selector.setMouseTransparent(false);
 
@@ -518,15 +567,7 @@ public class PlanningController {
             card.getProperties().put("innerY", innerY);
             card.getProperties().put("innerH", innerH);
 
-            card.setLayoutX(0);
-            card.setLayoutY(innerY);
-            card.setPrefWidth(cardWidth);
-            card.setMinWidth(cardWidth);
-            card.setMaxWidth(cardWidth);
-
-            card.setPrefHeight(innerH);
-            card.setMinHeight(innerH);
-            card.setMaxHeight(innerH);
+            card.resizeRelocate(0, innerY, cardWidth, innerH);
 
             if (i == 0) {
                 card.setOpacity(1.0);
@@ -554,10 +595,25 @@ public class PlanningController {
         }
 
         container.getChildren().addAll(cardsLayer, selector);
-
         showCardInStack(cardsLayer, selector, tabButtons, group, 0);
 
         return container;
+    }
+
+    private Bounds getCellBoundsInCoursesPane(int col, int row) {
+        for (Node node : planningGrid.getChildren()) {
+            Integer nodeCol = GridPane.getColumnIndex(node);
+            Integer nodeRow = GridPane.getRowIndex(node);
+
+            int c = nodeCol == null ? 0 : nodeCol;
+            int r = nodeRow == null ? 0 : nodeRow;
+
+            if (c == col && r == row) {
+                Bounds boundsInScene = node.localToScene(node.getBoundsInLocal());
+                return coursesPane.sceneToLocal(boundsInScene);
+            }
+        }
+        return null;
     }
 
     private void showCardInStack(Pane cardsLayer, VBox selector, List<Button> tabButtons, List<Node> group, int selectedIndex) {
@@ -609,7 +665,7 @@ public class PlanningController {
         for (int day = 0; day < dayCols; day++) {
             final int currentDay = day;
 
-            java.util.List<Node> dayCards = sourceCourseCards.stream()
+            List<Node> dayCards = sourceCourseCards.stream()
                     .filter(n -> ((int) n.getProperties().get("dayIndex")) == currentDay)
                     .sorted(java.util.Comparator.comparingInt(n -> (int) n.getProperties().get("startMinutes")))
                     .map(n -> (Node) n)
@@ -620,14 +676,13 @@ public class PlanningController {
             for (List<Node> group : groups) {
                 if (group.size() == 1) {
                     VBox card = (VBox) group.get(0);
-                    placeSingleCard(card, dayWidth, currentDay);
+                    placeSingleCard(card, currentDay);
                     coursesPane.getChildren().add(card);
                 } else {
-                    Pane overlapPane = buildOverlapPane(group, dayWidth, currentDay);
+                    Pane overlapPane = buildOverlapPane(group, currentDay);
                     coursesPane.getChildren().add(overlapPane);
                 }
             }
         }
     }
 }
-

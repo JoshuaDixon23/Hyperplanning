@@ -1,13 +1,19 @@
 package fr.univtln.projet.planning.entity.infrastructure;
 
-import fr.univtln.projet.planning.entity.academic.UFR;
-
 import java.time.LocalTime;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
-public class Building {
+import fr.univtln.projet.planning.entity.academic.UFREntity;
+import fr.univtln.projet.planning.modele.infrastructure.Day;
+import fr.univtln.projet.planning.modele.infrastructure.RoomType;
 
-    public class Hours{
+public class BuildingEntity {
+
+    public static class Hours{
         public LocalTime opening;
         public LocalTime closing;
     }
@@ -19,20 +25,20 @@ public class Building {
     //private LocalTime openingTime; // à modifier regarder diagramme
     //private LocalTime closingTime;
 
-    private UFR ufr; //peut être null
-    private Campus campus;
-    private final Set<Room> rooms = new HashSet<>();
+    private UFREntity ufr; //peut être null
+    private CampusEntity campus;
+    //private final Set<RoomEntity> rooms = new HashSet<>();
 
 
     //factory
-    private Building(String name, String localisation, Map<Day,Hours> openingHours) {
+    private BuildingEntity(String name, String localisation, Map<Day,Hours> openingHours) {
         this.localisation = localisation;
         this.name = name;
         this.openingHours = openingHours;
     }
 
-    public static Building BuildingFactory(String name, String localisation, Map openingHours) {
-        return new Building(name, localisation,openingHours);
+    public static BuildingEntity BuildingFactory(String name, String localisation, Map openingHours) {
+        return new BuildingEntity(name, localisation,openingHours);
     }
 
     // getter setter
@@ -44,7 +50,7 @@ public class Building {
         this.localisation = localisation;
     }
 
-    public Map getOpeningHours() {
+    public Map<Day,Hours> getOpeningHours() {
         return openingHours;
     }
 
@@ -52,44 +58,57 @@ public class Building {
         this.openingHours = openingHours;
     }
 
-    public UFR getUfr(){
+    public UFREntity getUfr(){
         return ufr;
     }
 
-    public void setUfr(UFR u){
+    public void setUfr(UFREntity u){
         this.ufr=u;
     }
 
-    public Campus getCampus() {
+    public CampusEntity getCampus() {
         return campus;
     }
 
-    public void setCampus(Campus campus) {
+    public void setCampus(CampusEntity campus) {
         this.campus = campus;
     }
 
-    public Set<Room> getRooms() {
+    /*
+    public Set<RoomEntity> getRooms() {
         return Collections.unmodifiableSet(rooms);
     }
+
+     */
 
     public String getName() {
         return name;
     }
 
-// manage Building
+    @Override
+    public String toString() {
+        return "BuildingEntity{" +
+                "name='" + name + '\'' +
+                ", localisation='" + localisation + '\'' +
+                ", ufr=" + ufr +
+                ", campus=" + campus +
+                '}';
+    }
 
+    // manage Building
+
+
+    /*
     public void addRoom(int num, int capacity, RoomType type) {
-        /*if (r == null) {
-            return; //throw ?
-        }
-
-         */
-        Room r = Room.RoomFactory(num,capacity,type,this);
+//        if (r == null) {
+//            return; //throw ?
+//        }
+        RoomEntity r = RoomEntity.RoomFactory(num,capacity,type,this);
         rooms.add(r);
 
     }
 
-    public void removeRoom(Room r) {
+    public void removeRoom(RoomEntity r) {
         if (r == null) {
             return; //throw ?
         }
@@ -97,7 +116,7 @@ public class Building {
             rooms.remove(r);
         }
     }
-
+     */
 
     // equals hashCode
 
@@ -105,7 +124,7 @@ public class Building {
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
-        Building building = (Building) o;
+        BuildingEntity building = (BuildingEntity) o;
         return Objects.equals(name, building.name) && Objects.equals(localisation, building.localisation) && Objects.equals(ufr, building.ufr);
     }
 

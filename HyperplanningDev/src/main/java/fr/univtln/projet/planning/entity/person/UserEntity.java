@@ -1,23 +1,25 @@
 package fr.univtln.projet.planning.entity.person;
 
 import fr.univtln.projet.planning.entity.TextTransformation;
+import lombok.Getter;
 
 import java.util.Objects;
 import java.util.function.BiFunction;
 
-public abstract class User{
+@Getter
+public abstract class UserEntity {
     private final String firstName;
     private final String lastName;
     protected String emailUniv;
     // private ? phoneNumber;
     protected static final EmailCreate functionUnivMail =  new EmailCreate();
 
-    protected User(String firstName, String lastName) {
+    protected UserEntity(String firstName, String lastName) {
         this.firstName = firstName;
         this.lastName = lastName;
     }
 
-    protected static <T extends User> T UserFactory(String fname, String lname, BiFunction<String, String, T> constructor) {
+    protected static <T extends UserEntity> T UserFactory(String fname, String lname, BiFunction<String, String, T> constructor) {
         // verification of entries to do !!!
 
         // format : Firstname LASTNAME
@@ -30,22 +32,6 @@ public abstract class User{
         user.emailUniv = functionUnivMail.apply(user);
 
         return user;
-    }
-    
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setEmailUniv(String emailUniv) {
-        this.emailUniv = emailUniv;
-    }
-
-    public String getEmailUniv() {
-        return emailUniv;
     }
 
     @Override
@@ -65,7 +51,7 @@ public abstract class User{
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
-        User user = (User) o;
+        UserEntity user = (UserEntity) o;
         return Objects.equals(emailUniv, user.emailUniv);
     }
 

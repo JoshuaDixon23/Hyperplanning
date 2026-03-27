@@ -1,8 +1,10 @@
 package fr.univtln.projet.planning.entity.planning;
 
-import fr.univtln.projet.planning.entity.person.Professor;
+import fr.univtln.projet.planning.entity.person.ProfessorEntity;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
+
+import fr.univtln.projet.planning.modele.planning.Language;
 
 public class ModuleTest {
 
@@ -12,9 +14,9 @@ public class ModuleTest {
         String lastName = "MurisAsco";
 
         // Act (action)
-        Professor professor = Professor.ProfessorFactory(firstName, lastName);
+        ProfessorEntity professor = ProfessorEntity.ProfessorFactory(firstName, lastName);
 
-        Module m = Module.builder()
+        ModuleEntity m = ModuleEntity.builder()
                 .code("UE123")
                 .name("developpement avancé")
                 .ECTS(1)

@@ -1,12 +1,11 @@
 package fr.univtln.projet.planning.entity.infrastructure;
 
-import org.junit.jupiter.api.Test;
-
 import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import org.junit.jupiter.api.Test;
 
 public class BuildingTest {
 
@@ -17,7 +16,7 @@ public class BuildingTest {
         Map<String,String> hours = new HashMap<>();
         hours.put("Monday", "9h-17h");
 
-        Building building = Building.BuildingFactory("UFR Sciences",
+        BuildingEntity building = BuildingEntity.BuildingFactory("UFR Sciences",
                 "Campus La Garde", hours);
 
         assertNotNull(building);

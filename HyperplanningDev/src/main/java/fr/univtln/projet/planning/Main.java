@@ -1,11 +1,27 @@
 package fr.univtln.projet.planning;
 
 // Imports de l'académique
+import fr.univtln.projet.planning.controller.PlanningContext;
+import fr.univtln.projet.planning.controller.PlanningController;
 import fr.univtln.projet.planning.modele.academic.Group;
 import fr.univtln.projet.planning.modele.academic.GroupType;
 import fr.univtln.projet.planning.modele.academic.Promo;
 import fr.univtln.projet.planning.modele.academic.StudyLevel;
 import fr.univtln.projet.planning.modele.academic.UFR;
+import fr.univtln.projet.planning.repository.academicRepository.UFRRepository;
+import fr.univtln.projet.planning.repository.infrastructureRepository.BuildingRepository;
+import fr.univtln.projet.planning.repository.infrastructureRepository.CampusRepository;
+import fr.univtln.projet.planning.repository.infrastructureRepository.RoomRepository;
+import fr.univtln.projet.planning.repository.personRepository.AdminRepository;
+import fr.univtln.projet.planning.repository.personRepository.ProfessorRepository;
+import fr.univtln.projet.planning.repository.planningRepository.ModuleRepository;
+import fr.univtln.projet.planning.service.academicService.UFRService;
+import fr.univtln.projet.planning.service.infrastructureService.BuildingService;
+import fr.univtln.projet.planning.service.infrastructureService.CampusService;
+import fr.univtln.projet.planning.service.personService.AdminService;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.Persistence;
 
 // Imports de l'infrastructure
 import fr.univtln.projet.planning.modele.infrastructure.Building;
@@ -18,7 +34,6 @@ import fr.univtln.projet.planning.modele.infrastructure.RoomType;
 import fr.univtln.projet.planning.modele.person.Admin;
 import fr.univtln.projet.planning.modele.person.LocalStudent;
 import fr.univtln.projet.planning.modele.person.Professor;
-import fr.univtln.projet.planning.modele.person.User;
 
 // Imports du planning
 import fr.univtln.projet.planning.modele.planning.Course;
@@ -26,31 +41,85 @@ import fr.univtln.projet.planning.modele.planning.CourseType;
 import fr.univtln.projet.planning.modele.planning.Language;
 import fr.univtln.projet.planning.modele.planning.Module;
 
+import fr.univtln.projet.planning.repository.planningRepository.CourseRepository;
+import fr.univtln.projet.planning.service.infrastructureService.RoomService;
+import fr.univtln.projet.planning.service.personService.ProfessorService;
+import fr.univtln.projet.planning.service.planningService.CourseService;
+import fr.univtln.projet.planning.service.planningService.ModuleService;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
-
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
-
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-public class Main extends Application {
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.EnumMap;
+import java.util.Map;
 
+public class Main extends Application {
+    private CourseService courseService;
 
     @Override
     public void start(Stage stage) throws Exception {
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("HyperplanningPU");
+        EntityManager em = emf.createEntityManager();
 
-        Parent root = FXMLLoader.load(
+        FXMLLoader loader = new FXMLLoader(
                 getClass().getResource("/view/planning-view.fxml")
         );
+        Parent root = loader.load();
+
+        PlanningController controller = loader.getController();
+
+        CourseRepository courseRepository = new CourseRepository(em);
+        ModuleRepository moduleRepository = new ModuleRepository(em);
+        ProfessorRepository professorRepository = new ProfessorRepository(em);
+        AdminRepository adminRepository = new AdminRepository(em);
+        RoomRepository roomRepository = new RoomRepository(em);
+        BuildingRepository buildingRepository = new BuildingRepository(em);
+        CampusRepository campusRepository = new CampusRepository(em);
+        UFRRepository ufrRepository = new UFRRepository(em);
+
+        ProfessorService professorService = new ProfessorService(professorRepository);
+        AdminService adminService = new AdminService(adminRepository);
+        CampusService campusService = new CampusService(campusRepository);
+
+        UFRService ufrService = new UFRService(
+                ufrRepository,
+                adminService,
+                campusService
+        );
+
+        BuildingService buildingService = new BuildingService(
+                buildingRepository,
+                campusService,
+                ufrService
+        );
+
+        ModuleService moduleService = new ModuleService(
+                moduleRepository,
+                professorService
+        );
+
+        RoomService roomService = new RoomService(
+                roomRepository,
+                buildingService
+        );
+
+        CourseService courseService = new CourseService(
+                courseRepository,
+                moduleService,
+                roomService,
+                professorService
+        );
+
+
 
         Scene scene = new Scene(root, 1200, 800);
 
@@ -66,6 +135,15 @@ public class Main extends Application {
         stage.setMinHeight(700);
         stage.setScene(scene);
         stage.show();
+        controller.setCourseService(courseService);
+
+
+        Platform.runLater(() -> Platform.runLater(() -> controller.loadPlanning(PlanningContext.forGroup(1L))));
+
+        stage.setOnCloseRequest(event -> {
+            em.close();
+            emf.close();
+        });
     }
 
 
@@ -73,6 +151,7 @@ public class Main extends Application {
     public static void main(String[] args) {
 
         launch();
+        /*
         System.out.println("⏳ Starting Hibernate and connecting to the database...");
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("HyperplanningPU");
         EntityManager em = emf.createEntityManager();
@@ -88,9 +167,9 @@ public class Main extends Application {
             // 1. PEOPLE (Users - Sans InternationalStudent)
             // ==========================================
             System.out.println("1️⃣ Creating Users...");
-            Admin admin = Admin.AdminFactory("jean", "michel");
-            Professor prof = Professor.ProfessorFactory("alan", "turing");
-            LocalStudent localStudent = LocalStudent.LocalStudentFactory("alice", "liddell", "alice.perso@gmail.com");
+            Admin admin = new Admin("jean", "michel", "jean.michel7@univ-tln.fr");
+            Professor prof = new Professor("alan", "turing", "alan.turing3@univ-tln.fr");
+            LocalStudent localStudent = new LocalStudent("alice", "liddell", "alice-perso621@etud.univ-tln.fr", "alice.perso@gmail.com");
 
             em.persist(admin);
             em.persist(prof);
@@ -138,6 +217,8 @@ public class Main extends Application {
             // ==========================================
             // 4. PLANNING (Module -> Course <-> Group)
             // ==========================================
+
+            Duration duration = Duration.ofHours(2);
             System.out.println("4️⃣ Creating Planning...");
             Module javaModule = Module.builder()
                     .code("m-java-01")
@@ -151,7 +232,7 @@ public class Main extends Application {
                     .module(javaModule)
                     .date(LocalDate.of(2026, 9, 15))
                     .startTime(LocalTime.of(10, 0))
-                    .duration(180)
+                    .duration(duration)
                     .courseType(CourseType.TP)
                     .room(roomInfo)
                     .professor(prof)
@@ -198,5 +279,7 @@ public class Main extends Application {
             em.close();
             emf.close();
         }
+
+         */
     }
 }

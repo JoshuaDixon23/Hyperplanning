@@ -1,7 +1,8 @@
 package fr.univtln.projet.planning.entity.person;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
 
 public class ProfessorTest {
 
@@ -12,7 +13,7 @@ public class ProfessorTest {
         String lastName = "MurisAsco";
 
         // Act (action)
-        Professor professor = Professor.ProfessorFactory(firstName, lastName);
+        ProfessorEntity professor = ProfessorEntity.ProfessorFactory(firstName, lastName);
 
         // Assert (vérification)
         assertEquals("Elisabeth", professor.getFirstName());
