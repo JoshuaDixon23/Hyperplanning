@@ -1,12 +1,12 @@
 package fr.univtln.projet.planning.service.infrastructureService;
 
 import fr.univtln.projet.planning.entity.infrastructure.CampusEntity;
+import fr.univtln.projet.planning.mapper.infrastracture.CampusMapper;
 import fr.univtln.projet.planning.modele.infrastructure.Campus;
 import fr.univtln.projet.planning.repository.infrastructureRepository.CampusRepository;
 import jakarta.transaction.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 public class CampusService {
 
@@ -18,52 +18,40 @@ public class CampusService {
         this.campusRepository = campusRepository;
     }
 
-    // ------------------ MAPPERS ------------------
-
-    public CampusEntity toDomain(Campus c) {
-        if (c == null) return null;
-        return CampusEntity.CampusFactory(c.getCity(), c.getImageFileName());
-    }
-
-    public Campus toJpa(CampusEntity c) {
-        if (c == null) return null;
-        return Campus.CampusFactory(c.getCity(), c.getImageFileName());
-    }
-
     // ------------------ CREATE ------------------
 
     public CampusEntity create(CampusEntity campusEntity) {
-        Campus jpa = toJpa(campusEntity);
+        Campus jpa = CampusMapper.toJpa(campusEntity);
         Campus saved = campusRepository.save(jpa);
-        return toDomain(saved);
+        return CampusMapper.toDomain(saved);
     }
 
     @Transactional
     public CampusEntity create(String city, String imageFileName) {
         CampusEntity campusEntity =  CampusEntity.CampusFactory(city, imageFileName);
-        Campus jpa = toJpa(campusEntity);
+        Campus jpa = CampusMapper.toJpa(campusEntity);
         Campus saved = campusRepository.save(jpa);
-        return toDomain(saved);
+        return CampusMapper.toDomain(saved);
     }
 
     // ------------------ FIND ------------------
 
     public CampusEntity findById(Long id) {
         return campusRepository.findById(id)
-                .map(this::toDomain)
+                .map(CampusMapper::toDomain)
                 .orElse(null);
     }
 
     public List<CampusEntity> findAll() {
         return campusRepository.findAll()
                 .stream()
-                .map(this::toDomain)
+                .map(CampusMapper::toDomain)
                 .toList();
     }
 
     public CampusEntity findByCity(String city) {
         return campusRepository.findByCity(city)
-                .map(this::toDomain)
+                .map(CampusMapper::toDomain)
                 .orElse(null);
     }
 

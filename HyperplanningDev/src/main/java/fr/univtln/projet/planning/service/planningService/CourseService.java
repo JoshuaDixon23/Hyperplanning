@@ -3,6 +3,7 @@ package fr.univtln.projet.planning.service.planningService;
 import fr.univtln.projet.planning.entity.infrastructure.RoomEntity;
 import fr.univtln.projet.planning.entity.planning.CourseEntity;
 import fr.univtln.projet.planning.entity.planning.ModuleEntity;
+import fr.univtln.projet.planning.mapper.planning.CourseMapper;
 import fr.univtln.projet.planning.modele.academic.Group;
 import fr.univtln.projet.planning.modele.person.Professor;
 import fr.univtln.projet.planning.modele.planning.Course;
@@ -40,53 +41,21 @@ public class CourseService {
 
     // ################### MAPPERS ##################
 
-    public CourseEntity toDomain(Course c) {
-        if (c == null) return null;
-        CourseEntity.Builder builder = CourseEntity.builder()
-                .module(moduleService.toDomain(c.getModule()))
-                .date(c.getDate())
-                .startTime(c.getStartTime())
-                .duration(c.getDuration())
-                .room(roomService.toDomain(c.getRoom()))
-                .courseType(c.getCourseType());
 
-        if (c.getProfessors() != null) {
-            c.getProfessors().forEach(prof -> builder.professor(professorService.toDomain(prof)));
-        }
-
-        return builder.build();
-    }
-
-    public Course toJpa(CourseEntity c) {
-        if (c == null) return null;
-        Course.Builder builder = Course.builder()
-                .module(moduleService.toJpa(c.getModule()))
-                .date(c.getDate())
-                .startTime(c.getStartTime())
-                .duration(c.getDuration())
-                .room(roomService.toJpa(c.getRoom()))
-                .courseType(c.getCourseType());
-
-        if (c.getProfessors() != null) {
-            c.getProfessors().forEach(prof -> builder.professor(professorService.toJpa(prof)));
-        }
-
-        return builder.build();
-    }
 
     // ################### CRUD ##################
 
     public Optional<CourseEntity> findById(Long id) {
-        return courseRepository.findById(id).map(this::toDomain);
+        return courseRepository.findById(id).map(CourseMapper::toDomain);
     }
 
     public List<CourseEntity> findAll() {
-        return courseRepository.findAll().stream().map(this::toDomain).toList();
+        return courseRepository.findAll().stream().map(CourseMapper::toDomain).toList();
     }
 
     @Transactional
     public CourseEntity create(CourseEntity entity) {
-        Course jpa = toJpa(entity);
+        Course jpa = CourseMapper.toJpa(entity);
         courseRepository.save(jpa);
         return entity;
     }
@@ -153,56 +122,56 @@ public class CourseService {
     // By Group
     public List<CourseEntity> findPlanningByGroup(Group group, LocalDate start, LocalDate end) {
         return courseRepository.findByGroupAndPeriod(group, start, end)
-                .stream().map(this::toDomain).toList();
+                .stream().map(CourseMapper::toDomain).toList();
     }
 
     public List<CourseEntity> findPlanningByGroupId(Long groupId, LocalDate start, LocalDate end) {
         return courseRepository.findByGroupIdAndPeriod(groupId, start, end)
-                .stream().map(this::toDomain).toList();
+                .stream().map(CourseMapper::toDomain).toList();
     }
 
     // By Module
     public List<CourseEntity> findPlanningByModule(Module module, LocalDate start, LocalDate end) {
         return courseRepository.findByModuleAndPeriod(module, start, end)
-                .stream().map(this::toDomain).toList();
+                .stream().map(CourseMapper::toDomain).toList();
     }
 
     public List<CourseEntity> findPlanningByModuleCode(String code, LocalDate start, LocalDate end) {
         return courseRepository.findByModuleCodeAndPeriod(code, start, end)
-                .stream().map(this::toDomain).toList();
+                .stream().map(CourseMapper::toDomain).toList();
     }
 
     // By Room
     public List<CourseEntity> findPlanningByRoomId(Long roomId, LocalDate start, LocalDate end) {
         return courseRepository.findByRoomIdAndPeriod(roomId, start, end)
-                .stream().map(this::toDomain).toList();
+                .stream().map(CourseMapper::toDomain).toList();
     }
 
     // By Professor
     public List<CourseEntity> findPlanningByProfessor(Professor professor, LocalDate start, LocalDate end) {
         return courseRepository.findByProfessorAndPeriod(professor, start, end)
-                .stream().map(this::toDomain).toList();
+                .stream().map(CourseMapper::toDomain).toList();
     }
 
     public List<CourseEntity> findPlanningByProfessorId(Long professorId, LocalDate start, LocalDate end) {
         return courseRepository.findByProfessorIdAndPeriod(professorId, start, end)
-                .stream().map(this::toDomain).toList();
+                .stream().map(CourseMapper::toDomain).toList();
     }
 
     // By Student
     public List<CourseEntity> findPlanningByStudentId(Long studentId, LocalDate start, LocalDate end) {
         return courseRepository.findByStudentIdAndPeriod(studentId, start, end)
-                .stream().map(this::toDomain).toList();
+                .stream().map(CourseMapper::toDomain).toList();
     }
 
     public List<CourseEntity> getPlanningByStudentEmailUniv(String emailUniv, LocalDate start, LocalDate end) {
         return courseRepository.findByStudentEmailUnivAndPeriod(emailUniv, start, end)
-                .stream().map(this::toDomain).toList();
+                .stream().map(CourseMapper::toDomain).toList();
     }
 
     // By Promo
     public List<CourseEntity> findPlanningByPromoId(Long promoId, LocalDate start, LocalDate end) {
         return courseRepository.findByPromoIdAndPeriod(promoId, start, end)
-                .stream().map(this::toDomain).toList();
+                .stream().map(CourseMapper::toDomain).toList();
     }
 }
