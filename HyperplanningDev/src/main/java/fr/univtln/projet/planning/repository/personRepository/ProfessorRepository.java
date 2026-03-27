@@ -1,7 +1,6 @@
 package fr.univtln.projet.planning.repository.personRepository;
 
 import fr.univtln.projet.planning.modele.person.Professor;
-import fr.univtln.projet.planning.modele.planning.Course;
 import fr.univtln.projet.planning.repository.JpaRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;

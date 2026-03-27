@@ -10,7 +10,7 @@ import fr.univtln.projet.planning.modele.academic.Promo;
 import fr.univtln.projet.planning.modele.academic.StudyLevel;
 import fr.univtln.projet.planning.modele.planning.Module;
 import fr.univtln.projet.planning.repository.academicRepository.GroupRepository;
-import fr.univtln.projet.planning.service.planningService.CourseService;
+
 import fr.univtln.projet.planning.service.planningService.ModuleService;
 
 import java.util.List;

@@ -1,7 +1,6 @@
 package fr.univtln.projet.planning.entity.planning;
 
 import java.time.Duration;
-import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.*;
@@ -98,14 +97,23 @@ public class CourseEntity implements Comparable<CourseEntity>{
 
     @Override
     public boolean equals(Object o) {
+
+        if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         CourseEntity course = (CourseEntity) o;
-        return Objects.equals(module, course.module) && Objects.equals(startTime, course.startTime) && Objects.equals(duration, course.duration) && Objects.equals(professors, course.professors) && Objects.equals(room, course.room) && courseType == course.courseType;
+        return Objects.equals(module, course.module)
+                && Objects.equals(date, course.date)
+                && Objects.equals(startTime, course.startTime)
+                && Objects.equals(duration, course.duration)
+                && Objects.equals(professors, course.professors)
+                && Objects.equals(room, course.room)
+                && courseType == course.courseType;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(module, startTime, duration, professors, room, courseType);
+
+        return Objects.hash(module, date, startTime, duration, professors, room, courseType);
     }
 
     @Override
