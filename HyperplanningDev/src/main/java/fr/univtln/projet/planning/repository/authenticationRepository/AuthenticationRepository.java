@@ -22,12 +22,15 @@ public class AuthenticationRepository extends JpaRepository<Authentication, Long
 
     public Optional<Authentication> findByEmail(String email) {
 
-        String jpql = "SELECT a FROM Authentication a WHERE LOWER(a.email) = LOWER(:email)";
+        String jpql = "SELECT a FROM Authentication a WHERE a.email = :email";
         TypedQuery<Authentication> query = em.createQuery(jpql, Authentication.class);
         query.setParameter("email", email);
-        Authentication result = query.getSingleResult();
-        return Optional.of(result);
-
+        try {
+            Authentication result = query.getSingleResult();
+            return Optional.of(result);
+        } catch (NoResultException e) {
+        return Optional.empty();
+    }
         // Au cas ou email introuvable ajouter une condition !
 
     }

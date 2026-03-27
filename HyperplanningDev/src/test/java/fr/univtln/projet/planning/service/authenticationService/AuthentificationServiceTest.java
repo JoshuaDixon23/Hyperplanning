@@ -1,6 +1,7 @@
 package fr.univtln.projet.planning.service.authenticationService;  // Correction du package pour correspondre au dossier renommé
 
 import fr.univtln.projet.planning.modele.authentication.Authentication;
+import fr.univtln.projet.planning.repository.authenticationRepository.AuthenticationRepository;
 import fr.univtln.projet.planning.service.authenticationService.AuthenticationService;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
@@ -15,34 +16,43 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class AuthentificationServiceTest {
 
-//    private EntityManagerFactory emf;
-//    private EntityManager em;
-//    private AuthenticationService authService;
-//
-//    @BeforeEach
-//    public void setUp() {
-//        try {
-//            System.out.println("setUp called");
-//            emf = Persistence.createEntityManagerFactory("HyperplanningPU");
-//            em = emf.createEntityManager();
-//            authService = new AuthenticationService(em);
-//
-//            // Nettoyage
-//            em.getTransaction().begin();
-//            em.createQuery("DELETE FROM Authentication a WHERE a.email = :email")
-//                    .setParameter("email", "test@example.com")
-//                    .executeUpdate();
-//            em.getTransaction().commit();
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            throw e;
-//        }
-//    }
-//
+
+
+
+
+    @Test
+    public void testRegisterValidEmail() {
+
+
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("HyperplanningPU");
+        EntityManager em = emf.createEntityManager();
+
+        AuthenticationRepository authRepo = new AuthenticationRepository(em);
+        AuthenticationService authService = new AuthenticationService(em,authRepo);
+
+        // Test d'enregistrement avec un email valide
+        String testEmail = "thomas@dj.com";
+        Optional<Authentication> result = authService.register(testEmail);
+
+        // Vérifications
+        assertTrue(result.isPresent(), "L'enregistrement devrait réussir");
+        assertEquals(testEmail, result.get().getEmail(), "L'email devrait correspondre");
+        assertFalse(result.get().isPasswordDefined(), "Le mot de passe ne devrait pas être défini");
+    }
+
+
 //    @Test
-//    public void testRegisterValidEmail() {
+//    public void testSetPassword() {
+//
+//
+//        EntityManagerFactory emf = Persistence.createEntityManagerFactory("HyperplanningPU");
+//        EntityManager em = emf.createEntityManager();
+//
+//        AuthenticationRepository authRepo = new AuthenticationRepository(em);
+//        AuthenticationService authService = new AuthenticationService(em,authRepo);
+//
 //        // Test d'enregistrement avec un email valide
-//        String testEmail = "test@example.com";
+//        String testEmail = "thomas@dj.com";
 //        Optional<Authentication> result = authService.register(testEmail);
 //
 //        // Vérifications
@@ -50,10 +60,29 @@ public class AuthentificationServiceTest {
 //        assertEquals(testEmail, result.get().getEmail(), "L'email devrait correspondre");
 //        assertFalse(result.get().isPasswordDefined(), "Le mot de passe ne devrait pas être défini");
 //    }
+
+//    @Test
+//    public void testverifyPassword() {
 //
-//    @AfterEach
-//    public void tearDown() {
-//        em.close();
-//        emf.close();
+//
+//        EntityManagerFactory emf = Persistence.createEntityManagerFactory("HyperplanningPU");
+//        EntityManager em = emf.createEntityManager();
+//
+//        AuthenticationRepository authRepo = new AuthenticationRepository(em);
+//        AuthenticationService authService = new AuthenticationService(em,authRepo);
+//
+//        // Test d'enregistrement avec un email valide
+//        String testEmail = "thomas@dj.com";
+//        Optional<Authentication> result = authService.register(testEmail);
+//
+//        // Vérifications
+//        assertTrue(result.isPresent(), "L'enregistrement devrait réussir");
+//        assertEquals(testEmail, result.get().getEmail(), "L'email devrait correspondre");
+//        assertFalse(result.get().isPasswordDefined(), "Le mot de passe ne devrait pas être défini");
 //    }
+
+
+
+
+
 }

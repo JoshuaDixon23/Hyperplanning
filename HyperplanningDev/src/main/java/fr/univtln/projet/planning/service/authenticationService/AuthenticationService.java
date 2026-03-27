@@ -18,9 +18,9 @@ public class AuthenticationService {
     private final AuthenticationRepository authenticationRepository;
     private final EntityManager entityManager;
 
-    public AuthenticationService(EntityManager entityManager) {
+    public AuthenticationService(EntityManager entityManager,AuthenticationRepository authenticationRepository) {
         this.entityManager = entityManager;
-        this.authenticationRepository = new AuthenticationRepository(entityManager);
+        this.authenticationRepository =  authenticationRepository;
     }
 
     /**
