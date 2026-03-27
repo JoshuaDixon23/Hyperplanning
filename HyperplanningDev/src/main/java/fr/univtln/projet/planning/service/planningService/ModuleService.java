@@ -1,6 +1,7 @@
 package fr.univtln.projet.planning.service.planningService;
 
 import fr.univtln.projet.planning.entity.planning.ModuleEntity;
+import fr.univtln.projet.planning.mapper.planning.ModuleMapper;
 import fr.univtln.projet.planning.modele.person.Professor;
 import fr.univtln.projet.planning.modele.planning.CourseType;
 import fr.univtln.projet.planning.modele.planning.Language;
@@ -24,60 +25,11 @@ public class ModuleService {
         this.professorService = professorService;
     }
 
-    ModuleEntity toDomain(Module module) {
-        if (module == null) return null;
-
-        ModuleEntity.Builder builder = ModuleEntity.builder()
-                .code(module.getCode())
-                .name(module.getName())
-                .language(module.getLanguage())
-                .ECTS(module.getEcts())
-                .responsible(professorService.toDomain(module.getResponsible()));
-
-        return builder.build();
-    }
-
-    public Module toJpa(ModuleEntity module) {
-        if (module == null) return null;
-
-        Module.Builder builder = Module.builder()
-                .code(module.getCode())
-                .name(module.getName())
-                .responsible(professorService.toJpa(module.getResponsible()))
-                .language(module.getLanguage())
-                .ects(module.getECTS());
-
-        return builder.build();
-    }
-
-
-    // ################### CRUD ##################
-
-    public Optional<ModuleEntity> findById(Long id) {
-        return moduleRepository.findById(id)
-                .map(this::toDomain);
-    }
-
-    public List<ModuleEntity> findAll() {
-        return moduleRepository.findAll()
-                .stream()
-                .map(this::toDomain)
-                .toList();
-    }
-
-    public ModuleEntity findByCode(String code) {
-        return toDomain(moduleRepository.findByCode(code));
-    }
-
-    public Module findJpaByCode(String code) {
-        return moduleRepository.findByCode(code);
-    }
-
     @Transactional
     public ModuleEntity create(ModuleEntity entity) {
-        Module module = toJpa(entity);
+        Module module = ModuleMapper.toJpa(entity);
         Module saved = moduleRepository.save(module);
-        return toDomain(saved);
+        return ModuleMapper.toDomain(saved);
     }
 
     @Transactional
@@ -92,7 +44,7 @@ public class ModuleService {
                 .responsible(responsible)
                 .build();
         Module saved = moduleRepository.save(jpa);
-        return toDomain(saved);
+        return ModuleMapper.toDomain(saved);
     }
 
     @Transactional
@@ -101,6 +53,26 @@ public class ModuleService {
                 .orElseThrow(() -> new IllegalArgumentException("Module introuvable"));
 
         moduleRepository.delete(module);
+    }
+
+    public ModuleEntity findByCode(String code) {
+        return ModuleMapper.toDomain(moduleRepository.findByCode(code));
+    }
+
+    public Module findJpaByCode(String code) {
+        return moduleRepository.findByCode(code);
+    }
+
+    public Optional<ModuleEntity> findById(Long id) {
+        return moduleRepository.findById(id)
+                .map(ModuleMapper::toDomain);
+    }
+
+    public List<ModuleEntity> findAll() {
+        return moduleRepository.findAll()
+                .stream()
+                .map(ModuleMapper::toDomain)
+                .toList();
     }
 
 }

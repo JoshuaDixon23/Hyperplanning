@@ -1,6 +1,7 @@
 package fr.univtln.projet.planning.service.personService;
 
 import fr.univtln.projet.planning.entity.person.AdminEntity;
+import fr.univtln.projet.planning.mapper.person.AdminMapper;
 import fr.univtln.projet.planning.modele.person.Admin;
 import fr.univtln.projet.planning.repository.personRepository.AdminRepository;
 import jakarta.transaction.Transactional;
@@ -12,26 +13,6 @@ public class AdminService {
 
     private final AdminRepository adminRepository;
 
-    // ------------------ MAPPERS ------------------
-
-    public AdminEntity toDomain(Admin a){
-        if (a == null) return null;
-        return new AdminEntity(
-                a.getFirstName(),
-                a.getLastName(),
-                a.getEmailUniv()
-        );
-    }
-
-    public Admin toJpa(AdminEntity a){
-        if (a == null) return null;
-        return new Admin(
-                a.getFirstName(),
-                a.getLastName(),
-                a.getEmailUniv()
-        );
-    }
-
     public AdminService(AdminRepository adminRepository) {
         this.adminRepository = adminRepository;
     }
@@ -41,13 +22,13 @@ public class AdminService {
     public List<AdminEntity> findAll(int pageNumber, int pageSize){
         return adminRepository.findAll(pageNumber, pageSize)
                 .stream()
-                .map(this::toDomain)
+                .map(AdminMapper::toDomain)
                 .toList();
     }
 
     public Optional<AdminEntity> findById(Long id){
         return adminRepository.findById(id)
-                .map(this::toDomain);
+                .map(AdminMapper::toDomain);
     }
 
     // ------------------ CREATE ------------------
@@ -55,15 +36,15 @@ public class AdminService {
     @Transactional
     public AdminEntity create(String fName, String lName) {
         AdminEntity entity = AdminEntity.AdminFactory(fName, lName);
-        Admin jpa = toJpa(entity);
+        Admin jpa = AdminMapper.toJpa(entity);
         Admin saved = adminRepository.save(jpa);
-        return toDomain(saved);
+        return AdminMapper.toDomain(saved);
     }
 
     // ------------------ GET ------------------
 
     public AdminEntity findByEmailUniv(String emailUniv) {
-        return toDomain(adminRepository.findByEmailUniv(emailUniv));
+        return AdminMapper.toDomain(adminRepository.findByEmailUniv(emailUniv));
     }
 
     // ------------------ DELETE ------------------
@@ -71,7 +52,7 @@ public class AdminService {
     @Transactional
     public void delete(String emailUniv) {
         AdminEntity entity = findByEmailUniv(emailUniv);
-        Admin jpa = toJpa(entity);
+        Admin jpa = AdminMapper.toJpa(entity);
         adminRepository.delete(jpa);
     }
 

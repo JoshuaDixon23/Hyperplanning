@@ -1,21 +1,12 @@
 package fr.univtln.projet.planning.service.planningService;
 
-import fr.univtln.projet.planning.entity.infrastructure.RoomEntity;
 import fr.univtln.projet.planning.entity.planning.CourseEntity;
-import fr.univtln.projet.planning.entity.planning.ModuleEntity;
 import fr.univtln.projet.planning.mapper.planning.CourseMapper;
 import fr.univtln.projet.planning.modele.academic.Group;
 import fr.univtln.projet.planning.modele.person.Professor;
 import fr.univtln.projet.planning.modele.planning.Course;
-import fr.univtln.projet.planning.modele.planning.CourseType;
 import fr.univtln.projet.planning.repository.planningRepository.CourseRepository;
-import fr.univtln.projet.planning.repository.planningRepository.ModuleRepository;
-import fr.univtln.projet.planning.service.academicService.GroupService;
-import fr.univtln.projet.planning.service.infrastructureService.RoomService;
-import fr.univtln.projet.planning.service.personService.ProfessorService;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.Persistence;
+
 import jakarta.transaction.Transactional;
 
 import java.time.*;
@@ -25,32 +16,18 @@ import java.util.Optional;
 public class CourseService {
 
     private final CourseRepository courseRepository;
-    private final ModuleService moduleService;
-    private final RoomService roomService;
-    private final ProfessorService professorService;
+//    private final ModuleService moduleService;
+//    private final RoomService roomService;
+//    private final ProfessorService professorService;
 
-    public CourseService(CourseRepository courseRepository,
+    public CourseService(CourseRepository courseRepository /*,
                          ModuleService moduleService,
                          RoomService roomService,
-                         ProfessorService professorService) {
+                         ProfessorService professorService */) {
         this.courseRepository = courseRepository;
-        this.moduleService = moduleService;
-        this.roomService = roomService;
-        this.professorService = professorService;
-    }
-
-    // ################### MAPPERS ##################
-
-
-
-    // ################### CRUD ##################
-
-    public Optional<CourseEntity> findById(Long id) {
-        return courseRepository.findById(id).map(CourseMapper::toDomain);
-    }
-
-    public List<CourseEntity> findAll() {
-        return courseRepository.findAll().stream().map(CourseMapper::toDomain).toList();
+//        this.moduleService = moduleService;
+//        this.roomService = roomService;
+//        this.professorService = professorService;
     }
 
     @Transactional
@@ -115,6 +92,14 @@ public class CourseService {
         Course course = courseRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Course introuvable"));
         courseRepository.delete(course);
+    }
+
+    public Optional<CourseEntity> findById(Long id) {
+        return courseRepository.findById(id).map(CourseMapper::toDomain);
+    }
+
+    public List<CourseEntity> findAll() {
+        return courseRepository.findAll().stream().map(CourseMapper::toDomain).toList();
     }
 
     // ################### PLANNING ##################

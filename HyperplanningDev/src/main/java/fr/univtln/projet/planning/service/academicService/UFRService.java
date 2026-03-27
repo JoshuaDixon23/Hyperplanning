@@ -1,6 +1,7 @@
 package fr.univtln.projet.planning.service.academicService;
 
 import fr.univtln.projet.planning.entity.academic.UFREntity;
+import fr.univtln.projet.planning.mapper.academic.UFRMapper;
 import fr.univtln.projet.planning.modele.academic.UFR;
 import fr.univtln.projet.planning.modele.infrastructure.Campus;
 import fr.univtln.projet.planning.modele.person.Admin;
@@ -9,8 +10,6 @@ import fr.univtln.projet.planning.service.infrastructureService.CampusService;
 import fr.univtln.projet.planning.service.personService.AdminService;
 
 import java.util.List;
-import java.util.Optional;
-
 public class UFRService {
 
     private final UFRRepository ufrRepository;
@@ -25,25 +24,11 @@ public class UFRService {
         this.campusService = campusService;
     }
 
-    // ------------------ MAPPERS ------------------
-
-    public UFREntity toDomain(UFR u) {
-        if (u == null) return null;
-        return UFREntity.UFRFactory(u.getName(), campusService.toDomain(u.getCampus()),
-                adminService.toDomain(u.getAdmin()));
-    }
-
-    public UFR toJpa(UFREntity u) {
-        if (u == null) return null;
-        return UFR.UFRFactory(u.getName(), campusService.toJpa(u.getCampus()),
-                adminService.toJpa(u.getAdmin()));
-    }
-
     // ------------------ CREATE ------------------
 
     public UFREntity create(UFREntity entity) {
-        UFR saved = ufrRepository.save(toJpa(entity));
-        return toDomain(saved);
+        UFR saved = ufrRepository.save(UFRMapper.toJpa(entity));
+        return UFRMapper.toDomain(saved);
     }
 
     public UFREntity create(String name, String campusCity, String adminEmailUniv) {
@@ -62,27 +47,27 @@ public class UFRService {
 
         UFR saved = ufrRepository.save(ufr);
 
-        return toDomain(saved);
+        return UFRMapper.toDomain(saved);
     }
 
     // ------------------ FIND ------------------
 
     public UFREntity findById(Long id) {
         return ufrRepository.findById(id)
-                .map(this::toDomain)
+                .map(UFRMapper::toDomain)
                 .orElse(null);
     }
 
     public UFREntity findByName(String name) {
         return ufrRepository.findByName(name)
-                .map(this::toDomain)
+                .map(UFRMapper::toDomain)
                 .orElse(null);
     }
 
     public List<UFREntity> findAll() {
         return ufrRepository.findAll()
                 .stream()
-                .map(this::toDomain)
+                .map(UFRMapper::toDomain)
                 .toList();
     }
 

@@ -52,7 +52,7 @@ class LocalStudentServiceTest {
         ProfessorService professorService = new ProfessorService(professorRepository);
         ModuleService moduleService = new ModuleService(moduleRepository, professorService);
         GroupService groupService = new GroupService(groupRepository, promoService, moduleService); // repository non nécessaire pour test minimal
-        LocalStudentService studentService = new LocalStudentService(studentRepo, promoService, groupService);
+        LocalStudentService studentService = new LocalStudentService(studentRepo, promoService/*, groupService*/);
 
         // ------------------ CREATE STUDENT ------------------
         System.out.println("Creating LocalStudent");

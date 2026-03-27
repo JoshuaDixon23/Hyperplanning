@@ -1,6 +1,7 @@
 package fr.univtln.projet.planning.service.personService;
 
 import fr.univtln.projet.planning.entity.person.StaffDRIEntity;
+import fr.univtln.projet.planning.mapper.person.StaffDRIMapper;
 import fr.univtln.projet.planning.modele.person.StaffDRI;
 import fr.univtln.projet.planning.repository.personRepository.StaffDRIRepository;
 import jakarta.transaction.Transactional;
@@ -12,26 +13,6 @@ public class StaffDRIService {
 
     private final StaffDRIRepository staffDRIRepository;
 
-    // ------------------ MAPPERS ------------------
-
-    private StaffDRIEntity toDomain(StaffDRI s){
-        if (s == null) return null;
-        return new StaffDRIEntity(
-                s.getFirstName(),
-                s.getLastName(),
-                s.getEmailUniv()
-        );
-    }
-
-    private StaffDRI toJpa(StaffDRIEntity s){
-        if (s == null) return null;
-        return new StaffDRI(
-                s.getFirstName(),
-                s.getLastName(),
-                s.getEmailUniv()
-        );
-    }
-
     public StaffDRIService(StaffDRIRepository staffDRIRepository) {
         this.staffDRIRepository = staffDRIRepository;
     }
@@ -41,13 +22,13 @@ public class StaffDRIService {
     public List<StaffDRIEntity> findAll(int pageNumber, int pageSize){
         return staffDRIRepository.findAll(pageNumber, pageSize)
                 .stream()
-                .map(this::toDomain)
+                .map(StaffDRIMapper::toDomain)
                 .toList();
     }
 
     public Optional<StaffDRIEntity> findById(Long id){
         return staffDRIRepository.findById(id)
-                .map(this::toDomain);
+                .map(StaffDRIMapper::toDomain);
     }
 
     // ------------------ CREATE ------------------
@@ -57,7 +38,7 @@ public class StaffDRIService {
 
         StaffDRIEntity entity = StaffDRIEntity.StaffDRIFactory(fName, lName);
 
-        StaffDRI jpa = toJpa(entity);
+        StaffDRI jpa = StaffDRIMapper.toJpa(entity);
 
         staffDRIRepository.save(jpa);
 

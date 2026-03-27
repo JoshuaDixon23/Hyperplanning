@@ -70,7 +70,7 @@ class CourseServiceTest {
 
         RoomService roomService = new RoomService(roomRepo, buildingService);
 
-        CourseService courseService = new CourseService(courseRepo, moduleService, roomService, profService);
+        CourseService courseService = new CourseService(courseRepo/*, moduleService, roomService, profService*/);
 
         // ------------------ CREATE COURSE ENTITY VIA KEYS ------------------
         LocalDate date = LocalDate.of(2026, 4, 22);

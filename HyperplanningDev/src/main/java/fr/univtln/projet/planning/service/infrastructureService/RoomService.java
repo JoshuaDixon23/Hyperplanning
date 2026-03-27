@@ -1,6 +1,7 @@
 package fr.univtln.projet.planning.service.infrastructureService;
 
 import fr.univtln.projet.planning.entity.infrastructure.RoomEntity;
+import fr.univtln.projet.planning.mapper.infrastracture.RoomMapper;
 import fr.univtln.projet.planning.modele.infrastructure.Building;
 import fr.univtln.projet.planning.modele.infrastructure.Room;
 import fr.univtln.projet.planning.modele.infrastructure.RoomType;
@@ -19,25 +20,11 @@ public class RoomService {
         this.buildingService = buildingService;
     }
 
-    // ------------------ MAPPERS ------------------
-
-    public RoomEntity toDomain(Room r) {
-        if (r == null) return null;
-        return RoomEntity.RoomFactory(r.getNumber(), r.getCapacity(), r.getType(),
-                buildingService.toDomain(r.getBuilding()));
-    }
-
-    public Room toJpa(RoomEntity r) {
-        if (r == null) return null;
-        return Room.RoomFactory(r.getNumber(), r.getCapacity(), r.getType(),
-                buildingService.toJpa(r.getBuilding()));
-    }
-
     // ------------------ CREATE ------------------
 
     public RoomEntity create(RoomEntity entity) {
-        Room saved = roomRepository.save(toJpa(entity));
-        return toDomain(saved);
+        Room saved = roomRepository.save(RoomMapper.toJpa(entity));
+        return RoomMapper.toDomain(saved);
     }
 
     public RoomEntity create(int num, int capacity, RoomType type, String buildingName) {
@@ -47,21 +34,21 @@ public class RoomService {
         }
         Room room = Room.RoomFactory(num, capacity, type, building);
         Room saved = roomRepository.save(room);
-        return toDomain(saved);
+        return RoomMapper.toDomain(saved);
     }
 
     // ------------------ FIND ------------------
 
     public RoomEntity findById(Long id) {
         return roomRepository.findById(id)
-                .map(this::toDomain)
+                .map(RoomMapper::toDomain)
                 .orElse(null);
     }
 
     public List<RoomEntity> findAll() {
         return roomRepository.findAll()
                 .stream()
-                .map(this::toDomain)
+                .map(RoomMapper::toDomain)
                 .toList();
     }
 }

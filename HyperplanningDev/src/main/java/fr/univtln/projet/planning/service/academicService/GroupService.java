@@ -2,6 +2,8 @@ package fr.univtln.projet.planning.service.academicService;
 
 import fr.univtln.projet.planning.entity.academic.GroupEntity;
 import fr.univtln.projet.planning.entity.planning.ModuleEntity;
+import fr.univtln.projet.planning.mapper.academic.GroupMapper;
+import fr.univtln.projet.planning.mapper.planning.ModuleMapper;
 import fr.univtln.projet.planning.modele.academic.Group;
 import fr.univtln.projet.planning.modele.academic.GroupType;
 import fr.univtln.projet.planning.modele.academic.Promo;
@@ -27,33 +29,11 @@ public class GroupService {
         this.moduleService = moduleService;
     }
 
-    // ------------------ MAPPERS ------------------
-
-    public GroupEntity toDomain(Group g) {
-        if (g == null) return null;
-        GroupEntity entity = GroupEntity.GroupFactory(
-                g.getNum(),
-                g.getType()
-        );
-        entity.setPromo(promoService.toDomain(g.getPromo()));
-        return entity;
-    }
-
-    public Group toJpa(GroupEntity g) {
-        if (g == null) return null;
-        Group jpa = Group.GroupFactory(
-                g.getNum(),
-                g.getType()
-        );
-        jpa.setPromo(promoService.toJpa(g.getPromo()));
-        return jpa;
-    }
-
     // ------------------ CREATE ------------------
 
     public GroupEntity create(GroupEntity entity) {
-        Group saved = groupRepository.save(toJpa(entity));
-        return toDomain(saved);
+        Group saved = groupRepository.save(GroupMapper.toJpa(entity));
+        return GroupMapper.toDomain(saved);
     }
 
     public GroupEntity create(int num, GroupType type, String promoName, StudyLevel promoStudyLevel, int promoYear){
@@ -61,21 +41,21 @@ public class GroupService {
         Group group = Group.GroupFactory(num, type);
         group.setPromo(promo);
         Group saved = groupRepository.save(group);
-        return toDomain(saved);
+        return GroupMapper.toDomain(saved);
     }
 
     // ------------------ FIND ------------------
 
     public GroupEntity findById(Long id) {
         return groupRepository.findById(id)
-                .map(this::toDomain)
+                .map(GroupMapper::toDomain)
                 .orElse(null);
     }
 
     public List<GroupEntity> findAll() {
         return groupRepository.findAll()
                 .stream()
-                .map(this::toDomain)
+                .map(GroupMapper::toDomain)
                 .toList();
     }
 
@@ -88,7 +68,7 @@ public class GroupService {
     // is not tested, may require change of signature in ordrer to have comfortable insertion
     public void addModuleToGroup(Long groupId, ModuleEntity moduleEntity) {
         Group group = groupRepository.findById(groupId).orElseThrow();
-        Module module = moduleService.toJpa(moduleEntity);
+        Module module = ModuleMapper.toJpa(moduleEntity);
         group.addModule(module);
         groupRepository.save(group);
     }

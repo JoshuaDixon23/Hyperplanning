@@ -5,6 +5,10 @@ import fr.univtln.projet.planning.modele.infrastructure.Campus;
 
 public class CampusMapper {
 
+    private CampusMapper(){
+        // Prevent instantiation of utility class
+    }
+
     public static CampusEntity toDomain(Campus c) {
         if (c == null) return null;
         return CampusEntity.CampusFactory(c.getCity(), c.getImageFileName());

@@ -1,6 +1,7 @@
 package fr.univtln.projet.planning.service.personService;
 
 import fr.univtln.projet.planning.entity.person.ProfessorEntity;
+import fr.univtln.projet.planning.mapper.person.ProfessorMapper;
 import fr.univtln.projet.planning.modele.person.Professor;
 import fr.univtln.projet.planning.repository.personRepository.ProfessorRepository;
 import jakarta.transaction.Transactional;
@@ -16,46 +17,23 @@ public class ProfessorService {
         this.professorRepository = professorRepository;
     }
 
-    // ################### MAPPERS ##################
-
-    public ProfessorEntity toDomain(Professor professor) {
-        if (professor == null) return null;
-
-        ProfessorEntity entity = ProfessorEntity.ProfessorFactory(
-                professor.getFirstName(),
-                professor.getLastName()
-        );
-
-        return entity;
-    }
-
-    public Professor toJpa(ProfessorEntity entity) {
-        if (entity == null) return null;
-
-        return new Professor(
-                entity.getName(),
-                entity.getSurname(),
-                "email@email@email"   //verfifier la méthode
-        );
-    }
-
     // ################### CRUD ##################
 
     public Optional<ProfessorEntity> findById(Long id) {
         return professorRepository.findById(id)
-                .map(this::toDomain);
+                .map(ProfessorMapper::toDomain);
     }
 
     public List<ProfessorEntity> findAll() {
         return professorRepository.findAll()
                 .stream()
-                .map(this::toDomain)
+                .map(ProfessorMapper::toDomain)
                 .toList();
     }
 
     @Transactional
     public ProfessorEntity create(ProfessorEntity entity) {
-        Professor professor = toJpa(entity);
+        Professor professor = ProfessorMapper.toJpa(entity);
         professorRepository.save(professor);
         return entity;
     }
