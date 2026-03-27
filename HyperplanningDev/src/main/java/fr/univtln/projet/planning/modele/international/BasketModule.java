@@ -1,7 +1,7 @@
 package fr.univtln.projet.planning.modele.international;
 
-import fr.univtln.projet.planning.entity.person.InternationalStudentEntity;
-import fr.univtln.projet.planning.entity.planning.ModuleEntity;
+import fr.univtln.projet.planning.modele.planning.Module;
+import fr.univtln.projet.planning.modele.person.InternationalStudent;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,9 +18,9 @@ public class BasketModule {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "student_id", nullable = false)
-    private InternationalStudentEntity internationalStudent;
+    private InternationalStudent internationalStudent;
 
     @ManyToMany
     @JoinTable(
@@ -28,23 +28,23 @@ public class BasketModule {
             joinColumns = @JoinColumn(name = "basket_id"),
             inverseJoinColumns = @JoinColumn(name = "module_id")
     )
-    private Set<ModuleEntity> modules = new HashSet<ModuleEntity>();
+    private Set<Module> modules = new HashSet<>();
 
     // Constructeur vide obligatoire
     public BasketModule() {}
 
-    public BasketModule(InternationalStudentEntity internationalStudent) {
+    public BasketModule(InternationalStudent internationalStudent) {
         this.internationalStudent = internationalStudent;
     }
 
-    public void addModule(ModuleEntity module) {
+    public void addModule(Module module) {
         modules.add(module);
     }
 
-    public void removeModule(ModuleEntity module) {
+    public void removeModule(Module module) {
         modules.remove(module);
     }
 
-    public void setInternationalStudent(InternationalStudentEntity student) {
+    public void setInternationalStudent(InternationalStudent student) {
     }
 }

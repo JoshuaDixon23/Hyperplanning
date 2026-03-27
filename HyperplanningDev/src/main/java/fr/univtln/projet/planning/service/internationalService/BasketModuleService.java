@@ -3,6 +3,7 @@ package fr.univtln.projet.planning.service.internationalService;
 import fr.univtln.projet.planning.modele.international.BasketModule;
 import fr.univtln.projet.planning.entity.person.InternationalStudentEntity;
 import fr.univtln.projet.planning.entity.planning.ModuleEntity;
+import fr.univtln.projet.planning.modele.person.InternationalStudent;
 import fr.univtln.projet.planning.repository.internationalRepository.BasketModuleRepository;
 
 import java.util.Optional;
@@ -15,8 +16,9 @@ public class BasketModuleService {
         this.basketModuleRepository = basketModuleRepository;
     }
 
+    // créer une méthode pour rajouter un d
     // créer un panier pour un étudiant
-    public BasketModule createBasket(InternationalStudentEntity student) {
+    public BasketModule createBasket(InternationalStudent student) {
         BasketModule basket = new BasketModule();
         basket.setInternationalStudent(student);
         return basketModuleRepository.save(basket);
