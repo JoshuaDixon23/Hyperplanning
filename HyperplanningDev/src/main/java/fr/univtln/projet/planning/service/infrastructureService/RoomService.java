@@ -40,7 +40,9 @@ public class RoomService {
         return toDomain(saved);
     }
 
-    public RoomEntity create(int num, int capacity, RoomType type, String buildingName) {
+
+    public RoomEntity create(String num, int capacity, RoomType type, String buildingName) {
+
         Building building = buildingService.findJpaByName(buildingName);
         if (building == null) {
             throw new IllegalArgumentException("Building not found: " + buildingName);

@@ -23,7 +23,7 @@ public class Room {
     private Long idRoom;
 
     @Column(nullable = false)
-    private int number;
+    private String number;
 
     @Column(nullable = false)
     private int capacity;
@@ -43,14 +43,14 @@ public class Room {
     protected Room() {
     }
 
-    private Room(int number, int capacity, RoomType type, Building building) {
+    private Room(String number, int capacity, RoomType type, Building building) {
         this.number = number;
         this.capacity = capacity;
         this.type = type;
         this.building = building;
     }
 
-    public static Room RoomFactory(int number, int capacity, RoomType type, Building building) {
+    public static Room RoomFactory(String number, int capacity, RoomType type, Building building) {
         Objects.requireNonNull(number, "Room number cannot be null");
         Objects.requireNonNull(type, "Room type cannot be null");
         Objects.requireNonNull(building, "Room must belong to a building");

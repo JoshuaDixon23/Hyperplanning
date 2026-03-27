@@ -11,7 +11,9 @@ import lombok.Getter;
 @Getter
 public class RoomEntity {
 
-    private int number;
+
+    private String number;
+
     private int capacity;
     private RoomType type;
 
@@ -21,20 +23,25 @@ public class RoomEntity {
 
     //factory
 
-    private RoomEntity(int num, int capacity, RoomType type, BuildingEntity building) {
+
+    private RoomEntity(String num, int capacity, RoomType type, BuildingEntity building) {
+
         this.number = num;
         this.capacity = capacity;
         this.type = type;
         this.building = building;
     }
 
-    public static RoomEntity RoomFactory(int num, int capacity, RoomType type, BuildingEntity building) {
+
+    public static RoomEntity RoomFactory(String num, int capacity, RoomType type, BuildingEntity building) {
+
         return new RoomEntity(num, capacity, type, building);
     }
 
     // getter setter
 
-    public void setNumber(int num) {
+
+    public void setNumber(String num) {
         this.number = num;
     }
 
