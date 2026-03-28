@@ -65,3 +65,12 @@
     -fx-font-weight: 700;
     -fx-text-fill: #1877d2;
 }
+
+.nav-icon {
+    -fx-scale-shape: true;
+    -fx-background-color: #808080;
+}
+.nav-icon-selected {
+    -fx-scale-shape: true;
+    -fx-background-color: #007bff; /* Exemple de couleur au clic/sélection */
+}
