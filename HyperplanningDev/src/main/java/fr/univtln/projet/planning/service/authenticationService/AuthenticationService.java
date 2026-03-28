@@ -202,6 +202,16 @@ public class AuthenticationService {
     }
 
     /**
+     * Vérifie si un email est déjà présent dans la base
+     */
+    public boolean isEmailExiste(String email) {
+        if (!isValidEmail(email)) {
+            throw new IllegalArgumentException("Format d'email invalide: " + email);
+        }
+        return authenticationRepository.findByEmail(email).isPresent();
+    }
+
+    /**
      * Vérifie si un utilisateur a défini son mot de passe
      */
     public boolean isPasswordDefined(String email) {

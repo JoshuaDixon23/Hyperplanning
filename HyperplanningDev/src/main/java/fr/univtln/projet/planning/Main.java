@@ -28,6 +28,11 @@ import fr.univtln.projet.planning.modele.planning.Module;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
+import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -35,7 +40,32 @@ import java.time.LocalTime;
 import java.util.EnumMap;
 import java.util.Map;
 
-public class Main /*extends Application*/ {
+public class Main extends Application {
+
+    @Override
+    public void start(Stage stage) throws Exception {
+
+        Parent root = FXMLLoader.load(
+                getClass().getResource("/view/connexion-view.fxml")
+        );
+
+        Scene scene = new Scene(root, 1200, 800);
+
+        scene.getStylesheets().addAll(
+                getClass().getResource("/css/base.css").toExternalForm(),
+                getClass().getResource("/css/sidebar.css").toExternalForm(),
+                getClass().getResource("/css/components.css").toExternalForm(),
+                getClass().getResource("/css/connexion.css").toExternalForm()
+        );
+
+        stage.setTitle("Hyperplanning");
+        stage.setMinWidth(1000);
+        stage.setMinHeight(700);
+        stage.setScene(scene);
+        stage.show();
+    }
+
+
 
     /*
     @Override
@@ -65,7 +95,7 @@ public class Main /*extends Application*/ {
 
     public static void main(String[] args) {
 
-        //launch();
+        launch();
         /*
         System.out.println("⏳ Starting Hibernate and connecting to the database...");
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("HyperplanningPU");

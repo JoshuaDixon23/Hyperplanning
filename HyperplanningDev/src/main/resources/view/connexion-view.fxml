@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+
+<HBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="fr.univtln.projet.planning.controller.AuthenticationController"
+      stylesheets="@/css/connexion.css"
+      styleClass="login-root">
+
+<HBox styleClass="login-card">
+
+    <!-- Partie gauche -->
+    <VBox styleClass="login-left">
+        <Label text="Planning 2026"/>
+    </VBox>
+
+    <Pane styleClass="login-divider"/>
+
+    <!-- Partie droite -->
+    <VBox>
+
+        <HBox styleClass="login-header">
+            <Label text="Identification" styleClass="login-title"/>
+        </HBox>
+
+        <VBox styleClass="login-content">
+
+            <Label text="Connexion au planning :" styleClass="login-label"/>
+            <Label fx:id="planningLabel" text="Planning 2024" styleClass="login-label"/>
+
+            <Label text="Identifiant de connexion :" styleClass="login-label"/>
+            <TextField fx:id="usernameField" styleClass="login-input"/>
+
+            <Label text="Mot de passe :" styleClass="login-label"/>
+            <PasswordField fx:id="passwordField" styleClass="login-input"/>
+
+            <!-- Message erreur -->
+            <Label fx:id="errorLabel" styleClass="login-label"/>
+
+            <HBox spacing="10">
+                <Button text="Annuler"
+                        styleClass="login-button-secondary"
+                        onAction="#handleCancel"/>
+
+                <Button text="Valider"
+                        styleClass="login-button"
+                        onAction="#handleLogin"/>
+            </HBox>
+
+        </VBox>
+
+    </VBox>
+
+</HBox>
+</HBox>

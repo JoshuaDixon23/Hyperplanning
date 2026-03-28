@@ -31,6 +31,8 @@ public class AuthenticationRepository extends JpaRepository<Authentication, Long
         } catch (NoResultException e) {
         return Optional.empty();
     }
+
+
         // Au cas ou email introuvable ajouter une condition !
 
     }
