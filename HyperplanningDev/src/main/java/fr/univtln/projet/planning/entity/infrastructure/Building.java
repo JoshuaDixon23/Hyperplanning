@@ -1,10 +1,13 @@
 package fr.univtln.projet.planning.entity.infrastructure;
 
-import fr.univtln.projet.planning.entity.academic.UFR;
-import fr.univtln.projet.planning.modele.infrastructure.Campus;
-
 import java.time.LocalTime;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+
+import fr.univtln.projet.planning.entity.academic.UFR;
 
 public class Building {
 
