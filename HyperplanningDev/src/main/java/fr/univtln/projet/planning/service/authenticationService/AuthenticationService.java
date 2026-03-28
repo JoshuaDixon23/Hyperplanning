@@ -142,6 +142,7 @@ public class AuthenticationService {
         try {
             entityManager.merge(auth);
             entityManager.getTransaction().commit();
+            System.out.println("mdp vérifié");
             return Optional.of(auth);
         } catch (Exception e) {
             entityManager.getTransaction().rollback();
