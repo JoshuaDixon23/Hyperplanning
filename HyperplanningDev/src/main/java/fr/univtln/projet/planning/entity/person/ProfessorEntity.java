@@ -38,4 +38,9 @@ public class ProfessorEntity extends UserEntity {
             c.getProfessors().remove(this);
         }
     }
+
+    @Override
+    public String toString() {
+        return getName() + " " + getSurname();
+    }
 }

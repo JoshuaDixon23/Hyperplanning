@@ -63,12 +63,7 @@ public class RoomEntity {
 
     @Override
     public String toString() {
-        return "RoomEntity{" +
-                "number=" + number +
-                ", capacity=" + capacity +
-                ", type=" + type +
-                ", building=" + building +
-                '}';
+        return building.getName() + " " + this.getNumber();
     }
 
     // manage room

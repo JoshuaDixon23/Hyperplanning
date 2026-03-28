@@ -9,17 +9,19 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-import fr.univtln.projet.planning.entity.academic.Group;
-import fr.univtln.projet.planning.entity.academic.GroupType;
-import fr.univtln.projet.planning.entity.infrastructure.Room;
-import fr.univtln.projet.planning.entity.person.Professor;
-import fr.univtln.projet.planning.entity.planning.Course;
-import fr.univtln.projet.planning.entity.planning.CourseType;
-import fr.univtln.projet.planning.entity.planning.Module;
+import fr.univtln.projet.planning.entity.academic.GroupEntity;
+import fr.univtln.projet.planning.modele.academic.GroupType;
+import fr.univtln.projet.planning.entity.infrastructure.RoomEntity;
+import fr.univtln.projet.planning.entity.person.ProfessorEntity;
+import fr.univtln.projet.planning.entity.planning.CourseEntity;
+import fr.univtln.projet.planning.modele.planning.CourseType;
+import fr.univtln.projet.planning.entity.planning.ModuleEntity;
+import fr.univtln.projet.planning.modele.infrastructure.Room;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -39,44 +41,69 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 
+import fr.univtln.projet.planning.service.infrastructureService.RoomService;
+import fr.univtln.projet.planning.service.planningService.ModuleService;
+import fr.univtln.projet.planning.service.personService.ProfessorService;
+import fr.univtln.projet.planning.service.academicService.GroupService;
+import fr.univtln.projet.planning.service.ServiceRegistry;
+
 public class ModuleController implements Initializable {
 
     @FXML private HBox cardsContainer;
     @FXML private TextField searchField;
+    private RoomService roomService;
+    private ModuleService moduleService;
+    private ProfessorService professorService;
+    private GroupService groupService;
 
     // formater en heure local
     private final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm").withZone(ZoneId.systemDefault());
 
-    private final Map<Module, List<Course>> mockDatabase = new HashMap<>();
+    private final Map<ModuleEntity, List<CourseEntity>> mockDatabase = new HashMap<>();
 
-    private final Map<Course, Group> courseGroupMap = new HashMap<>();
+    private final Map<CourseEntity, GroupEntity> courseGroupMap = new HashMap<>();
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        // Initialize services from ServiceRegistry
+        try {
+            roomService = ServiceRegistry.getRoomService();
+            moduleService = ServiceRegistry.getModuleService();
+            professorService = ServiceRegistry.getProfessorService();
+            groupService = ServiceRegistry.getGroupService();
+        } catch (IllegalStateException e) {
+            System.err.println("ServiceRegistry not initialized: " + e.getMessage());
+            return;
+        }
         loadModulesAndCoursesFromService();
     }
 
     private void loadModulesAndCoursesFromService() {
         cardsContainer.getChildren().clear();
+        mockDatabase.clear();
 
-        // Appel au service ...
-
-        // En attendant
-        Module moduleInfo = Module.builder()
-                .code("INFO101")
-                .name("Informatique")
-                .ECTS(6.0f)
-                .responsible(Professor.ProfessorFactory("Alan", "Turing"))
-                .build();
-
-        mockDatabase.put(moduleInfo, new ArrayList<>());
+        try {
+            // Fetch all modules from ModuleService
+            List<ModuleEntity> allModules = moduleService.findAll().stream()
+                                             .limit(3)
+                                             .toList(); //
+            
+            // For each module, fetch its associated courses
+            for (ModuleEntity module : allModules) {
+                List<CourseEntity> courses = new ArrayList<>();
+                // Note: You may need to add a method in CourseService to fetch by module
+                mockDatabase.put(module, courses);
+            }
+        } catch (Exception e) {
+            System.err.println("Error loading modules from service: " + e.getMessage());
+        }
 
         refreshView();
     }
 
     private void refreshView() {
         cardsContainer.getChildren().clear();
-        for (Map.Entry<Module, List<Course>> entry : mockDatabase.entrySet()) {
+        for (Map.Entry<ModuleEntity, List<CourseEntity>> entry : mockDatabase.entrySet()) {
             createModuleCard(entry.getKey(), entry.getValue());
         }
     }
@@ -167,7 +194,7 @@ public class ModuleController implements Initializable {
      * @param module Le module concerné
      * @param courses La liste des cours liés à ce module (récupérée via votre service)
      */
-    private void createModuleCard(Module module, List<Course> courses) {
+    private void createModuleCard(ModuleEntity module, List<CourseEntity> courses) {
         // hash du nom pour trouver la couleur
         int hash = module.getName().hashCode();
         String headerColor = String.format("#%06X", (0xFFFFFF & hash));
@@ -209,7 +236,7 @@ public class ModuleController implements Initializable {
 
         VBox coursesListContainer = new VBox(10);
         coursesListContainer.setPadding(new Insets(15, 15, 15, 15));
-        for (Course c : courses) {
+        for (CourseEntity c : courses) {
             coursesListContainer.getChildren().add(createCourseItem(module, c));
         }
 
@@ -228,7 +255,7 @@ public class ModuleController implements Initializable {
     /**
      * Construit visuellement un bloc "Cours" à partir de votre entité Course
      */
-    private HBox createCourseItem(Module parentModule, Course course) {
+    private HBox createCourseItem(ModuleEntity parentModule, CourseEntity course) {
         HBox item = new HBox(5);
         item.setAlignment(Pos.CENTER_LEFT);
         item.setPadding(new Insets(10));
@@ -239,18 +266,20 @@ public class ModuleController implements Initializable {
         String endTime = timeFormatter.format(course.getStartTime().plus(course.getDuration()));
         
         // Extraction Prof et Salle
-        String profName = (course.getProfessors() != null && !course.getProfessors().isEmpty()) ? course.getProfessors().get(0).getName() : "Pas de prof";
+        String profName = course.getProfessors() != null && !course.getProfessors().isEmpty() 
+    ? course.getProfessors().stream().findFirst().get().getName() 
+    : "Pas de prof";
         
         String roomName = "Pas de salle";
         if(course.getRoom() != null) {
             try {
                 roomName = course.getRoom().getName();
             } catch (NullPointerException e) {
-                roomName = "Salle " + course.getRoom().getNum(); 
+                roomName = "Salle " + course.getRoom().getName(); 
             }
         }
 
-        Group assignedGroup = courseGroupMap.get(course);
+        GroupEntity assignedGroup = courseGroupMap.get(course);
         String groupName = (assignedGroup != null) ? "Groupe " + assignedGroup.getNum() : "Pas de groupe"; 
 
         String infoText = String.format("%s - %s | %s\n%s | %s", 
@@ -277,7 +306,7 @@ public class ModuleController implements Initializable {
 
     @FXML
     private void handleAddModule() {
-        Dialog<Module> dialog = new Dialog<>();
+        Dialog<ModuleEntity> dialog = new Dialog<>();
         dialog.setTitle("Ajouter un Module");
         dialog.setHeaderText("Veuillez saisir les informations du nouveau module.");
 
@@ -291,19 +320,9 @@ public class ModuleController implements Initializable {
         TextField codeField = new TextField(); codeField.setPromptText("Ex: MATH101");
         TextField ectsField = new TextField(); ectsField.setPromptText("Ex: 6.0");
         
-        ComboBox<Professor> profComboBox = new ComboBox<>();
+        ComboBox<ProfessorEntity> profComboBox = new ComboBox<>();
         profComboBox.getItems().addAll(getAvailableProfessors());
         profComboBox.setPromptText("Sélectionnez un responsable");
-        profComboBox.setConverter(new javafx.util.StringConverter<Professor>() {
-            @Override
-            public String toString(Professor p) {
-                return p != null ? p.getName() : "";
-            }
-            @Override
-            public Professor fromString(String string) {
-                return null; 
-            }
-        });
 
         grid.add(new Label("Nom du module:"), 0, 0); grid.add(nameField, 1, 0);
         grid.add(new Label("Code:"), 0, 1); grid.add(codeField, 1, 1);
@@ -327,7 +346,7 @@ public class ModuleController implements Initializable {
         dialog.setResultConverter(dialogButton -> {
             if (dialogButton == saveButtonType) {
                 try {
-                    return Module.builder()
+                    return ModuleEntity.builder()
                             .name(nameField.getText())
                             .code(codeField.getText())
                             .ECTS(Float.parseFloat(ectsField.getText()))
@@ -342,19 +361,24 @@ public class ModuleController implements Initializable {
         });
 
         dialog.showAndWait().ifPresent(newModule -> {
-            // a changer avec la vrai db
-            mockDatabase.put(newModule, new ArrayList<>());
-            refreshView(); 
+            // Save the new module to the database via ModuleService
+            try {
+                moduleService.create(newModule);
+                refreshView();
+            } catch (Exception e) {
+                System.err.println("Error saving module: " + e.getMessage());
+                showErrorAlert("Erreur", "Impossible de sauvegarder le module.");
+            }
         });
     }
 
     private static class CourseCreationResult {
-        Course course;
-        Group group;
-        CourseCreationResult(Course c, Group g) { this.course = c; this.group = g; }
+        CourseEntity course;
+        GroupEntity group;
+        CourseCreationResult(CourseEntity c, GroupEntity g) { this.course = c; this.group = g; }
     }
 
-    private void handleAddCourse(Module module) {
+    private void handleAddCourse(ModuleEntity module) {
         Dialog<CourseCreationResult> dialog = new Dialog<>();
         dialog.setTitle("Ajouter un Cours");
         dialog.setHeaderText("Nouveau cours pour : " + module.getName());
@@ -371,31 +395,20 @@ public class ModuleController implements Initializable {
         ComboBox<CourseType> typeComboBox = new ComboBox<>();
         typeComboBox.getItems().addAll(CourseType.values()); 
 
-        ComboBox<Professor> profComboBox = new ComboBox<>();
+        ComboBox<ProfessorEntity> profComboBox = new ComboBox<>();
         profComboBox.getItems().addAll(getAvailableProfessors());
         profComboBox.setPromptText("Sélectionnez un professeur");
-        profComboBox.setConverter(new javafx.util.StringConverter<Professor>() {
-            @Override public String toString(Professor p) { return p != null ? p.getName() : ""; }
-            @Override public Professor fromString(String string) { return null; }
-        });
 
-        ComboBox<Room> roomComboBox = new ComboBox<>();
-        roomComboBox.getItems().addAll(getAvailableRooms());
+        ComboBox<RoomEntity> roomComboBox = new ComboBox<>();
+        roomComboBox.getItems().addAll(roomService.findAll());
         roomComboBox.setPromptText("Sélectionnez une salle");
-        roomComboBox.setConverter(new javafx.util.StringConverter<Room>() {
-            @Override public String toString(Room r) { 
-                if(r == null) return "";
-                try { return r.getName(); } catch(NullPointerException e) { return "Salle " + r.getNum(); }
-            }
-            @Override public Room fromString(String string) { return null; }
-        });
 
-        ComboBox<Group> groupComboBox = new ComboBox<>();
+        ComboBox<GroupEntity> groupComboBox = new ComboBox<>();
         groupComboBox.getItems().addAll(getAvailableGroups());
         groupComboBox.setPromptText("Sélectionnez un groupe");
-        groupComboBox.setConverter(new javafx.util.StringConverter<Group>() {
-            @Override public String toString(Group g) { return g != null ? "Groupe " + g.getNum() + " (" + g.getType() + ")" : ""; }
-            @Override public Group fromString(String string) { return null; }
+        groupComboBox.setConverter(new javafx.util.StringConverter<GroupEntity>() {
+            @Override public String toString(GroupEntity g) { return g != null ? "Groupe " + g.getNum() + " (" + g.getType() + ")" : ""; }
+            @Override public GroupEntity fromString(String string) { return null; }
         });
 
         grid.add(new Label("Heure de début (HH:mm):"), 0, 0); grid.add(timeField, 1, 0);
@@ -427,11 +440,10 @@ public class ModuleController implements Initializable {
             if (dialogButton == saveButtonType) {
                 try {
                     LocalTime localTime = LocalTime.parse(timeField.getText());
-                    java.time.Instant startInstant = LocalDate.now().atTime(localTime).atZone(ZoneId.systemDefault()).toInstant();
 
-                    Course newCourse = Course.builder()
+                    CourseEntity newCourse = CourseEntity.builder()
                             .module(module)
-                            .startTime(startInstant)
+                            .startTime(localTime)
                             .duration(Duration.ofMinutes(Long.parseLong(durationField.getText())))
                             .courseType(typeComboBox.getValue())
                             .professor(profComboBox.getValue())
@@ -448,22 +460,27 @@ public class ModuleController implements Initializable {
         });
 
         dialog.showAndWait().ifPresent(result -> {
-            // Ajout du cours au module
-            mockDatabase.get(module).add(result.course);
-            
-            // Assignation du groupe à ce cours
-            if(result.group != null) {
-                result.group.addCourse(result.course);
-                courseGroupMap.put(result.course, result.group); // Pour l'affichage
+            try {
+                // Save the new course to the database via CourseService
+                ServiceRegistry.getCourseService().create(result.course);
+                
+                // Assignation du groupe à ce cours
+                if(result.group != null) {
+                    result.group.addCourse(result.course);
+                    courseGroupMap.put(result.course, result.group);
+                }
+                
+                refreshView(); 
+            } catch (Exception e) {
+                System.err.println("Error saving course: " + e.getMessage());
+                showErrorAlert("Erreur", "Impossible de sauvegarder le cours.");
             }
-            
-            refreshView(); 
         });
     }
 
 
-    private void handleEditCourse(Course course) {
-        Dialog<Course> dialog = new Dialog<>();
+    private void handleEditCourse(CourseEntity course) {
+        Dialog<CourseEntity> dialog = new Dialog<>();
         dialog.setTitle("Modifier un Cours");
         dialog.setHeaderText("Modification du cours de type : " + course.getCourseType());
 
@@ -480,33 +497,37 @@ public class ModuleController implements Initializable {
         typeComboBox.getItems().addAll(CourseType.values()); 
         typeComboBox.getSelectionModel().select(course.getCourseType());
 
-        ComboBox<Professor> profComboBox = new ComboBox<>();
+        ComboBox<ProfessorEntity> profComboBox = new ComboBox<>();
         profComboBox.getItems().addAll(getAvailableProfessors());
-        profComboBox.setConverter(new javafx.util.StringConverter<Professor>() {
-            @Override public String toString(Professor p) { return p != null ? p.getName() : ""; }
-            @Override public Professor fromString(String string) { return null; }
+        profComboBox.setConverter(new javafx.util.StringConverter<ProfessorEntity>() {
+            @Override public String toString(ProfessorEntity p) { return p != null ? p.getName() : ""; }
+            @Override public ProfessorEntity fromString(String string) { return null; }
         });
         if (course.getProfessors() != null && !course.getProfessors().isEmpty()) {
-            profComboBox.getSelectionModel().select(course.getProfessors().get(0));
+            profComboBox.getSelectionModel().select(
+                course.getProfessors().stream()
+                    .findFirst()
+                    .orElse(null)
+            );
         }
 
-        ComboBox<Room> roomComboBox = new ComboBox<>();
-        roomComboBox.getItems().addAll(getAvailableRooms());
+        ComboBox<RoomEntity> roomComboBox = new ComboBox<>();
+        roomComboBox.getItems().addAll(roomService.findAll());
         roomComboBox.setPromptText("Sélectionnez une salle");
-        roomComboBox.setConverter(new javafx.util.StringConverter<Room>() {
-            @Override public String toString(Room r) { 
+        roomComboBox.setConverter(new javafx.util.StringConverter<RoomEntity>() {
+            @Override public String toString(RoomEntity r) { 
                 if(r == null) return "";
-                try { return r.getName(); } catch(NullPointerException e) { return "Salle " + r.getNum(); }
+                try { return r.getName(); } catch(NullPointerException e) { return "Salle " + r.getName(); }
             }
-            @Override public Room fromString(String string) { return null; }
+            @Override public RoomEntity fromString(String string) { return null; }
         });
         roomComboBox.getSelectionModel().select(course.getRoom());
 
-        ComboBox<Group> groupComboBox = new ComboBox<>();
+        ComboBox<GroupEntity> groupComboBox = new ComboBox<>();
         groupComboBox.getItems().addAll(getAvailableGroups());
-        groupComboBox.setConverter(new javafx.util.StringConverter<Group>() {
-            @Override public String toString(Group g) { return g != null ? "Groupe " + g.getNum() + " (" + g.getType() + ")" : ""; }
-            @Override public Group fromString(String string) { return null; }
+        groupComboBox.setConverter(new javafx.util.StringConverter<GroupEntity>() {
+            @Override public String toString(GroupEntity g) { return g != null ? "Groupe " + g.getNum() + " (" + g.getType() + ")" : ""; }
+            @Override public GroupEntity fromString(String string) { return null; }
         });
         // On sélectionne le groupe actuellement assigné à ce cours
         groupComboBox.getSelectionModel().select(courseGroupMap.get(course));
@@ -540,13 +561,12 @@ public class ModuleController implements Initializable {
             if (dialogButton == saveButtonType) {
                 try {
                     LocalTime localTime = LocalTime.parse(timeField.getText());
-                    java.time.Instant startInstant = LocalDate.now().atTime(localTime).atZone(ZoneId.systemDefault()).toInstant();
 
-                    course.setStartTime(startInstant);
+                    course.setStartTime(localTime);
                     course.setDuration(Duration.ofMinutes(Long.parseLong(durationField.getText())));
                     course.setCourseType(typeComboBox.getValue());
                     
-                    List<Professor> updatedProfs = new ArrayList<>();
+                    HashSet<ProfessorEntity> updatedProfs = new HashSet<>();
                     if (profComboBox.getValue() != null) {
                         updatedProfs.add(profComboBox.getValue());
                     }
@@ -554,10 +574,10 @@ public class ModuleController implements Initializable {
                     course.setRoom(roomComboBox.getValue());
                     
                     // Mise à jour de l'assignation du groupe
-                    Group oldGroup = courseGroupMap.get(course);
+                    GroupEntity oldGroup = courseGroupMap.get(course);
                     if(oldGroup != null) oldGroup.removeCourse(course);
                     
-                    Group newGroup = groupComboBox.getValue();
+                    GroupEntity newGroup = groupComboBox.getValue();
                     if(newGroup != null) {
                         newGroup.addCourse(course);
                         courseGroupMap.put(course, newGroup);
@@ -575,12 +595,20 @@ public class ModuleController implements Initializable {
         });
 
         dialog.showAndWait().ifPresent(updatedCourse -> {
-            refreshView(); 
+            try {
+                // Update the course in the database via CourseService
+                // Note: create() method in CourseService uses JPA save which handles both create and update
+                ServiceRegistry.getCourseService().create(updatedCourse);
+                refreshView();
+            } catch (Exception e) {
+                System.err.println("Error updating course: " + e.getMessage());
+                showErrorAlert("Erreur", "Impossible de mettre à jour le cours.");
+            }
         });
     }
 
-    private void handleEditModule(Module oldModule) {
-        Dialog<Module> dialog = new Dialog<>();
+    private void handleEditModule(ModuleEntity oldModule) {
+        Dialog<ModuleEntity> dialog = new Dialog<>();
         dialog.setTitle("Modifier un Module");
         dialog.setHeaderText("Modification du module : " + oldModule.getName());
 
@@ -595,11 +623,11 @@ public class ModuleController implements Initializable {
         TextField codeField = new TextField(oldModule.getCode()); 
         TextField ectsField = new TextField(String.valueOf(oldModule.getECTS())); 
         
-        ComboBox<Professor> profComboBox = new ComboBox<>();
+        ComboBox<ProfessorEntity> profComboBox = new ComboBox<>();
         profComboBox.getItems().addAll(getAvailableProfessors());
-        profComboBox.setConverter(new javafx.util.StringConverter<Professor>() {
-            @Override public String toString(Professor p) { return p != null ? p.getName() : ""; }
-            @Override public Professor fromString(String string) { return null; }
+        profComboBox.setConverter(new javafx.util.StringConverter<ProfessorEntity>() {
+            @Override public String toString(ProfessorEntity p) { return p != null ? p.getName() : ""; }
+            @Override public ProfessorEntity fromString(String string) { return null; }
         });
         
         // On pré-sélectionne le responsable actuel
@@ -629,7 +657,7 @@ public class ModuleController implements Initializable {
 
         dialog.setResultConverter(dialogButton -> {
             if (dialogButton == saveButtonType) {
-                return Module.builder()
+                return ModuleEntity.builder()
                         .name(nameField.getText())
                         .code(codeField.getText())
                         .ECTS(Float.parseFloat(ectsField.getText()))
@@ -640,67 +668,96 @@ public class ModuleController implements Initializable {
         });
 
         dialog.showAndWait().ifPresent(newModule -> {
-            List<Course> existingCourses = mockDatabase.remove(oldModule);
-            
-            mockDatabase.put(newModule, existingCourses != null ? existingCourses : new ArrayList<>());
-            
-            refreshView(); 
+            try {
+                // Update the existing module with new values and save via ModuleService
+                oldModule.setName(newModule.getName());
+                oldModule.setCode(newModule.getCode());
+                oldModule.setECTS(newModule.getECTS());
+                oldModule.setResponsible(newModule.getResponsible());
+                
+                moduleService.create(oldModule);
+                refreshView();
+            } catch (Exception e) {
+                System.err.println("Error updating module: " + e.getMessage());
+                showErrorAlert("Erreur", "Impossible de mettre à jour le module.");
+            }
         });
     }
 
 
-    private List<Professor> getAvailableProfessors() {
-        return List.of(
-            Professor.ProfessorFactory("Alan", "Turing"),
-            Professor.ProfessorFactory("Ada", "Lovelace"),
-            Professor.ProfessorFactory("Marie", "Curie"),
-            Professor.ProfessorFactory("Albert", "Einstein")
-        );
-    }
-
-    private List<Room> getAvailableRooms() {
-        fr.univtln.projet.planning.entity.infrastructure.Building batimentTest = null; 
-        fr.univtln.projet.planning.entity.infrastructure.RoomType typeTest = null; 
-
-        return List.of(
-            Room.RoomFactory(101, 50, typeTest, batimentTest),
-            Room.RoomFactory(204, 30, typeTest, batimentTest),
-            Room.RoomFactory(1, 200, typeTest, batimentTest) 
-        );
-    }
-
-    private List<Group> getAvailableGroups() {
-        return List.of(
-            Group.GroupFactory(1, null),
-            Group.GroupFactory(2, null),
-            Group.GroupFactory(3, null)
-        );
-    }
-
-    private void handleDeleteModule(Module module) {
-        System.out.println("Supprimer le module : " + module.getName());
-        
-        List<Course> courses = mockDatabase.get(module);
-        if(courses != null) {
-            for(Course c : courses) {
-                Group g = courseGroupMap.get(c);
-                if(g != null) g.removeCourse(c);
-                courseGroupMap.remove(c);
-            }
+    private List<ProfessorEntity> getAvailableProfessors() {
+        try {
+            // Fetch all professors from ProfessorService via ServiceRegistry
+            return professorService.findAll();
+        } catch (Exception e) {
+            System.err.println("Error fetching professors: " + e.getMessage());
+            // Fallback to empty list
+            return new ArrayList<>();
         }
-        
-        mockDatabase.remove(module);
-        refreshView();
     }
 
-    private void handleDeleteCourse(Module parentModule, Course course) {
-        System.out.println("Supprimer un cours");
-        
-        Group g = courseGroupMap.get(course);
-        if(g != null) g.removeCourse(course);
-        courseGroupMap.remove(course);
 
-        mockDatabase.get(parentModule).remove(course);
-        refreshView();
+    private List<GroupEntity> getAvailableGroups() {
+        try {
+            // Fetch all groups from GroupService via ServiceRegistry
+            return groupService.findAll();
+        } catch (Exception e) {
+            System.err.println("Error fetching groups: " + e.getMessage());
+            // Fallback to empty list
+            return new ArrayList<>();
+        }
+    }
+
+    private void handleDeleteModule(ModuleEntity module) {
+        try {
+            // Remove all courses associated with this module
+            List<CourseEntity> courses = mockDatabase.get(module);
+            if(courses != null) {
+                for(CourseEntity c : courses) {
+                    // Delete course from database
+                    try {
+                        ServiceRegistry.getCourseService().delete(0L);  // TODO: need proper ID management
+                    } catch (Exception e) {
+                        System.err.println("Warning: Could not delete course from database: " + e.getMessage());
+                    }
+                    GroupEntity g = courseGroupMap.get(c);
+                    if(g != null) g.removeCourse(c);
+                    courseGroupMap.remove(c);
+                }
+            }
+            
+            // Delete the module from the database via ModuleService
+            try {
+                moduleService.delete(0L);  // TODO: need proper ID management
+            } catch (Exception e) {
+                System.err.println("Warning: Could not delete module from database: " + e.getMessage());
+            }
+            mockDatabase.remove(module);
+            refreshView();
+        } catch (Exception e) {
+            System.err.println("Error deleting module: " + e.getMessage());
+            showErrorAlert("Erreur", "Impossible de supprimer le module.");
+        }
+    }
+
+    private void handleDeleteCourse(ModuleEntity parentModule, CourseEntity course) {
+        try {
+            // Remove course group association
+            GroupEntity g = courseGroupMap.get(course);
+            if(g != null) g.removeCourse(course);
+            courseGroupMap.remove(course);
+
+            // Delete the course from the database via CourseService
+            try {
+                ServiceRegistry.getCourseService().delete(0L);  // TODO: need proper ID management
+            } catch (Exception e) {
+                System.err.println("Warning: Could not delete course from database: " + e.getMessage());
+            }
+            mockDatabase.get(parentModule).remove(course);
+            refreshView();
+        } catch (Exception e) {
+            System.err.println("Error deleting course: " + e.getMessage());
+            showErrorAlert("Erreur", "Impossible de supprimer le cours.");
+        }
     }
 }

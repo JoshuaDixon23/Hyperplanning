@@ -1,17 +1,8 @@
 package fr.univtln.projet.planning.entity.infrastructure;
 
 import java.time.LocalTime;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
-
-import fr.univtln.projet.planning.entity.academic.UFR;
-
-import java.util.Map;
-import java.util.Objects;
-
 
 import fr.univtln.projet.planning.entity.academic.UFREntity;
 import fr.univtln.projet.planning.modele.infrastructure.Day;
