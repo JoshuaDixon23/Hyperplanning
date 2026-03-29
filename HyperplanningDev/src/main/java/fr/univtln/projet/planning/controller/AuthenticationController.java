@@ -71,6 +71,11 @@ public class AuthenticationController {
             return;
         }
 
+        if(!authenticationService.isEmailExiste(username)  ) {
+            showError("Cet email n'existe pas: " + username);
+            return;
+        }
+
         // Simulation d'authentification
         if (authenticate(username, password)) {
             showSuccess("Connexion réussie : " + username);
@@ -82,7 +87,7 @@ public class AuthenticationController {
 
 
         } else {
-            showError("Identifiants incorrects");
+            showError("Identifiants incorrects ");
         }
     }
 
@@ -101,11 +106,10 @@ public class AuthenticationController {
      */
     private boolean authenticate(String username, String password) {
         try {
-            if(authenticationService.isEmailExiste(username)) {
 
-                if (authenticationService.isPasswordDefined(username)) {
+
+            if (authenticationService.isPasswordDefined(username)) {
                     Optional<Authentication> auth = authenticationService.authenticate(username, password);
-
                     if (auth.isPresent()) {
                         // Connexion réussie
                         return true;
@@ -113,18 +117,13 @@ public class AuthenticationController {
                         showError("Identifiants incorrects");
                         return false;
                     }
-
-                } else {// la méthode passe par cette instruction si il n'y a pas de mdp
+            } else {// la méthode passe par cette instruction si il n'y a pas de mdp
                     authenticationService.setPasswordFirstTime(username, password);
                     showSuccess("Mot de passe configuré");
                     // mot de passe défini pour la première fois, on considère que l'authentification est réussie
-
                     return true;
-                }
-            } else {
-                showError("Cet email n'existe pas: " + username);
-                return false;
             }
+
 
         } catch (Exception e) {
             showError("Erreur lors de l'authentification: " + e.getMessage());
