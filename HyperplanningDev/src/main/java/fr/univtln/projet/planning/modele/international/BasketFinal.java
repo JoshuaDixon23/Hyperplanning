@@ -1,6 +1,5 @@
 package fr.univtln.projet.planning.modele.international;
 
-import fr.univtln.projet.planning.entity.academic.GroupEntity;
 import fr.univtln.projet.planning.entity.planning.ModuleEntity;
 import fr.univtln.projet.planning.modele.academic.Group;
 import fr.univtln.projet.planning.modele.person.InternationalStudent;
@@ -30,7 +29,7 @@ public class BasketFinal {
 
     // Methods
 
-    public void addModuleGroup(Module module, GroupEntity group) {
+    public void addModuleGroup(Module module, Group group) {
         BasketEntry entry = new BasketEntry(this, module, group);
         entries.add(entry);
     }

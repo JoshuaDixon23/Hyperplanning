@@ -5,13 +5,15 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Map;
-
 @Entity
 @Table(name = "InternationalStudent")
 @Getter
 @Setter
 public class InternationalStudent extends Student {
+
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "basket_id")
+    private BasketFinal basketFinal;
 
     protected InternationalStudent() {
         super();
@@ -21,16 +23,12 @@ public class InternationalStudent extends Student {
         super(firstName, lastName, emailUniv, emailPersonal);
     }
 
-    @OneToOne
-    @JoinColumn(name = "basket_id") //
-    private BasketFinal basket;
-
-    public BasketFinal getBasket() {
-        return basket;
+    public BasketFinal getBasketFinal() {
+        return basketFinal;
     }
 
-    public void setBasket(BasketFinal basket) {
-        this.basket = basket;
+    public void setBasketFinal(BasketFinal basketFinal) {
+        this.basketFinal = basketFinal;
     }
 
     /*
@@ -46,8 +44,4 @@ public class InternationalStudent extends Student {
         return s;
     }
      */
-
-
 }
-
-
