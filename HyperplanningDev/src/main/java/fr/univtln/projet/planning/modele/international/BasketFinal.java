@@ -1,6 +1,5 @@
 package fr.univtln.projet.planning.modele.international;
 
-import fr.univtln.projet.planning.entity.academic.GroupEntity;
 import fr.univtln.projet.planning.entity.planning.ModuleEntity;
 import fr.univtln.projet.planning.modele.academic.Group;
 import fr.univtln.projet.planning.modele.planning.Module;
@@ -13,7 +12,6 @@ import java.util.List;
 
 @Getter
 @Entity
-@Embeddable
 public class BasketFinal {
 
     @Id
@@ -30,7 +28,7 @@ public class BasketFinal {
 
     // ====== LOGIQUE MÉTIER ======
 
-    public void addModuleGroup(Module module, GroupEntity group) {
+    public void addModuleGroup(Module module, Group group) {
         BasketEntry entry = new BasketEntry(this, module, group);
         entries.add(entry);
     }
