@@ -23,7 +23,7 @@ public class AuthentificationServiceTest {
         UserRepository userRepo = new UserRepository(em);
         AuthenticationService authService = new AuthenticationService(em, userRepo);
 
-        String testEmail = "etudiant@univtln.fr";
+        String testEmail = "jean-dupont@univtln.fr";
 
         // 1. Créer un étudiant et le persister en base de données
         em.getTransaction().begin();
@@ -37,7 +37,7 @@ public class AuthentificationServiceTest {
             );
             em.persist(student);
             em.getTransaction().commit();
-            System.out.println("✓ Étudiant créé en base de données: " + testEmail);
+            System.out.println("-Étudiant créé en base de données: " + testEmail);
         } catch (Exception e) {
             em.getTransaction().rollback();
             throw new RuntimeException("Erreur création étudiant: " + e.getMessage(), e);
@@ -45,11 +45,11 @@ public class AuthentificationServiceTest {
 
         // 2. Vérifier que l'étudiant existe
         assertTrue(userRepo.existsByEmailUniv(testEmail), "L'étudiant doit exister en base");
-        System.out.println("✓ Vérification: l'étudiant existe");
+        System.out.println("-Vérification: l'étudiant existe");
 
         // 3. Vérifier que le mot de passe n'est pas défini au départ
         assertFalse(userRepo.isPasswordDefinedByEmailUniv(testEmail), "Le mot de passe ne doit pas être défini");
-        System.out.println("✓ Vérification: aucun mot de passe défini");
+        System.out.println("-Vérification: aucun mot de passe défini");
 
         // 4. Définir le mot de passe pour la première fois
         String password = "MonMotDePasse123!";
@@ -57,16 +57,16 @@ public class AuthentificationServiceTest {
 
         assertTrue(result.isPresent(), "La création du mot de passe devrait réussir");
         assertEquals(testEmail, result.get().getEmail(), "L'email doit correspondre");
-        System.out.println("✓ Mot de passe défini avec succès");
+        System.out.println("- Mot de passe défini avec succès");
 
         // 5. Vérifier que le mot de passe est maintenant défini
         assertTrue(userRepo.isPasswordDefinedByEmailUniv(testEmail), "Le mot de passe doit maintenant être défini");
-        System.out.println("✓ Vérification: mot de passe défini");
+        System.out.println("-Vérification: mot de passe défini");
 
         // 6. Vérifier l'authentification avec le mot de passe
         Optional<AuthenticationEntity> authenticated = authService.authenticate(testEmail, password);
         assertTrue(authenticated.isPresent(), "L'authentification doit réussir");
-        System.out.println("✓ Authentification réussie avec le mot de passe");
+        System.out.println("-Authentification réussie avec le mot de passe");
 
         em.close();
         emf.close();

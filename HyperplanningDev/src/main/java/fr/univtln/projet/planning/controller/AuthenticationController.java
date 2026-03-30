@@ -52,6 +52,34 @@ public class AuthenticationController {
         // Entrée clavier = login
         usernameField.setOnAction(e -> handleLogin());
         passwordField.setOnAction(e -> handleLogin());
+
+        // cas de la première authentification
+
+        usernameField.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null && !newValue.isEmpty()) {
+                try {
+                    if (authenticationService.isEmailExiste(newValue)) {
+                        if (!authenticationService.isPasswordDefined(newValue)) {
+                            errorLabel.setText("Première connexion :\n          le mot de passe sera défini avec votre saisie.");
+                            errorLabel.setVisible(true);
+                        } else {
+                            errorLabel.setVisible(false);
+                        }
+                    } else {
+                        errorLabel.setVisible(false);
+                    }
+                } catch (Exception e) {
+                    errorLabel.setVisible(false);
+                }
+            } else {
+                errorLabel.setVisible(false);
+            }
+        });
+
+
+
+
+
     }
 
     /**
@@ -72,6 +100,7 @@ public class AuthenticationController {
             showError("Cet email n'existe pas: " + username);
             return;
         }
+
 
         // Simulation d'authentification
         if (authenticate(username, password)) {

@@ -8,10 +8,10 @@
       stylesheets="@/css/connexion.css"
       styleClass="login-root">
 
-<HBox styleClass="login-card">
+<HBox styleClass="login-card" prefWidth="550">
 
     <!-- Partie gauche -->
-    <VBox styleClass="login-left">
+    <VBox styleClass="login-left" prefWidth="150">
         <Label text="Planning 2026"/>
     </VBox>
 
@@ -20,7 +20,7 @@
     <!-- Partie droite -->
     <VBox>
 
-        <HBox styleClass="login-header">
+        <HBox styleClass="login-header" prefWidth="400">
             <Label text="Identification" styleClass="login-title"/>
         </HBox>
 

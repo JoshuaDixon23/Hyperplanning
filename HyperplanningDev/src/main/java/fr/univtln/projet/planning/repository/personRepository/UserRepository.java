@@ -78,15 +78,16 @@ public class UserRepository extends JpaRepository<User,Long> {
 
     /**
      * Vérifie si un mot de passe est défini pour un utilisateur
+     * Un mot de passe est défini si hashedPassword n'est pas null
      */
     public boolean isPasswordDefinedByEmailUniv(String emailUniv) {
         try {
-            Boolean isDefined = em.createQuery(
-                    "SELECT u.passwordDefined FROM User u WHERE u.emailUniv = :emailUniv",
-                    Boolean.class)
+            String hashedPassword = em.createQuery(
+                    "SELECT u.hashedPassword FROM User u WHERE u.emailUniv = :emailUniv",
+                    String.class)
                     .setParameter("emailUniv", emailUniv)
                     .getSingleResult();
-            return isDefined != null && isDefined;
+            return hashedPassword != null;
         } catch (Exception e) {
             return false;
         }

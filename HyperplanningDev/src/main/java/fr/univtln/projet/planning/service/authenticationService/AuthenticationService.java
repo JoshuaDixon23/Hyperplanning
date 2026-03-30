@@ -10,10 +10,6 @@ import java.util.Optional;
 
 /**
  * Service d'authentification gérant la connexion et la gestion des mots de passe des utilisateurs
- * - Travaille directement avec la table User (qui contient hashedPassword et passwordDefined)
- * - Le mot de passe est stocké en haché en base de données
- * - La première authentification d'un utilisateur sans mdp sert à le définir
- * - Ne expose JAMAIS le hash du mot de passe
  */
 public class AuthenticationService {
 

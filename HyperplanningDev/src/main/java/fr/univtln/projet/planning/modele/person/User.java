@@ -30,21 +30,16 @@ public abstract class User {
     @Column(nullable = true)
     private String hashedPassword;
 
-    @Column(nullable = false)
-    private boolean passwordDefined;
-
     //@Transient
     //protected static final EmailCreate functionUnivMail = new EmailCreate();
 
     protected User() {
-        this.passwordDefined = false;
     }
 
     protected User(String firstName, String lastName, String emailUniv) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.emailUniv = emailUniv;
-        this.passwordDefined = false;
     }
 
     /**
@@ -53,15 +48,21 @@ public abstract class User {
      */
     public void setHashedPassword(String hashedPassword) {
         this.hashedPassword = hashedPassword;
-        this.passwordDefined = true;
     }
 
     /**
-     * Retourne UNIQUEMENT si un mot de passe est défini
-     * Ne retourne PAS le hash du mot de passe
+     * Retourne le hash du mot de passe pour authentification
+     * Retourne null si aucun mot de passe n'est défini
      */
     public String getHashedPasswordForAuthentication() {
         return this.hashedPassword;
+    }
+
+    /**
+     * Vérifie si un mot de passe est défini en regardant si hashedPassword n'est pas null
+     */
+    public boolean isPasswordDefined() {
+        return this.hashedPassword != null;
     }
 
     /*
