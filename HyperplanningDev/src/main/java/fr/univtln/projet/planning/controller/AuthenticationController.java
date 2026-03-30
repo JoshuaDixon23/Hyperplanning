@@ -1,16 +1,13 @@
-
 package fr.univtln.projet.planning.controller;
 
-import fr.univtln.projet.planning.modele.authentication.Authentication;
-import fr.univtln.projet.planning.repository.authenticationRepository.AuthenticationRepository;
+import fr.univtln.projet.planning.entity.authentication.AuthenticationEntity;
+import fr.univtln.projet.planning.repository.personRepository.UserRepository;
 import fr.univtln.projet.planning.service.authenticationService.AuthenticationService;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.layout.VBox;
-import javafx.scene.text.Text;
 import javafx.scene.paint.Color;
 
 import java.util.Optional;
@@ -47,8 +44,8 @@ public class AuthenticationController {
         // liaison avec le service d'authentification
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("HyperplanningPU");
         EntityManager em = emf.createEntityManager();
-        AuthenticationRepository authRepo = new AuthenticationRepository(em);
-        AuthenticationService authService = new AuthenticationService(em,authRepo);
+        UserRepository userRepo = new UserRepository(em);
+        AuthenticationService authService = new AuthenticationService(em, userRepo);
 
         this.authenticationService = authService;
 
@@ -106,24 +103,27 @@ public class AuthenticationController {
      */
     private boolean authenticate(String username, String password) {
         try {
-
-
             if (authenticationService.isPasswordDefined(username)) {
-                    Optional<Authentication> auth = authenticationService.authenticate(username, password);
-                    if (auth.isPresent()) {
-                        // Connexion réussie
-                        return true;
-                    } else {
-                        showError("Identifiants incorrects");
-                        return false;
-                    }
-            } else {// la méthode passe par cette instruction si il n'y a pas de mdp
-                    authenticationService.setPasswordFirstTime(username, password);
+                Optional<AuthenticationEntity> auth = authenticationService.authenticate(username, password);
+                if (auth.isPresent()) {
+                    // Connexion réussie
+                    return true;
+                } else {
+                    showError("Identifiants incorrects");
+                    return false;
+                }
+            } else {
+                // la méthode passe par cette instruction si il n'y a pas de mdp
+                Optional<AuthenticationEntity> auth = authenticationService.setPasswordFirstTime(username, password);
+                if (auth.isPresent()) {
                     showSuccess("Mot de passe configuré");
                     // mot de passe défini pour la première fois, on considère que l'authentification est réussie
                     return true;
+                } else {
+                    showError("Erreur lors de la configuration du mot de passe");
+                    return false;
+                }
             }
-
 
         } catch (Exception e) {
             showError("Erreur lors de l'authentification: " + e.getMessage());

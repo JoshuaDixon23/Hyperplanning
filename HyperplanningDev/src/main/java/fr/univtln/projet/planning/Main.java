@@ -66,6 +66,47 @@ public class Main extends Application {
     }
 
 
+    /* voici le main de la branch dev
+
+    // Initialize all services at application startup
+        ServiceRegistry.initialize();
+
+        Parent root = FXMLLoader.load(
+                getClass().getResource("/view/admin-course-view.fxml")
+        );
+
+        Scene scene = new Scene(root, 1200, 800);
+
+        scene.getStylesheets().addAll(
+                getClass().getResource("/css/base.css").toExternalForm(),
+                getClass().getResource("/css/sidebar.css").toExternalForm(),
+                getClass().getResource("/css/components.css").toExternalForm(),
+                getClass().getResource("/css/planning.css").toExternalForm()
+        );
+
+        stage.setTitle("Hyperplanning");
+        stage.setMinWidth(1000);
+        stage.setMinHeight(700);
+        stage.setScene(scene);
+
+        // Graceful shutdown: close ServiceRegistry when window closes
+        stage.setOnCloseRequest(event -> {
+            ServiceRegistry.shutdown();
+        });
+
+        stage.show();
+    }
+
+
+    public static void main(String[] args) {
+        launch();
+    }
+}
+
+
+     */
+
+
 
     /*
     @Override

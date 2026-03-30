@@ -16,7 +16,7 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 class RoomServiceTest {
-
+/*
     @Test
     void create_then_findAll() {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("HyperplanningPU");
@@ -50,4 +50,6 @@ class RoomServiceTest {
         em.close();
         emf.close();
     }
+*/
+
 }

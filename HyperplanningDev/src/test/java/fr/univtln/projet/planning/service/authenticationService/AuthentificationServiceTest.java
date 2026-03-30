@@ -1,13 +1,11 @@
-package fr.univtln.projet.planning.service.authenticationService;  // Correction du package pour correspondre au dossier renommé
+package fr.univtln.projet.planning.service.authenticationService;
 
-import fr.univtln.projet.planning.modele.authentication.Authentication;
-import fr.univtln.projet.planning.repository.authenticationRepository.AuthenticationRepository;
-import fr.univtln.projet.planning.service.authenticationService.AuthenticationService;
+import fr.univtln.projet.planning.entity.authentication.AuthenticationEntity;
+import fr.univtln.projet.planning.modele.person.LocalStudent;
+import fr.univtln.projet.planning.repository.personRepository.UserRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
@@ -16,102 +14,62 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class AuthentificationServiceTest {
 
-
-
-
-
     @Test
-    public void testRegisterValidEmail() {
-
-
+    public void testCreateStudentAndSetPasswordFirstTime() {
+        // Créer l'EntityManagerFactory et EntityManager
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("HyperplanningPU");
         EntityManager em = emf.createEntityManager();
 
-        AuthenticationRepository authRepo = new AuthenticationRepository(em);
-        AuthenticationService authService = new AuthenticationService(em,authRepo);
+        UserRepository userRepo = new UserRepository(em);
+        AuthenticationService authService = new AuthenticationService(em, userRepo);
 
-        // Suppression de thomas@dj.com de la base de données au début du test
-        String testEmail = "thomas@dj.com";
-        Optional<Authentication> existingAuth = authRepo.findByEmail(testEmail);
-        if (existingAuth.isPresent()) {
-            authRepo.delete(existingAuth.get());
+        String testEmail = "etudiant@univtln.fr";
+
+        // 1. Créer un étudiant et le persister en base de données
+        em.getTransaction().begin();
+        try {
+            LocalStudent student = new LocalStudent(
+                    "Jean",
+                    "Dupont",
+                    testEmail,
+                    "jean.dupont@email.com",
+                    null
+            );
+            em.persist(student);
+            em.getTransaction().commit();
+            System.out.println("✓ Étudiant créé en base de données: " + testEmail);
+        } catch (Exception e) {
+            em.getTransaction().rollback();
+            throw new RuntimeException("Erreur création étudiant: " + e.getMessage(), e);
         }
 
-        // Test d'enregistrement avec un email valide
-        Optional<Authentication> result = authService.register(testEmail);
+        // 2. Vérifier que l'étudiant existe
+        assertTrue(userRepo.existsByEmailUniv(testEmail), "L'étudiant doit exister en base");
+        System.out.println("✓ Vérification: l'étudiant existe");
 
-        // Vérifications
-        assertTrue(result.isPresent(), "L'enregistrement devrait réussir");
-        assertEquals(testEmail, result.get().getEmail(), "L'email devrait correspondre");
-        assertFalse(result.get().isPasswordDefined(), "Le mot de passe ne devrait pas être défini");
+        // 3. Vérifier que le mot de passe n'est pas défini au départ
+        assertFalse(userRepo.isPasswordDefinedByEmailUniv(testEmail), "Le mot de passe ne doit pas être défini");
+        System.out.println("✓ Vérification: aucun mot de passe défini");
+
+        // 4. Définir le mot de passe pour la première fois
+        String password = "MonMotDePasse123!";
+        Optional<AuthenticationEntity> result = authService.setPasswordFirstTime(testEmail, password);
+
+        assertTrue(result.isPresent(), "La création du mot de passe devrait réussir");
+        assertEquals(testEmail, result.get().getEmail(), "L'email doit correspondre");
+        System.out.println("✓ Mot de passe défini avec succès");
+
+        // 5. Vérifier que le mot de passe est maintenant défini
+        assertTrue(userRepo.isPasswordDefinedByEmailUniv(testEmail), "Le mot de passe doit maintenant être défini");
+        System.out.println("✓ Vérification: mot de passe défini");
+
+        // 6. Vérifier l'authentification avec le mot de passe
+        Optional<AuthenticationEntity> authenticated = authService.authenticate(testEmail, password);
+        assertTrue(authenticated.isPresent(), "L'authentification doit réussir");
+        System.out.println("✓ Authentification réussie avec le mot de passe");
+
+        em.close();
+        emf.close();
     }
-
-
-    @Test
-    public void testSetPasswordFirstTime_authenticate_changePassword() {
-
-
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("HyperplanningPU");
-        EntityManager em = emf.createEntityManager();
-
-        AuthenticationRepository authRepo = new AuthenticationRepository(em);
-        AuthenticationService authService = new AuthenticationService(em,authRepo);
-
-        // Suppression de thomas@dj.com de la base de données au début du test
-        String testEmail = "thomas@dj.com";
-        Optional<Authentication> existingAuth = authRepo.findByEmail(testEmail);
-        if (existingAuth.isPresent()) {
-            authRepo.delete(existingAuth.get());
-        }
-
-        // Test d'enregistrement avec un email valide
-        Optional<Authentication> cree = authService.register(testEmail);
-
-        // Créartion de mdp pour la 1ere fois
-        String mdp = "jesuisthomas";
-        Optional<Authentication> mdpCree = authService.setPasswordFirstTime(testEmail,mdp);
-
-        // Vérifications
-        assertTrue(mdpCree.isPresent(), "L'enregistrement devrait réussir");
-        assertEquals(testEmail, mdpCree.get().getEmail(), "L'email devrait correspondre");
-        assertTrue(mdpCree.get().isPasswordDefined(), "Le mot de passe devrait être défini");
-
-
-        authService.authenticate(testEmail,mdp);
-
-        // Test de modification avec nouvel mot de passe
-
-        String mdp2 = "jesuisthomasmaisjaichangemonmdp";
-
-
-        Optional<Authentication> mdpModifie = authService.changePassword(testEmail,mdp,mdp2);
-
-        authService.authenticate(testEmail,mdp2);
-
-    }
-
-//    @Test
-//    public void testverifyPassword() {
-//
-//
-//        EntityManagerFactory emf = Persistence.createEntityManagerFactory("HyperplanningPU");
-//        EntityManager em = emf.createEntityManager();
-//
-//        AuthenticationRepository authRepo = new AuthenticationRepository(em);
-//        AuthenticationService authService = new AuthenticationService(em,authRepo);
-//
-//        // Test d'enregistrement avec un email valide
-//        String testEmail = "thomas@dj.com";
-//        Optional<Authentication> result = authService.register(testEmail);
-//
-//        // Vérifications
-//        assertTrue(result.isPresent(), "L'enregistrement devrait réussir");
-//        assertEquals(testEmail, result.get().getEmail(), "L'email devrait correspondre");
-//        assertFalse(result.get().isPasswordDefined(), "Le mot de passe ne devrait pas être défini");
-//    }
-
-
-
-
 
 }
