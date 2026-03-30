@@ -7,10 +7,9 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Collections;
-import java.util.HashSet;
+
 import java.util.Objects;
-import java.util.Set;
+
 
 @Entity
 @Table(name = "UFR")
@@ -33,12 +32,14 @@ public class UFR {
     @JoinColumn(name = "idCampus", nullable = false)
     private Campus campus;
 
+    /*
     @OneToMany(mappedBy = "ufr", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Promo> promos = new HashSet<>();
 
-
     @OneToMany(mappedBy = "ufr")
     private Set<Building> buildings = new HashSet<>();
+
+     */
 
     protected UFR() {
     }
@@ -59,6 +60,7 @@ public class UFR {
     }
 
 
+    /*
     public Set<Promo> getPromos() {
         return Collections.unmodifiableSet(promos);
     }
@@ -103,6 +105,8 @@ public class UFR {
             b.setUfr(null); 
         }
     }
+    
+     */
 
     @Override
     public boolean equals(Object o) {

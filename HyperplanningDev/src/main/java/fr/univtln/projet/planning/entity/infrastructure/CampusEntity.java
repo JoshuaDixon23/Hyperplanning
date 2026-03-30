@@ -1,10 +1,8 @@
 package fr.univtln.projet.planning.entity.infrastructure;
 
-import fr.univtln.projet.planning.entity.academic.UFREntity;
+
 import lombok.Getter;
 
-import java.util.HashSet;
-import java.util.Set;
 
 @Getter
 public class CampusEntity {
@@ -13,8 +11,8 @@ public class CampusEntity {
     private final String city;
     private final String imageFileName; // peut être stocker l'image directement
 
-    private final Set<BuildingEntity> buildings = new HashSet<>();
-    private final Set<UFREntity> ufrs = new HashSet<>();
+    //private final Set<BuildingEntity> buildings = new HashSet<>();
+    //private final Set<UFREntity> ufrs = new HashSet<>();
 
     // Factory
 
@@ -27,8 +25,17 @@ public class CampusEntity {
         return new CampusEntity(city, imageFileName);
     }
 
+    @Override
+    public String toString() {
+        return "CampusEntity{" +
+                "city='" + city + '\'' +
+                ", imageFileName='" + imageFileName + '\'' +
+                '}';
+    }
+
     //manage Building
 
+    /*
     public void addBuilding(BuildingEntity b) {
         if (b == null){
             return; //throw ?
@@ -68,4 +75,6 @@ public class CampusEntity {
             u.setCampus(null);
         }
     }
+
+     */
 }

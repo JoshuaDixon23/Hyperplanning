@@ -1,88 +1,78 @@
 package fr.univtln.projet.planning.service.academicService;
 
-import java.util.List;
-import java.util.stream.Collectors;             // Modèle JPA
-
-import fr.univtln.projet.planning.entity.academic.UFREntity;       // Modèle Métier (DTO)
+import fr.univtln.projet.planning.entity.academic.UFREntity;
+import fr.univtln.projet.planning.mapper.academic.UFRMapper;
 import fr.univtln.projet.planning.modele.academic.UFR;
+import fr.univtln.projet.planning.modele.infrastructure.Campus;
+import fr.univtln.projet.planning.modele.person.Admin;
 import fr.univtln.projet.planning.repository.academicRepository.UFRRepository;
-import fr.univtln.projet.planning.service.infrastructureService.BuildingService;
 import fr.univtln.projet.planning.service.infrastructureService.CampusService;
 import fr.univtln.projet.planning.service.personService.AdminService;
 
+import java.util.List;
 public class UFRService {
 
-    /*
     private final UFRRepository ufrRepository;
-    private final CampusService campusService;
     private final AdminService adminService;
-    private final BuildingService buildingService;
-    private final PromoService promoService;
+    private final CampusService campusService;
 
-    public UFRService(UFRRepository ufrRepository, CampusService campusService, AdminService adminService, BuildingService buildingService, PromoService promoService) {
+    public UFRService(UFRRepository ufrRepository,
+                      AdminService adminService,
+                      CampusService campusService) {
         this.ufrRepository = ufrRepository;
-        this.campusService = campusService;
         this.adminService = adminService;
-        this.buildingService = buildingService;
-        this.promoService = promoService;
+        this.campusService = campusService;
     }
 
-    // --- MÉTHODES MÉTIER ---
+    // ------------------ CREATE ------------------
 
-    public UFREntity createUFR(UFREntity domainUfr) {
-        UFR jpaUfr = toJpaModel(domainUfr);
-        UFR savedUfr = ufrRepository.save(jpaUfr);
-        return toDomainEntity(savedUfr);
+    public UFREntity create(UFREntity entity) {
+        UFR saved = ufrRepository.save(UFRMapper.toJpa(entity));
+        return UFRMapper.toDomain(saved);
     }
 
-    public UFREntity getUFRById(Long id) {
+    public UFREntity create(String name, String campusCity, String adminEmailUniv) {
+        Campus campus = campusService.findJpaByCity(campusCity);
+        if (campus == null) {
+            throw new IllegalArgumentException("Campus not found: " + campusCity);
+        }
+
+        Admin admin = adminService.findJpaByEmailUniv(adminEmailUniv);
+        if (admin == null) {
+            throw new IllegalArgumentException("Admin not found: " + adminEmailUniv);
+        }
+
+        // 🔹 Créer directement l'objet JPA avec des objets déjà persistés
+        UFR ufr = UFR.UFRFactory(name, campus, admin);
+
+        UFR saved = ufrRepository.save(ufr);
+
+        return UFRMapper.toDomain(saved);
+    }
+
+    // ------------------ FIND ------------------
+
+    public UFREntity findById(Long id) {
         return ufrRepository.findById(id)
-                .map(this::toDomainEntity)
+                .map(UFRMapper::toDomain)
                 .orElse(null);
     }
 
-    public List<UFREntity> getAllUFRs() {
-        return ufrRepository.findAll().stream()
-                .map(this::toDomainEntity)
-                .collect(Collectors.toList());
+    public UFREntity findByName(String name) {
+        return ufrRepository.findByName(name)
+                .map(UFRMapper::toDomain)
+                .orElse(null);
     }
 
-    // --- MAPPINGS ---
-    UFREntity toDomainEntity(UFR jpaUfr) {
-        if (jpaUfr == null) return null;
-
-        UFREntity domainUfr = UFREntity.UFRFactory(
-            jpaUfr.getName(), 
-            campusService.toDomainEntity(jpaUfr.getCampus()),
-            adminService.toDomainEntity(jpaUfr.getAdmin())
-        );
-
-        if (jpaUfr.getPromos() != null) {
-            jpaUfr.getPromos().forEach(p -> domainUfr.addPromo(promoService.toDomainEntity(p))); 
-        }
-        if (jpaUfr.getBuildings() != null) {
-            jpaUfr.getBuildings().forEach(b -> domainUfr.addBuilding(buildingService.toDomainEntity(b)));
-        }
-        return domainUfr;
+    public List<UFREntity> findAll() {
+        return ufrRepository.findAll()
+                .stream()
+                .map(UFRMapper::toDomain)
+                .toList();
     }
 
-    UFR toJpaModel(UFREntity domainUfr) {
-        if (domainUfr == null) return null;
-
-        UFR jpaUfr = UFR.UFRFactory(
-            domainUfr.getName(), 
-            campusService.toJpaModel(domainUfr.getCampus()), 
-            adminService.toJpaModel(domainUfr.getAdmin())
-        );
-
-        if (domainUfr.getModules() != null) { // getModules() correspond à tes promos
-            domainUfr.getModules().forEach(p -> jpaUfr.addPromo(promoService.toJpaModel(p)));
-        }
-        if (domainUfr.getBuildings() != null) {
-            domainUfr.getBuildings().forEach(b -> jpaUfr.addBuilding(buildingService.toJpaModel(b)));
-        }
-        return jpaUfr;
+    public UFR findJpaByName(String name) {
+        return ufrRepository.findByName(name)
+                .orElse(null);
     }
-
-     */
 }

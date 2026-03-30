@@ -4,10 +4,15 @@ import fr.univtln.projet.planning.entity.TextTransformation;
 import fr.univtln.projet.planning.entity.person.ProfessorEntity;
 import fr.univtln.projet.planning.modele.planning.Language;
 import fr.univtln.projet.planning.modele.planning.CourseType;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+
+@Getter
+@Setter
 
 public class ModuleEntity {
     private String code; // code may be not unique and depend on promo ?, a dictionary may be a solution
@@ -16,8 +21,6 @@ public class ModuleEntity {
     private float ECTS; // number of credits
     private ProfessorEntity responsible;
     private Map<CourseType, Float> courseHours; // Dictionary for CM/TD/TP hours in module
-
-    // private Set<Group> groups;
 
     private ModuleEntity(Builder b){
         code = b.code;
@@ -39,6 +42,10 @@ public class ModuleEntity {
     public ProfessorEntity responsible() { return responsible; }
 
     public static Builder builder() { return new Builder(); }
+
+    public ProfessorEntity getResponsible() {
+        return responsible;
+    }
 
     public static final class Builder {
         private String code = "";
@@ -69,23 +76,15 @@ public class ModuleEntity {
         }
     }
 
-    public String getCode() {
-        return code;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public Language getLanguage() {
-        return language;
-    }
-
-    public float getECTS() {
-        return ECTS;
-    }
-
-    public void setCourseHours(Map<CourseType, Float> courseHours) {
-        this.courseHours = courseHours;
+    @Override
+    public String toString() {
+        return "ModuleEntity{" +
+                "code='" + code + '\'' +
+                ", name='" + name + '\'' +
+                ", language=" + language +
+                ", ECTS=" + ECTS +
+                ", responsible=" + responsible +
+                ", courseHours=" + courseHours +
+                '}';
     }
 }

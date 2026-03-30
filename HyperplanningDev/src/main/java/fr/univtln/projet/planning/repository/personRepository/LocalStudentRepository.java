@@ -1,7 +1,6 @@
 package fr.univtln.projet.planning.repository.personRepository;
 
 import fr.univtln.projet.planning.modele.person.LocalStudent;
-import fr.univtln.projet.planning.modele.person.User;
 import fr.univtln.projet.planning.repository.JpaRepository;
 import jakarta.persistence.EntityManager;
 
@@ -47,6 +46,7 @@ public class LocalStudentRepository extends JpaRepository<LocalStudent, Long> {
                 .getSingleResult();
     }
 
+    @Override
     public List<LocalStudent> findAll(int pageNumber, int pageSize) {
         //Utiliser des named queries ou la criteria API
         String jpql = "SELECT e FROM LocalStudent e ORDER BY e.userId";

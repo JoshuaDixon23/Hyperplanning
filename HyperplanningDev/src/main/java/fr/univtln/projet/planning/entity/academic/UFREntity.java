@@ -1,21 +1,16 @@
 package fr.univtln.projet.planning.entity.academic;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import fr.univtln.projet.planning.entity.infrastructure.BuildingEntity;
 import fr.univtln.projet.planning.entity.infrastructure.CampusEntity;
 import fr.univtln.projet.planning.entity.person.AdminEntity;
-import fr.univtln.projet.planning.modele.academic.StudyLevel;
+
 
 public class UFREntity {
     private String name;
     private AdminEntity admin;
     private CampusEntity campus;
 
-    // private Admin admin:
-    private final Set<PromoEntity> promos = new HashSet<>();
-    private final Set<BuildingEntity> buildings = new HashSet<>();
+    //private final Set<PromoEntity> promos = new HashSet<>();
+    //private final Set<BuildingEntity> buildings = new HashSet<>();
 
 
     // factory
@@ -25,8 +20,8 @@ public class UFREntity {
         this.campus=campus;
     }
 
-    public static UFREntity UFRFactory(String name, CampusEntity campus,AdminEntity admin) {
-        return new UFREntity(name, campus,admin);
+    public static UFREntity UFRFactory(String name, CampusEntity campus, AdminEntity admin) {
+        return new UFREntity(name, campus, admin);
     }
 
     // getter setter
@@ -52,6 +47,16 @@ public class UFREntity {
         return admin;
     }
 
+    @Override
+    public String toString() {
+        return "UFREntity{" +
+                "name='" + name + '\'' +
+                ", admin=" + admin +
+                ", campus=" + campus +
+                '}';
+    }
+
+    /*
     public Set<PromoEntity> getModules() {
         return promos;
     }
@@ -113,6 +118,8 @@ public class UFREntity {
             b.setUfr(null); // set ufr à faire
         }
     }
+
+     */
 
 
 

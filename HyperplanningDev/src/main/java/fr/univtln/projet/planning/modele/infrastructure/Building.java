@@ -33,7 +33,7 @@ public class Building {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idBuilding;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String name;
 
     private String localisation;
@@ -55,8 +55,8 @@ public class Building {
     @MapKeyColumn(name = "dayOfWeek") 
     private Map<Day, Hours> openingHours = new EnumMap<>(Day.class); 
 
-    @OneToMany(mappedBy = "building", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Room> rooms = new HashSet<>();
+    //@OneToMany(mappedBy = "building", cascade = CascadeType.ALL, orphanRemoval = true)
+    //private Set<Room> rooms = new HashSet<>();
 
     protected Building() {
     }
@@ -74,6 +74,7 @@ public class Building {
         return new Building(name, localisation, openingHours);
     }
 
+    /*
     public void addRoom(Room room) {
         if (room != null) {
             rooms.add(room);
@@ -91,6 +92,8 @@ public class Building {
     public Set<Room> getRooms() {
         return Collections.unmodifiableSet(rooms);
     }
+
+     */
 
     @Override
     public boolean equals(Object o) {

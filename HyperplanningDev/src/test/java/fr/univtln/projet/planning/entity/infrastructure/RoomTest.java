@@ -33,7 +33,7 @@ public class RoomTest {
 
 
         assertNotNull(room);
-        assertEquals(num, room.getNum());
+        assertEquals(num, room.getNumber());
         assertEquals(capacity, room.getCapacity());
         assertEquals(type, room.getType());
         assertEquals(building, room.getBuilding());

@@ -5,6 +5,11 @@ public class AdminEntity extends UserEntity {
         super(name, surname);
     }
 
+    public AdminEntity(String firstName, String lastName, String emailUniv) {
+        super(firstName, lastName);
+        this.emailUniv = emailUniv;
+    }
+
     public static AdminEntity AdminFactory(String fname, String lname) {
         AdminEntity a =  UserFactory(fname, lname, AdminEntity::new);
         return a;

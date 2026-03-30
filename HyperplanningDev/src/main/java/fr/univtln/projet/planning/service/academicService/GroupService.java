@@ -1,79 +1,75 @@
 package fr.univtln.projet.planning.service.academicService;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import fr.univtln.projet.planning.entity.academic.GroupEntity;
+import fr.univtln.projet.planning.entity.planning.ModuleEntity;
+import fr.univtln.projet.planning.mapper.academic.GroupMapper;
+import fr.univtln.projet.planning.mapper.planning.ModuleMapper;
 import fr.univtln.projet.planning.modele.academic.Group;
+import fr.univtln.projet.planning.modele.academic.GroupType;
+import fr.univtln.projet.planning.modele.academic.Promo;
+import fr.univtln.projet.planning.modele.academic.StudyLevel;
+import fr.univtln.projet.planning.modele.planning.Module;
 import fr.univtln.projet.planning.repository.academicRepository.GroupRepository;
-import fr.univtln.projet.planning.service.personService.LocalStudentService;
-import fr.univtln.projet.planning.service.planningService.CourseService; 
+
+import fr.univtln.projet.planning.service.planningService.ModuleService;
+
+import java.util.List;
 
 public class GroupService {
 
-    /*
     private final GroupRepository groupRepository;
     private final PromoService promoService;
-    private final CourseService courseService;
-    private final LocalStudentService localStudentService;
+    private final ModuleService moduleService;
 
-    public GroupService(GroupRepository groupRepository, PromoService promoService, CourseService courseService, LocalStudentService localStudentService) {
+    public GroupService(GroupRepository groupRepository,
+                        PromoService promoService,
+                        ModuleService moduleService) {
         this.groupRepository = groupRepository;
         this.promoService = promoService;
-        this.courseService = courseService;
-        this.localStudentService = localStudentService;
+        this.moduleService = moduleService;
     }
 
-    // --- MÉTHODES MÉTIER ---
+    // ------------------ CREATE ------------------
 
-    public GroupEntity createGroup(GroupEntity domainGroup) {
-        Group jpaEntity = toEntity(domainGroup);
-        Group savedEntity = groupRepository.save(jpaEntity);
-        return toDomain(savedEntity);
+    public GroupEntity create(GroupEntity entity) {
+        Group saved = groupRepository.save(GroupMapper.toJpa(entity));
+        return GroupMapper.toDomain(saved);
     }
 
-    public GroupEntity getGroupById(Long id) {
+    public GroupEntity create(int num, GroupType type, String promoName, StudyLevel promoStudyLevel, int promoYear){
+        Promo promo = promoService.findJpaByNameAndYearAndStudyLevel(promoName, promoYear, promoStudyLevel);
+        Group group = Group.GroupFactory(num, type);
+        group.setPromo(promo);
+        Group saved = groupRepository.save(group);
+        return GroupMapper.toDomain(saved);
+    }
+
+    // ------------------ FIND ------------------
+
+    public GroupEntity findById(Long id) {
         return groupRepository.findById(id)
-                .map(this::toDomain)
+                .map(GroupMapper::toDomain)
                 .orElse(null);
     }
 
-    public List<GroupEntity> getAllGroups() {
-        return groupRepository.findAll().stream()
-                .map(this::toDomain)
-                .collect(Collectors.toList());
+    public List<GroupEntity> findAll() {
+        return groupRepository.findAll()
+                .stream()
+                .map(GroupMapper::toDomain)
+                .toList();
     }
 
-    // --- MAPPINGS ---
-    private GroupEntity toDomainEntity(Group jpaEntity) {
-        if (jpaEntity == null) return null;
-
-        GroupEntity domainGroup = GroupEntity.GroupFactory(jpaEntity.getNum(), jpaEntity.getType());
-        domainGroup.setPromo(promoService.toDomainEntity(jpaEntity.getPromo()));
-
-        if (jpaEntity.getStudents() != null) {
-            jpaEntity.getStudents().forEach(s -> domainGroup.addLocalStudent(localStudentService.toDomainEntity(s)));
-        }
-        if (jpaEntity.getPlanning() != null) {
-            jpaEntity.getPlanning().forEach(c -> domainGroup.addCourse(courseService.toDomainEntity(c)));
-        }
-        return domainGroup;
+    public Group findJpaByNumAndTypeAndPromo(int num, GroupType type, String promoName,
+                                                StudyLevel promoStudyLevel, int promoYear){
+        Promo promo =  promoService.findJpaByNameAndYearAndStudyLevel(promoName, promoYear, promoStudyLevel);
+        return groupRepository.findByNumAndTypeAndPromo(num, type, promo);
     }
 
-    private Group toEntityEntity(GroupEntity domainGroup) {
-        if (domainGroup == null) return null;
-
-        Group jpaEntity = Group.GroupFactory(domainGroup.getNum(), domainGroup.getType());
-        jpaEntity.setPromo(promoService.toJpaModel(domainGroup.getPromo()));
-
-        if (domainGroup.getStudents() != null) {
-            domainGroup.getStudents().forEach(s -> jpaEntity.addLocalStudent(localStudentService.toJpaModel(s)));
-        }
-        if (domainGroup.getPlanning() != null) {
-            domainGroup.getPlanning().forEach(c -> jpaEntity.addCourse(courseService.toJpaModel(c)));
-        }
-        return jpaEntity;
+    // is not tested, may require change of signature in ordrer to have comfortable insertion
+    public void addModuleToGroup(Long groupId, ModuleEntity moduleEntity) {
+        Group group = groupRepository.findById(groupId).orElseThrow();
+        Module module = ModuleMapper.toJpa(moduleEntity);
+        group.addModule(module);
+        groupRepository.save(group);
     }
-
-     */
 }

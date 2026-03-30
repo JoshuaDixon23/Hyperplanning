@@ -21,7 +21,12 @@ public class LocalStudent extends Student {
     private Promo promo;
 
     // "localStudents" correspond au nom exact de l'attribut dans ta classe Group
-    @ManyToMany(mappedBy = "localStudents")
+    @ManyToMany
+    @JoinTable(
+            name = "Student_Group",
+            joinColumns = @JoinColumn(name = "idStudent"),
+            inverseJoinColumns = @JoinColumn(name = "idGroup")
+    )
     private List<Group> groups = new ArrayList<>();
 
 
@@ -29,8 +34,9 @@ public class LocalStudent extends Student {
         super();
     }
 
-    public LocalStudent(String firstName, String lastName, String emailUniv, String emailPersonal) {
+    public LocalStudent(String firstName, String lastName, String emailUniv, String emailPersonal, Promo promo) {
         super(firstName, lastName, emailUniv, emailPersonal);
+        this.promo = promo;
     }
 
     /*

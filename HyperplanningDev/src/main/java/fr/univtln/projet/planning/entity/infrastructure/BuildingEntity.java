@@ -1,15 +1,14 @@
 package fr.univtln.projet.planning.entity.infrastructure;
 
 import java.time.LocalTime;
-import java.util.Collections;
-import java.util.HashSet;
+
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
+
 
 import fr.univtln.projet.planning.entity.academic.UFREntity;
 import fr.univtln.projet.planning.modele.infrastructure.Day;
-import fr.univtln.projet.planning.modele.infrastructure.RoomType;
+
 
 public class BuildingEntity {
 
@@ -27,7 +26,7 @@ public class BuildingEntity {
 
     private UFREntity ufr; //peut être null
     private CampusEntity campus;
-    private final Set<RoomEntity> rooms = new HashSet<>();
+    //private final Set<RoomEntity> rooms = new HashSet<>();
 
 
     //factory
@@ -74,22 +73,35 @@ public class BuildingEntity {
         this.campus = campus;
     }
 
+    /*
     public Set<RoomEntity> getRooms() {
         return Collections.unmodifiableSet(rooms);
     }
+
+     */
 
     public String getName() {
         return name;
     }
 
-// manage Building
+    @Override
+    public String toString() {
+        return "BuildingEntity{" +
+                "name='" + name + '\'' +
+                ", localisation='" + localisation + '\'' +
+                ", ufr=" + ufr +
+                ", campus=" + campus +
+                '}';
+    }
 
+    // manage Building
+
+
+    /*
     public void addRoom(int num, int capacity, RoomType type) {
-        /*if (r == null) {
-            return; //throw ?
-        }
-
-         */
+//        if (r == null) {
+//            return; //throw ?
+//        }
         RoomEntity r = RoomEntity.RoomFactory(num,capacity,type,this);
         rooms.add(r);
 
@@ -103,7 +115,7 @@ public class BuildingEntity {
             rooms.remove(r);
         }
     }
-
+     */
 
     // equals hashCode
 

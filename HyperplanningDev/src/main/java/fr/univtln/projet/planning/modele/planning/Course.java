@@ -13,11 +13,12 @@ import java.time.LocalTime;
 import java.util.*;
 
 @Entity
-@Table(name = "Course")
+@Table(name = "Course" /*,
+        uniqueConstraints = @UniqueConstraint(columnNames = {"module", "date", "startTime"} )*/
+)
 @Getter
 @Setter
 public class Course implements Comparable<Course> {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long courseId;
@@ -57,7 +58,7 @@ public class Course implements Comparable<Course> {
             joinColumns = @JoinColumn(name = "courseId"),
             inverseJoinColumns = @JoinColumn(name = "userId")
     )
-    private List<Professor> professors = new ArrayList<>();
+    private Set<Professor> professors = new HashSet<>();
 
     protected Course() {
     }
@@ -86,7 +87,7 @@ public class Course implements Comparable<Course> {
         private LocalDate date = null;
         private LocalTime startTime = null;
         private Duration duration = Duration.ZERO;;
-        private List<Professor> professors = new ArrayList<>();
+        private Set<Professor> professors = new HashSet<>();
         private Set<Group> groups = new HashSet<>();
         private Room room = null;
         private CourseType courseType = null;
@@ -138,6 +139,7 @@ public class Course implements Comparable<Course> {
         return this.startTime.compareTo(c.startTime);
     }
 
+    /*
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -156,6 +158,21 @@ public class Course implements Comparable<Course> {
         return Objects.hash(date, startTime, duration, module, room, courseType);
     }
 
+     */
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Course)) return false;
+        Course c = (Course) o;
+        return courseId != null && courseId.equals(c.courseId);
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
+
 
     @Override
     public String toString() {
@@ -167,8 +184,22 @@ public class Course implements Comparable<Course> {
                 ", courseType=" + courseType +
                 ", room=" + room +
                 ", module=" + module +
-                ", groups=" + groups +
+                /*", groups=" + groups + */
                 ", professors=" + professors +
                 '}';
+    }
+
+    public void addGroup(Group g) {
+        if (g != null && !groups.contains(g)) {
+            groups.add(g);
+            g.getPlanning().add(this);
+        }
+    }
+
+    public void addProfessor(Professor p) {
+        if (p != null && !professors.contains(p)) {
+            professors.add(p);
+            p.getPlanning().add(this);
+        }
     }
 }

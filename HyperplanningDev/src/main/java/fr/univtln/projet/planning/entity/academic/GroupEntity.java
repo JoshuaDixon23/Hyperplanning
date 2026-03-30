@@ -6,20 +6,25 @@ import java.util.TreeSet;
 
 import fr.univtln.projet.planning.entity.person.LocalStudentEntity;
 import fr.univtln.projet.planning.entity.planning.CourseEntity;
-import fr.univtln.projet.planning.entity.planning.ModuleEntity;
 import fr.univtln.projet.planning.modele.academic.GroupType;
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 
 /**
  * surement def equals etc dans bcp de choses
  */
 public class GroupEntity {
-
     private final int num;
     private final GroupType type;
     //private final Planning planning; // à enlever et relier a cours plutôt
+
     private PromoEntity promo;
 
-    private Set<ModuleEntity> modules = new HashSet<>();
+//    private Set<ModuleEntity> modules = new HashSet<>();
+
     private Set<CourseEntity> planning = new TreeSet<>();
     private Set<LocalStudentEntity> localStudents = new HashSet<>();
 
@@ -38,34 +43,8 @@ public class GroupEntity {
     //setter getter
 
 
-    public int getNum() {
-        return num;
-    }
-
-
-    public GroupType getType() {
-        return type;
-    }
-
-
-    public PromoEntity getPromo() {
-        return promo;
-    }
-
-    public void setPromo(PromoEntity promo) {
-        this.promo = promo;
-    }
-
     public Set<LocalStudentEntity> getStudents() {
         return localStudents;
-    }
-
-    public Set<CourseEntity> getPlanning() {
-        return planning;
-    }
-
-    public void setPlanning(Set<CourseEntity> planning) {
-        this.planning = planning;
     }
 
     // manage group
@@ -81,6 +60,7 @@ public class GroupEntity {
         planning.remove(c);
     }
 
+    /*
     public void addModule(ModuleEntity m) {
         if (m == null) {
             return; // throw qq chose
@@ -92,23 +72,23 @@ public class GroupEntity {
         modules.remove(m);
     }
 
+    */
 
     public void addLocalStudent(LocalStudentEntity s) {
-        if (s == null) {
-            return; // throw qq chose
-        }
-        else{
+        if (s != null && !localStudents.contains(s)) {
             localStudents.add(s);
+            s.addGroup(this); // synchronisation côté propriétaire
         }
     }
 
     public void removeLocalStudent(LocalStudentEntity s) {
-        localStudents.remove(s);
+        if (s != null && localStudents.contains(s)) {
+            localStudents.remove(s);
+            s.removeGroup(this);
+        }
     }
 
-
-    // euals and hashCode
-
+    // equals and hashCode
 
     @Override
     public boolean equals(Object o) {
@@ -120,5 +100,14 @@ public class GroupEntity {
     @Override
     public int hashCode() {
         return Objects.hash(num, type, promo);
+    }
+
+    @Override
+    public String toString() {
+        return "GroupEntity{" +
+                "num=" + num +
+                ", type=" + type +
+                ", promo=" + (promo != null ? promo.getName() + "-" + promo.getYear() + "-" + promo.getStudyLevel(): "null") +
+                '}';
     }
 }

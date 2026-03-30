@@ -5,10 +5,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.Objects;
-import java.util.Set;
 
 @Entity
 @Table(name = "Campus")
@@ -20,18 +17,20 @@ public class Campus {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idCampus;
 
-    @Column(nullable = false)
+    @Column(unique = true, nullable = false)
     private String city;
 
     private String imageFileName;
 
-
+    /*
     @OneToMany(mappedBy = "campus", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Building> buildings = new HashSet<>();
 
     // Points to the "campus" attribute in the UFR class
     @OneToMany(mappedBy = "campus", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<UFR> ufrs = new HashSet<>();
+
+     */
 
     protected Campus() {
     }
@@ -47,7 +46,7 @@ public class Campus {
         return new Campus(city, imageFileName);
     }
 
-
+    /*
     public Set<Building> getBuildings() {
         return Collections.unmodifiableSet(buildings);
     }
@@ -83,6 +82,8 @@ public class Campus {
             u.setCampus(null);
         }
     }
+
+     */
 
     @Override
     public boolean equals(Object o) {

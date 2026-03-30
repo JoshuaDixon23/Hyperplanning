@@ -1,72 +1,62 @@
 package fr.univtln.projet.planning.service.infrastructureService;
 
-import java.util.List;
-import java.util.stream.Collectors;             // Modèle JPA (BDD)
-
-import fr.univtln.projet.planning.entity.infrastructure.CampusEntity;       // Modèle Métier (DTO)
+import fr.univtln.projet.planning.entity.infrastructure.CampusEntity;
+import fr.univtln.projet.planning.mapper.infrastracture.CampusMapper;
 import fr.univtln.projet.planning.modele.infrastructure.Campus;
 import fr.univtln.projet.planning.repository.infrastructureRepository.CampusRepository;
-import fr.univtln.projet.planning.service.academicService.UFRService;
+import jakarta.transaction.Transactional;
+
+import java.util.List;
 
 public class CampusService {
 
-    /*
     private final CampusRepository campusRepository;
-    private final BuildingService buildingService;
-    private final UFRService ufrService;
 
-        /// Constructeur
-    public CampusService(CampusRepository campusRepository, BuildingService buildingService, UFRService ufrService) {
+    // ------------------ CONSTRUCTEUR ------------------
+
+    public CampusService(CampusRepository campusRepository) {
         this.campusRepository = campusRepository;
-        this.buildingService = buildingService;
-        this.ufrService = ufrService;
-    }
-    // --- MÉTHODES MÉTIER ---
-
-    public CampusEntity createCampus(CampusEntity domainCampus) {
-        Campus jpaCampus = toJpaModel(domainCampus);
-        Campus savedCampus = campusRepository.save(jpaCampus);
-        return toDomainEntity(savedCampus);
     }
 
-    public CampusEntity getCampusById(Long id) {
+    // ------------------ CREATE ------------------
+
+    public CampusEntity create(CampusEntity campusEntity) {
+        Campus jpa = CampusMapper.toJpa(campusEntity);
+        Campus saved = campusRepository.save(jpa);
+        return CampusMapper.toDomain(saved);
+    }
+
+    @Transactional
+    public CampusEntity create(String city, String imageFileName) {
+        CampusEntity campusEntity =  CampusEntity.CampusFactory(city, imageFileName);
+        Campus jpa = CampusMapper.toJpa(campusEntity);
+        Campus saved = campusRepository.save(jpa);
+        return CampusMapper.toDomain(saved);
+    }
+
+    // ------------------ FIND ------------------
+
+    public CampusEntity findById(Long id) {
         return campusRepository.findById(id)
-                .map(this::toDomainEntity)
+                .map(CampusMapper::toDomain)
                 .orElse(null);
     }
 
-    public List<CampusEntity> getAllCampuses() {
-        return campusRepository.findAll().stream()
-                .map(this::toDomainEntity)
-                .collect(Collectors.toList());
+    public List<CampusEntity> findAll() {
+        return campusRepository.findAll()
+                .stream()
+                .map(CampusMapper::toDomain)
+                .toList();
     }
 
-    // --- MAPPINGS ---
-    private CampusEntity toDomainEntity(Campus jpaCampus) {
-        if (jpaCampus == null) return null;
-        CampusEntity domainCampus = CampusEntity.CampusFactory(jpaCampus.getCity(), jpaCampus.getImageFileName());
-
-        if (jpaCampus.getBuildings() != null) {
-            jpaCampus.getBuildings().forEach(b -> domainCampus.addBuilding(buildingService.toDomainEntity(b)));
-        }
-        if (jpaCampus.getUfrs() != null) {
-            jpaCampus.getUfrs().forEach(u -> domainCampus.addUfr(ufrService.toDomainEntity(u)));
-        }
-        return domainCampus;
+    public CampusEntity findByCity(String city) {
+        return campusRepository.findByCity(city)
+                .map(CampusMapper::toDomain)
+                .orElse(null);
     }
 
-    private Campus toJpaModel(CampusEntity domainCampus) {
-        if (domainCampus == null) return null;
-        Campus jpaCampus = Campus.CampusFactory(domainCampus.getCity(), domainCampus.getImageFileName());
-
-        if (domainCampus.getBuildings() != null) {
-            domainCampus.getBuildings().forEach(b -> jpaCampus.addBuilding(buildingService.toJpaModel(b)));
-        }
-        if (domainCampus.getUfrs() != null) {
-            domainCampus.getUfrs().forEach(u -> jpaCampus.addUfr(ufrService.toJpaModel(u)));
-        }
-        return jpaCampus;
+    public Campus findJpaByCity(String city) {
+        return campusRepository.findByCity(city)
+                .orElse(null);
     }
-
-     */
 }
