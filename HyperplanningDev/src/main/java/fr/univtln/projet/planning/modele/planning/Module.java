@@ -64,6 +64,10 @@ public class Module {
         return new Builder(); 
     }
 
+    public float getEcts() {
+        return ects;
+    }
+
     public static final class Builder {
         private String code = null;
         private String name = null;

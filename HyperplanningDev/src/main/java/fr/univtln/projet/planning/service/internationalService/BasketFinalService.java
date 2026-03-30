@@ -23,6 +23,15 @@ public class BasketFinalService {
     }
 
 
+    public BasketFinalRepository getBasketFinalRepository() {
+        return basketFinalRepository;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return super.equals(obj);
+    }
+
     // obtenir un panier
     public BasketFinal getBasket(Long id) {
         return basketFinalRepository.findWithAll(id).orElse(null);

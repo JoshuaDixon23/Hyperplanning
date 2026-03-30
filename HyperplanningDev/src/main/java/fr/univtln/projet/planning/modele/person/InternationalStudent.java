@@ -13,9 +13,6 @@ import java.util.Map;
 @Setter
 public class InternationalStudent extends Student {
 
-    @Embedded
-    BasketFinal basketFinal;
-
     protected InternationalStudent() {
         super();
     }
@@ -24,12 +21,16 @@ public class InternationalStudent extends Student {
         super(firstName, lastName, emailUniv, emailPersonal);
     }
 
-    public BasketFinal getBasketFinal() {
-        return basketFinal;
+    @OneToOne
+    @JoinColumn(name = "basket_id") //
+    private BasketFinal basket;
+
+    public BasketFinal getBasket() {
+        return basket;
     }
 
-    public void setBasketFinal(BasketFinal basketFinal) {
-        this.basketFinal = basketFinal;
+    public void setBasket(BasketFinal basket) {
+        this.basket = basket;
     }
 
     /*
@@ -45,4 +46,8 @@ public class InternationalStudent extends Student {
         return s;
     }
      */
+
+
 }
+
+

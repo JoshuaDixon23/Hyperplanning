@@ -77,6 +77,10 @@ public class Course implements Comparable<Course> {
         return new Builder();
     }
 
+    public void setModule(Object o) {
+
+    }
+
     public static final class Builder {
         private Module module = null;
         private LocalDate date = null;
