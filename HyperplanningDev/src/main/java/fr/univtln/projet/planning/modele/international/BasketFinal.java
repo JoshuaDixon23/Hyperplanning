@@ -13,17 +13,18 @@ import java.util.List;
 
 @Getter
 @Entity
+@Embeddable
 public class BasketFinal {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // 🔥 relation principale
+    // relation principale
     @OneToMany(mappedBy = "basket", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<BasketEntry> entries = new ArrayList<>();
 
-    // ✅ constructeur JPA obligatoire
+    // constructeur JPA obligatoire
     public BasketFinal() {
     }
 
