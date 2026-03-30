@@ -80,7 +80,7 @@ class Campus {
 ' ─────────────────────────────────────────────
 class BasketModule
 class BasketFinal
-class ModuleGroup <<association>>
+class BasketEntry <<association>>
 
 ' ─────────────────────────────────────────────
 '  LAYOUT — paysage réel
@@ -135,39 +135,39 @@ InternationalStudent -u-|> Student
 
 ' Professor
 Professor "responsible"      -d- "0..1" Promo
-Professor "responsible"      -d- "0..*" Module
+Professor "responsible"      -d-> "0..*" Module
 Professor "1..*"             -d- "*"    Course : teaches >
 
 ' LocalStudent
-LocalStudent       -d-o Promo
-LocalStudent "*"   -d-  "*" Group : form >
+LocalStudent       <-d-o Promo
+LocalStudent "*"   <-d-  "*" Group : form >
 
 ' Module / Course / Group
-Module             -d-  "0..*" Course : describes >
-Group "1..*"       -r-  "1..*" Module : follows >
+Module             -d->  "0..*" Course : describes >
+Group "1..*"       <-r-  "1..*" Module : follows >
 Group "*"          -r-  "*"    Course : follows >
-Promo              -d-  "1..*" Group  : divide <
+Promo              -d->  "1..*" Group  : divide <
 
 ' UFR / Building
-UFR                *-l- Promo
-Building           *-d- Room
-Building           -r-* Campus
-Building "1..*"    -l-  "0..1" UFR : belongs >
-UFR             "*"- Campus : locate <
+UFR                *-l-> Promo
+Building           *-d-> Room
+Building           <-r-* Campus
+Building "1..*"    <-l-  "0..1" UFR : belongs >
+UFR             "*"<- Campus : locate <
 
 ' Room / Course
-Room "0..1"        -u- "*" Course
+Room "0..1"        -u-> "*" Course
 
 ' Basket
 BasketModule       o-u- Module
 BasketModule       <-l- InternationalStudent
-BasketFinal        *--  ModuleGroup
-BasketFinal        -u-> InternationalStudent
+BasketFinal        *--  BasketEntry 
+BasketFinal        -u-* InternationalStudent
 
 ' ModuleGroup association class
 '(Group, Module) .. ModuleGroup
-ModuleGroup        -u- Group
-ModuleGroup        -u- Module
+BasketEntry        <-u- Group
+BasketEntry        <-u- Module
 
 ' UFR / Admin
 UFR                <-u- Admin
