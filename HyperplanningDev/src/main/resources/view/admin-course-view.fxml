@@ -25,8 +25,20 @@
             <TextField fx:id="searchField" promptText="search module..." style="-fx-background-radius: 8; -fx-padding: 10; -fx-background-color: #e2e4e8; -fx-max-width: 400; -fx-border-width: 0;"/>
 
             <ScrollPane fitToHeight="true" fitToWidth="true" style="-fx-background-color: transparent; -fx-background: transparent; -fx-border-color: transparent;" VBox.vgrow="ALWAYS">
-                <HBox fx:id="cardsContainer" spacing="20" />
+                <HBox fx:id="cardsContainer" spacing="20" alignment="CENTER_LEFT" />
             </ScrollPane>
+
+            <HBox spacing="15" alignment="CENTER">
+                <Button text="&lt;" 
+                        onAction="#handlePreviousPage" 
+                        style="-fx-background-color: #e2e4e8; -fx-text-fill: #333; -fx-font-weight: bold; -fx-background-radius: 8; -fx-padding: 8 20; -fx-cursor: hand;"/>
+                
+                <Label fx:id="pageIndicator" text="Page 1" style="-fx-font-size: 14px; -fx-text-fill: #666;"/>
+                
+                <Button text="&gt;" 
+                        onAction="#handleNextPage" 
+                        style="-fx-background-color: #e2e4e8; -fx-text-fill: #333; -fx-font-weight: bold; -fx-background-radius: 8; -fx-padding: 8 20; -fx-cursor: hand;"/>
+            </HBox>
 
         </VBox>
     </center>

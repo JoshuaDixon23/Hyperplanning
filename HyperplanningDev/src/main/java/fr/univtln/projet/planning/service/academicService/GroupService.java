@@ -1,5 +1,7 @@
 package fr.univtln.projet.planning.service.academicService;
 
+import java.util.List;
+
 import fr.univtln.projet.planning.entity.academic.GroupEntity;
 import fr.univtln.projet.planning.entity.planning.ModuleEntity;
 import fr.univtln.projet.planning.mapper.academic.GroupMapper;
@@ -10,23 +12,19 @@ import fr.univtln.projet.planning.modele.academic.Promo;
 import fr.univtln.projet.planning.modele.academic.StudyLevel;
 import fr.univtln.projet.planning.modele.planning.Module;
 import fr.univtln.projet.planning.repository.academicRepository.GroupRepository;
-
 import fr.univtln.projet.planning.service.planningService.ModuleService;
-
-import java.util.List;
+import jakarta.transaction.Transactional;
 
 public class GroupService {
 
     private final GroupRepository groupRepository;
     private final PromoService promoService;
-    private final ModuleService moduleService;
 
     public GroupService(GroupRepository groupRepository,
                         PromoService promoService,
                         ModuleService moduleService) {
         this.groupRepository = groupRepository;
         this.promoService = promoService;
-        this.moduleService = moduleService;
     }
 
     // ------------------ CREATE ------------------
@@ -63,6 +61,29 @@ public class GroupService {
                                                 StudyLevel promoStudyLevel, int promoYear){
         Promo promo =  promoService.findJpaByNameAndYearAndStudyLevel(promoName, promoYear, promoStudyLevel);
         return groupRepository.findByNumAndTypeAndPromo(num, type, promo);
+    }
+
+    @Transactional
+    public void addModuleToGroup(GroupEntity groupEntity, ModuleEntity moduleEntity) {
+        if (groupEntity == null || moduleEntity == null) {
+            throw new IllegalArgumentException("Group and Module cannot be null");
+        }
+
+        Group groupJpa = findJpaByNumAndTypeAndPromo(
+                groupEntity.getNum(),
+                groupEntity.getType(),
+                groupEntity.getPromo().getName(),
+                groupEntity.getPromo().getStudyLevel(),
+                groupEntity.getPromo().getYear()
+        );
+
+        if (groupJpa == null) {
+            throw new IllegalStateException("Group not found for module association");
+        }
+
+        Module moduleJpa = ModuleMapper.toJpa(moduleEntity);
+        groupJpa.addModule(moduleJpa);
+        groupRepository.save(groupJpa);
     }
 
     // is not tested, may require change of signature in ordrer to have comfortable insertion

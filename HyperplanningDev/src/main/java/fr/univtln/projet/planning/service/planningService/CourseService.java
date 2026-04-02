@@ -1,91 +1,89 @@
 package fr.univtln.projet.planning.service.planningService;
 
-import fr.univtln.projet.planning.entity.planning.CourseEntity;
-import fr.univtln.projet.planning.mapper.planning.CourseMapper;
-import fr.univtln.projet.planning.modele.academic.Group;
-import fr.univtln.projet.planning.modele.person.Professor;
-import fr.univtln.projet.planning.modele.planning.Course;
-import fr.univtln.projet.planning.repository.planningRepository.CourseRepository;
-
-import jakarta.transaction.Transactional;
-
-import java.time.*;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+
+import fr.univtln.projet.planning.entity.planning.CourseEntity;
+import fr.univtln.projet.planning.entity.planning.ModuleEntity;
+import fr.univtln.projet.planning.mapper.planning.CourseMapper;
+import fr.univtln.projet.planning.mapper.planning.ModuleMapper;
+import fr.univtln.projet.planning.modele.academic.Group;
+import fr.univtln.projet.planning.modele.infrastructure.Room;
+import fr.univtln.projet.planning.modele.person.Professor;
+import fr.univtln.projet.planning.modele.planning.Course;
+import fr.univtln.projet.planning.modele.planning.Module;
+import fr.univtln.projet.planning.repository.infrastructureRepository.RoomRepository;
+import fr.univtln.projet.planning.repository.personRepository.ProfessorRepository;
+import fr.univtln.projet.planning.repository.planningRepository.CourseRepository;
+import fr.univtln.projet.planning.repository.planningRepository.ModuleRepository;
+import fr.univtln.projet.planning.service.academicService.GroupService;
+import jakarta.transaction.Transactional;
 
 public class CourseService {
 
     private final CourseRepository courseRepository;
-//    private final ModuleService moduleService;
-//    private final RoomService roomService;
-//    private final ProfessorService professorService;
+    private final ModuleRepository moduleRepository;
+    private final RoomRepository roomRepository;
+    private final ProfessorRepository professorRepository;
+    
+    // Ajout de l'injection du GroupService au lieu du GroupRepository
+    private final GroupService groupService;
 
-    public CourseService(CourseRepository courseRepository /*,
-                         ModuleService moduleService,
-                         RoomService roomService,
-                         ProfessorService professorService */) {
+    // Injection via le constructeur
+    public CourseService(
+            CourseRepository courseRepository,
+            ModuleRepository moduleRepository,
+            RoomRepository roomRepository,
+            ProfessorRepository professorRepository,
+            GroupService groupService) { // <- Ajout ici
+        
         this.courseRepository = courseRepository;
-//        this.moduleService = moduleService;
-//        this.roomService = roomService;
-//        this.professorService = professorService;
+        this.moduleRepository = moduleRepository;
+        this.roomRepository = roomRepository;
+        this.professorRepository = professorRepository;
+        this.groupService = groupService; // <- Initialisation ici
     }
 
     @Transactional
-    public CourseEntity create(CourseEntity entity) {
-        Course jpa = CourseMapper.toJpa(entity);
-        courseRepository.save(jpa);
-        return entity;
-    }
+    public CourseEntity create(CourseEntity courseEntity) {
+        Module moduleJpa = null;
+        if (courseEntity.getModule() != null) {
+            moduleJpa = moduleRepository.findByCode(courseEntity.getModule().getCode());
+        }
 
-    /*
-    @Transactional
-    public CourseEntity create(
-            LocalDate date,
-            LocalTime startTime,
-            Duration duration,
-            CourseType courseType,
-            String moduleCode,          // code naturel du module
-            Long roomId,                // id de la salle
-            List<Long> professorIds,    // ids des professeurs
-            List<Long> groupIds         // ids des groupes
-    ) {
-        // 1. Récupération des entités liées
-        ModuleEntity module = moduleService.findByCode(moduleCode);
-
-        RoomEntity room = roomService.findById(roomId);
-
-        var professors = professorIds.stream()
-                .map(id -> professorService.findById(id)
-                        .orElseThrow(() -> new IllegalArgumentException("Professeur introuvable : " + id)))
-                .toList();
-
-        var groups = groupIds.stream()
-                .map(id -> moduleService.findGroupById(id) // ou un GroupService si tu as
-                        .orElseThrow(() -> new IllegalArgumentException("Groupe introuvable : " + id)))
-                .toList();
-
-        // 2. Construction de l'entité
-        CourseEntity entity = CourseEntity.builder()
-                .module(module)
-                .date(date)
-                .startTime(startTime)
-                .duration(duration)
-                .courseType(courseType)
-                .room(room)
+        Course courseJpa = Course.builder()
+                .date(courseEntity.getDate())
+                .startTime(courseEntity.getStartTime())
+                .duration(courseEntity.getDuration())
+                .courseType(courseEntity.getCourseType())
+                .module(moduleJpa) // Si moduleJpa est null, le Builder va planter, c'est ce qu'on veut.
                 .build();
 
-        professors.forEach(entity::professor); // ajoute les profs
-        groups.forEach(entity::group);         // ajoute les groupes (il faut ajouter la méthode `group(GroupEntity g)` dans ton builder)
+        if (courseEntity.getRoom() != null) {
+            Room roomJpa = roomRepository.findByNumber(courseEntity.getRoom().getNumber());
+            courseJpa.setRoom(roomJpa);
+        }
 
-        // 3. Conversion en JPA et persist
-        Course jpa = toJpa(entity);
-        courseRepository.save(jpa);
+        // Utilisation propre du GroupService injecté
+        if (courseEntity.getGroups() != null) {
+            courseEntity.getGroups().forEach(groupEntity -> {
+                // On utilise la méthode findJpaById qu'on vient de créer pour récupérer l'entité Hibernate
+                Group groupJpa = groupService.findJpaByNumAndTypeAndPromo(groupEntity.getNum(), groupEntity.getType(), groupEntity.getPromo().getName(), groupEntity.getPromo().getStudyLevel(), groupEntity.getPromo().getYear());
+                courseJpa.addGroup(groupJpa);
+            });
+        }
 
-        // 4. Retour de l'entité Java pure
-        return entity;
+        if (courseEntity.getProfessors() != null) {
+            courseEntity.getProfessors().forEach(prof -> {
+                Professor profJpa = professorRepository.findByEmailUniv(prof.getEmailUniv());
+                courseJpa.addProfessor(profJpa);
+            });
+        }
+
+        Course savedCourse = courseRepository.save(courseJpa);
+        return CourseMapper.toDomain(savedCourse);
     }
-
-     */
 
     @Transactional
     public void delete(Long id) {
@@ -104,7 +102,6 @@ public class CourseService {
 
     // ################### PLANNING ##################
 
-    // By Group
     public List<CourseEntity> findPlanningByGroup(Group group, LocalDate start, LocalDate end) {
         return courseRepository.findByGroupAndPeriod(group, start, end)
                 .stream().map(CourseMapper::toDomain).toList();
@@ -115,9 +112,14 @@ public class CourseService {
                 .stream().map(CourseMapper::toDomain).toList();
     }
 
-    // By Module
     public List<CourseEntity> findPlanningByModule(Module module, LocalDate start, LocalDate end) {
         return courseRepository.findByModuleAndPeriod(module, start, end)
+                .stream().map(CourseMapper::toDomain).toList();
+    }
+
+    public List<CourseEntity> findPlanningByModule(ModuleEntity module, LocalDate start, LocalDate end) {
+        Module m = ModuleMapper.toJpa(module);
+        return courseRepository.findByModuleAndPeriod(m, start, end)
                 .stream().map(CourseMapper::toDomain).toList();
     }
 
@@ -126,13 +128,11 @@ public class CourseService {
                 .stream().map(CourseMapper::toDomain).toList();
     }
 
-    // By Room
     public List<CourseEntity> findPlanningByRoomId(Long roomId, LocalDate start, LocalDate end) {
         return courseRepository.findByRoomIdAndPeriod(roomId, start, end)
                 .stream().map(CourseMapper::toDomain).toList();
     }
 
-    // By Professor
     public List<CourseEntity> findPlanningByProfessor(Professor professor, LocalDate start, LocalDate end) {
         return courseRepository.findByProfessorAndPeriod(professor, start, end)
                 .stream().map(CourseMapper::toDomain).toList();
@@ -143,7 +143,6 @@ public class CourseService {
                 .stream().map(CourseMapper::toDomain).toList();
     }
 
-    // By Student
     public List<CourseEntity> findPlanningByStudentId(Long studentId, LocalDate start, LocalDate end) {
         return courseRepository.findByStudentIdAndPeriod(studentId, start, end)
                 .stream().map(CourseMapper::toDomain).toList();
@@ -154,7 +153,6 @@ public class CourseService {
                 .stream().map(CourseMapper::toDomain).toList();
     }
 
-    // By Promo
     public List<CourseEntity> findPlanningByPromoId(Long promoId, LocalDate start, LocalDate end) {
         return courseRepository.findByPromoIdAndPeriod(promoId, start, end)
                 .stream().map(CourseMapper::toDomain).toList();

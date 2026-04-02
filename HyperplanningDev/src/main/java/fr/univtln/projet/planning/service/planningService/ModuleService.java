@@ -1,5 +1,9 @@
 package fr.univtln.projet.planning.service.planningService;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
 import fr.univtln.projet.planning.entity.planning.ModuleEntity;
 import fr.univtln.projet.planning.mapper.planning.ModuleMapper;
 import fr.univtln.projet.planning.modele.person.Professor;
@@ -9,10 +13,6 @@ import fr.univtln.projet.planning.modele.planning.Module;
 import fr.univtln.projet.planning.repository.planningRepository.ModuleRepository;
 import fr.univtln.projet.planning.service.personService.ProfessorService;
 import jakarta.transaction.Transactional;
-
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 
 public class ModuleService {
@@ -53,6 +53,12 @@ public class ModuleService {
                 .orElseThrow(() -> new IllegalArgumentException("Module introuvable"));
 
         moduleRepository.delete(module);
+    }
+
+
+    public void delete(ModuleEntity module) {
+        Module jpaModule = findJpaByCode(module.getCode());
+        moduleRepository.delete(jpaModule);
     }
 
     public ModuleEntity findByCode(String code) {

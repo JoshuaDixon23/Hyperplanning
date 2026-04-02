@@ -25,4 +25,11 @@ public class RoomRepository extends JpaRepository<Room, Long> {
         query.setParameter("idBuilding", idBuilding);
         return query.getResultList();
     }
+
+    public Room findByNumber(String number) {
+        String jpql = "SELECT r FROM Room r WHERE r.number = :number";
+        TypedQuery<Room> query = em.createQuery(jpql, Room.class);
+        query.setParameter("number", number);
+        return query.getSingleResult();
+    }
 }

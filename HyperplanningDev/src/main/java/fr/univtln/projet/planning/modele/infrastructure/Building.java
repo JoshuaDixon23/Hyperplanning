@@ -1,17 +1,32 @@
 package fr.univtln.projet.planning.modele.infrastructure;
 
+import java.time.LocalTime;
+import java.util.EnumMap;
+import java.util.Map;
+import java.util.Objects;
+
 import fr.univtln.projet.planning.modele.academic.UFR;
-import jakarta.persistence.*;
+import jakarta.persistence.CollectionTable;
+import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Embeddable;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.MapKeyColumn;
+import jakarta.persistence.MapKeyEnumerated;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalTime;
-import java.util.*;
-
 @Entity
-@Table(name = "Building")
+@Table(name = "Buildings")
 @Getter
 @Setter
 public class Building {

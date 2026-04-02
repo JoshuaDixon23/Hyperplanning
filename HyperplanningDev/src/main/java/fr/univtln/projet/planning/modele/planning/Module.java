@@ -1,16 +1,31 @@
 package fr.univtln.projet.planning.modele.planning;
 
-import fr.univtln.projet.planning.entity.TextTransformation; // Adjust package if needed
+import java.util.ArrayList; // Adjust package if needed
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+
+import fr.univtln.projet.planning.entity.TextTransformation;
 import fr.univtln.projet.planning.modele.academic.Group;
 import fr.univtln.projet.planning.modele.person.Professor;
-import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.PreRemove;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.*;
-
 @Entity
-@Table(name = "Module")
+@Table(name = "Modules")
 @Getter
 @Setter
 public class Module {
@@ -36,10 +51,8 @@ public class Module {
     @ManyToMany(mappedBy = "modules")
     private Set<Group> groups = new HashSet<>();
 
-    /*
     @OneToMany(mappedBy = "module", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Course> planning = new ArrayList<>();
-     */
     
     protected Module() {
     }
@@ -65,6 +78,13 @@ public class Module {
     }
 
      */
+
+    @PreRemove
+    private void removeGroupsAssociations() {
+        for (Group group : this.groups) { 
+            group.getModules().remove(this);
+        }   
+    }
 
 
     public static Builder builder() { 

@@ -1,14 +1,20 @@
 package fr.univtln.projet.planning.modele.person;
 
-import fr.univtln.projet.planning.entity.TextTransformation;
-import jakarta.persistence.*;
+import java.util.Objects;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Objects;
-
 @Entity
-@Table(name = "User") // Toujours conseillé d'éviter "User" qui est un mot-clé SQL
+@Table(name = "Users") // Toujours conseillé d'éviter "User" qui est un mot-clé SQL
 @Inheritance(strategy = InheritanceType.JOINED)
 @Getter
 @Setter
