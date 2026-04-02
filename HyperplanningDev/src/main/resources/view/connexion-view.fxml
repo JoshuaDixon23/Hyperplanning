@@ -43,7 +43,7 @@
                         styleClass="login-button-secondary"
                         onAction="#handleCancel"/>
 
-                <Button text="Valider"
+                <Button fx:id="loginButton" text="Valider"
                         styleClass="login-button"
                         onAction="#handleLogin"/>
             </HBox>

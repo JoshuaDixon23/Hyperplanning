@@ -64,58 +64,11 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("HyperplanningPU");
-        EntityManager em = emf.createEntityManager();
-
-        FXMLLoader loader = new FXMLLoader(
-                getClass().getResource("/view/planning-view.fxml")
-        );
-        Parent root = loader.load();
-
-        PlanningController controller = loader.getController();
-
-        CourseRepository courseRepository = new CourseRepository(em);
-        ModuleRepository moduleRepository = new ModuleRepository(em);
-        ProfessorRepository professorRepository = new ProfessorRepository(em);
-        AdminRepository adminRepository = new AdminRepository(em);
-        RoomRepository roomRepository = new RoomRepository(em);
-        BuildingRepository buildingRepository = new BuildingRepository(em);
-        CampusRepository campusRepository = new CampusRepository(em);
-        UFRRepository ufrRepository = new UFRRepository(em);
-
-        ProfessorService professorService = new ProfessorService(professorRepository);
-        AdminService adminService = new AdminService(adminRepository);
-        CampusService campusService = new CampusService(campusRepository);
-
-        UFRService ufrService = new UFRService(
-                ufrRepository,
-                adminService,
-                campusService
+        Parent root = FXMLLoader.load(
+                getClass().getResource("/view/connexion-view.fxml")
         );
 
-        BuildingService buildingService = new BuildingService(
-                buildingRepository,
-                campusService,
-                ufrService
-        );
-
-        ModuleService moduleService = new ModuleService(
-                moduleRepository,
-                professorService
-        );
-
-        RoomService roomService = new RoomService(
-                roomRepository,
-                buildingService
-        );
-
-        CourseService courseService = new CourseService(
-                courseRepository
-        );
-
-
-
-        Scene scene = new Scene(root, 1200, 800);
+        Scene scene = new Scene(root, 700, 500);
 
         scene.getStylesheets().addAll(
                 getClass().getResource("/css/base.css").toExternalForm(),
@@ -125,19 +78,10 @@ public class Main extends Application {
         );
 
         stage.setTitle("Hyperplanning");
-        stage.setMinWidth(1000);
-        stage.setMinHeight(700);
+        stage.setMinWidth(700);
+        stage.setMinHeight(500);
         stage.setScene(scene);
         stage.show();
-        controller.setCourseService(courseService);
-
-
-        Platform.runLater(() -> Platform.runLater(() -> controller.loadPlanning(PlanningContext.forGroup(1L))));
-
-        stage.setOnCloseRequest(event -> {
-            em.close();
-            emf.close();
-        });
     }
 
 

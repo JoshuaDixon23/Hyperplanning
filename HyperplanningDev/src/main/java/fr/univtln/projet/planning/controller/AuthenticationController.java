@@ -1,14 +1,20 @@
 package fr.univtln.projet.planning.controller;
 
 import fr.univtln.projet.planning.entity.authentication.AuthenticationEntity;
+import fr.univtln.projet.planning.modele.person.User;
 import fr.univtln.projet.planning.repository.personRepository.UserRepository;
+import fr.univtln.projet.planning.repository.planningRepository.CourseRepository;
 import fr.univtln.projet.planning.service.authenticationService.AuthenticationService;
+import fr.univtln.projet.planning.service.planningService.CourseService;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.paint.Color;
+import javafx.stage.Stage;
 
 import java.util.Optional;
 
@@ -24,10 +30,13 @@ public class AuthenticationController {
     @FXML private Label errorLabel;
     @FXML private Button loginButton;
     @FXML private Button cancelButton;
+    private EntityManagerFactory emf;
+    private EntityManager em;
 
     //classe utiles
 
     private AuthenticationService authenticationService;
+    private UserRepository userRepository;
 
     /**
      * Called automatically after FXML load
@@ -42,12 +51,14 @@ public class AuthenticationController {
         errorLabel.setVisible(false);
 
         // liaison avec le service d'authentification
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("HyperplanningPU");
-        EntityManager em = emf.createEntityManager();
+        emf = Persistence.createEntityManagerFactory("HyperplanningPU");
+        em = emf.createEntityManager();
         UserRepository userRepo = new UserRepository(em);
         AuthenticationService authService = new AuthenticationService(em, userRepo);
 
         this.authenticationService = authService;
+        this.userRepository = userRepo;
+
 
         // Entrée clavier = login
         usernameField.setOnAction(e -> handleLogin());
@@ -101,7 +112,7 @@ public class AuthenticationController {
             return;
         }
 
-
+        Optional<User> optionalUser = userRepository.findByEmailUniv(username);
         // Simulation d'authentification
         if (authenticate(username, password)) {
             showSuccess("Connexion réussie : " + username);
@@ -110,6 +121,11 @@ public class AuthenticationController {
             // !!! changer la scene en fonction et la rediction de l'authentification !!!
             // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             //goToPlanning();
+
+            User connectedUser = optionalUser.get();
+            showSuccess("Connexion réussie : " + connectedUser.getFirstName() + " " + connectedUser.getLastName());
+
+            goToPlanning(connectedUser);
 
 
         } else {
@@ -182,23 +198,38 @@ public class AuthenticationController {
      * !!! A modifier aussi                                             !!!
      * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
      */
-    private void goToPlanning() {
+    private void goToPlanning(User connectedUser) {
         try {
-            // chemin
-            javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(
-                    getClass().getResource("/fxml/planning.fxml")
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/view/planning-view.fxml")
             );
 
-            javafx.scene.Scene scene = new javafx.scene.Scene(loader.load());
+            Scene scene = new Scene(loader.load());
 
-            javafx.stage.Stage stage = (javafx.stage.Stage) loginButton.getScene().getWindow();
+            scene.getStylesheets().addAll(
+                    getClass().getResource("/css/base.css").toExternalForm(),
+                    getClass().getResource("/css/sidebar.css").toExternalForm(),
+                    getClass().getResource("/css/components.css").toExternalForm(),
+                    getClass().getResource("/css/planning.css").toExternalForm()
+            );
+
+            PlanningController planningController = loader.getController();
+
+            CourseRepository courseRepository = new CourseRepository(em);
+            CourseService courseService = new CourseService(courseRepository);
+
+            planningController.setCourseService(courseService);
+            planningController.setConnectedUser(connectedUser);
+
+            Stage stage = (Stage) loginButton.getScene().getWindow();
             stage.setScene(scene);
             stage.show();
 
         } catch (Exception e) {
             e.printStackTrace();
-            showError("Erreur lors du chargement du planning");
+            showError("Erreur lors du chargement du planning : " + e.getMessage());
         }
     }
+
 }
 

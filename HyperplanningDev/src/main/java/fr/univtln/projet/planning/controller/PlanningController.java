@@ -1,5 +1,9 @@
 package fr.univtln.projet.planning.controller;
 
+import fr.univtln.projet.planning.modele.person.Admin;
+import fr.univtln.projet.planning.modele.person.LocalStudent;
+import fr.univtln.projet.planning.modele.person.Professor;
+import fr.univtln.projet.planning.modele.person.User;
 import fr.univtln.projet.planning.service.planningService.CourseService;
 import javafx.fxml.FXML;
 import javafx.geometry.Bounds;
@@ -78,7 +82,6 @@ public class PlanningController {
      */
     @FXML
     public void initialize() {
-        userNameLabel.setText("Thomas Dejean");
         selectedWeekMonday = mondayOf(LocalDate.now());
         baseWeekMonday = selectedWeekMonday;
 
@@ -263,6 +266,26 @@ public class PlanningController {
     // Load Data
     // ==========================================================
 
+
+    public void setConnectedUser(User user) {
+        if (user == null) {
+            userNameLabel.setText("Utilisateur inconnu");
+            return;
+        }
+
+        userNameLabel.setText(user.getFirstName() + " " + user.getLastName());
+
+        if (user instanceof LocalStudent student) {
+            loadPlanning(PlanningContext.forStudent(student.getUserId()));
+        } else if (user instanceof Professor professor) {
+            loadPlanning(PlanningContext.forProfessor(professor.getUserId()));
+        } else if (user instanceof Admin admin) {
+            // A adapter selon ce que tu veux afficher pour un admin
+            userNameLabel.setText(userNameLabel.getText() + " (Admin)");
+        } else {
+            userNameLabel.setText(userNameLabel.getText() + " (type inconnu)");
+        }
+    }
     // A corriger proprement par la suite car la c'est une methode qui permet de recuperer la durée qui est en nanos secondes et pas en minutes
     private int extractDurationMinutes(CourseEntity course) {
         if (course.getDuration() == null) return 0;
