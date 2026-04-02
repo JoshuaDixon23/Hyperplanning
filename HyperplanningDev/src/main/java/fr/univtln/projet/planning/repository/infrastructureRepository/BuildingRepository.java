@@ -3,7 +3,6 @@ package fr.univtln.projet.planning.repository.infrastructureRepository;
 import java.util.List;
 import java.util.Optional;
 
-import fr.univtln.projet.planning.modele.academic.UFR;
 import fr.univtln.projet.planning.modele.infrastructure.Building;
 import fr.univtln.projet.planning.repository.JpaRepository;
 import jakarta.persistence.EntityManager;

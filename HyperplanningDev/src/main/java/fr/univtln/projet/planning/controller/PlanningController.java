@@ -6,7 +6,6 @@ import fr.univtln.projet.planning.modele.person.Professor;
 import fr.univtln.projet.planning.modele.person.User;
 import fr.univtln.projet.planning.service.planningService.CourseService;
 import javafx.fxml.FXML;
-import javafx.geometry.Bounds;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.Node;
@@ -280,7 +279,6 @@ public class PlanningController {
         } else if (user instanceof Professor professor) {
             loadPlanning(PlanningContext.forProfessor(professor.getUserId()));
         } else if (user instanceof Admin admin) {
-            // A adapter selon ce que tu veux afficher pour un admin
             userNameLabel.setText(userNameLabel.getText() + " (Admin)");
         } else {
             userNameLabel.setText(userNameLabel.getText() + " (type inconnu)");

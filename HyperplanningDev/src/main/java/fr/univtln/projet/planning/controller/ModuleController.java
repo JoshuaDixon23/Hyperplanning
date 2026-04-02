@@ -2,7 +2,6 @@ package fr.univtln.projet.planning.controller;
 
 import java.net.URL;
 import java.time.Duration;
-import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -15,13 +14,11 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 import fr.univtln.projet.planning.entity.academic.GroupEntity;
-import fr.univtln.projet.planning.modele.academic.GroupType;
 import fr.univtln.projet.planning.entity.infrastructure.RoomEntity;
 import fr.univtln.projet.planning.entity.person.ProfessorEntity;
 import fr.univtln.projet.planning.entity.planning.CourseEntity;
 import fr.univtln.projet.planning.modele.planning.CourseType;
 import fr.univtln.projet.planning.entity.planning.ModuleEntity;
-import fr.univtln.projet.planning.modele.infrastructure.Room;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
