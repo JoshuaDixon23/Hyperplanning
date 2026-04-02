@@ -8,6 +8,7 @@ import fr.univtln.projet.planning.repository.JpaRepository;
 import jakarta.persistence.EntityManager;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 public class CourseRepository extends JpaRepository<Course, Long> {
@@ -159,5 +160,40 @@ public class CourseRepository extends JpaRepository<Course, Long> {
         if (end.isBefore(start)) {
             throw new IllegalArgumentException("Période invalide");
         }
+    }
+
+    // Planning by group for precise date
+    public List<Course> findByGroupIdAndDate(Long groupId, LocalDate date) {
+        String jpql = "SELECT c FROM Course c " +
+                "JOIN c.groups g " +
+                "WHERE g.groupId = :groupId AND c.date = :date";
+
+        return em.createQuery(jpql, Course.class)
+                .setParameter("groupId", groupId)
+                .setParameter("date", date)
+                .getResultList();
+    }
+
+    // Planning by room for precise date
+    public List<Course> findByRoomIdAndDate(Long roomId, LocalDate date) {
+        String jpql = "SELECT c FROM Course c " +
+                "WHERE c.room.idRoom = :roomId AND c.date = :date";
+
+        return em.createQuery(jpql, Course.class)
+                .setParameter("roomId", roomId)
+                .setParameter("date", date)
+                .getResultList();
+    }
+
+
+    public List<Course> findByTeacherIdAndDate(Long teacherId, LocalDate date) {
+        String jpql = "SELECT DISTINCT c FROM Course c " +
+                "JOIN c.professors p " +
+                "WHERE p.userId = :teacherId AND c.date = :date";
+
+        return em.createQuery(jpql, Course.class)
+                .setParameter("teacherId", teacherId)
+                .setParameter("date", date)
+                .getResultList();
     }
 }

@@ -38,4 +38,12 @@ public class GroupRepository extends JpaRepository<Group, Long> {
         query.setParameter("promo", promo);
         return query.getSingleResult();
     }
+
+    public List<Group> findGroupsByPromoId(Long promoId) {
+        String jpql = "SELECT g FROM Group g WHERE g.promo.promoId = :promoId";
+
+        return em.createQuery(jpql, Group.class)
+                .setParameter("promoId", promoId)
+                .getResultList();
+    }
 }

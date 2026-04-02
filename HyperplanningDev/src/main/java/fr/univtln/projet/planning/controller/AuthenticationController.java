@@ -2,6 +2,7 @@ package fr.univtln.projet.planning.controller;
 
 import fr.univtln.projet.planning.entity.authentication.AuthenticationEntity;
 import fr.univtln.projet.planning.modele.person.User;
+import fr.univtln.projet.planning.repository.academicRepository.GroupRepository;
 import fr.univtln.projet.planning.repository.personRepository.UserRepository;
 import fr.univtln.projet.planning.repository.planningRepository.CourseRepository;
 import fr.univtln.projet.planning.service.authenticationService.AuthenticationService;
@@ -225,7 +226,7 @@ public class AuthenticationController {
             PlanningController planningController = loader.getController();
 
             CourseRepository courseRepository = new CourseRepository(em);
-            CourseService courseService = new CourseService(courseRepository);
+            CourseService courseService = new CourseService(courseRepository, new GroupRepository(em));
 
             planningController.setCourseService(courseService);
             planningController.setConnectedUser(connectedUser);

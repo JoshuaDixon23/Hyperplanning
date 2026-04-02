@@ -1,6 +1,5 @@
 package fr.univtln.projet.planning.modele.planning;
 
-import fr.univtln.projet.planning.entity.planning.CourseEntity;
 import fr.univtln.projet.planning.modele.academic.Group;
 import fr.univtln.projet.planning.modele.infrastructure.Room;
 import fr.univtln.projet.planning.modele.person.Professor;
@@ -183,5 +182,15 @@ public class Course implements Comparable<Course> {
             professors.add(p);
             p.getPlanning().add(this);
         }
+    }
+
+    public boolean overlapsWith(Course other) {
+        LocalTime start1 = this.startTime;
+        LocalTime end1 = start1.plusMinutes(this.duration.toMinutes());
+
+        LocalTime start2 = other.getStartTime();
+        LocalTime end2 = start2.plusMinutes(other.getDuration().toMinutes());
+
+        return start1.isBefore(end2) && start2.isBefore(end1);
     }
 }

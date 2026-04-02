@@ -1,12 +1,16 @@
 package fr.univtln.projet.planning.service.planningService;
 
+import fr.univtln.projet.planning.entity.infrastructure.RoomEntity;
 import fr.univtln.projet.planning.entity.planning.CourseEntity;
+import fr.univtln.projet.planning.mapper.infrastracture.RoomMapper;
 import fr.univtln.projet.planning.mapper.planning.CourseMapper;
 import fr.univtln.projet.planning.modele.academic.Group;
 import fr.univtln.projet.planning.modele.person.Professor;
 import fr.univtln.projet.planning.modele.planning.Course;
+import fr.univtln.projet.planning.repository.academicRepository.GroupRepository;
 import fr.univtln.projet.planning.repository.planningRepository.CourseRepository;
 
+import fr.univtln.projet.planning.service.infrastructureService.RoomService;
 import jakarta.transaction.Transactional;
 
 import java.time.*;
@@ -19,22 +23,182 @@ public class CourseService {
 //    private final ModuleService moduleService;
 //    private final RoomService roomService;
 //    private final ProfessorService professorService;
+    private final GroupRepository groupRepository;
 
-    public CourseService(CourseRepository courseRepository /*,
-                         ModuleService moduleService,
-                         RoomService roomService,
-                         ProfessorService professorService */) {
+    public CourseService(CourseRepository courseRepository//,
+                         //ModuleService moduleService,
+                         //RoomService roomService//,
+                         /*ProfessorService professorService*/,
+                         GroupRepository groupRepository) {
         this.courseRepository = courseRepository;
 //        this.moduleService = moduleService;
 //        this.roomService = roomService;
 //        this.professorService = professorService;
+        this.groupRepository = groupRepository;
     }
 
     @Transactional
     public CourseEntity create(CourseEntity entity) {
         Course jpa = CourseMapper.toJpa(entity);
-        courseRepository.save(jpa);
-        return entity;
+        checkAllConstraints(jpa);
+        Course saved = courseRepository.save(jpa);
+        return CourseMapper.toDomain(saved);
+    }
+
+    private void checkAllConstraints(Course course) {
+        checkNoOverlap(course); // inter-groupe
+        checkPromoGroupConflicts(course); // inter-groupes promo
+        checkRoomAvailability(course);
+        checkTeacherAvailability(course);
+    }
+
+    private void checkNoOverlap(Course course) {
+        LocalTime newStart = course.getStartTime();
+        LocalTime newEnd = newStart.plusMinutes(course.getDuration().toMinutes());
+
+        for (Group group : course.getGroups()) {
+
+            List<Course> existingCourses =
+                    courseRepository.findByGroupIdAndDate(
+                            group.getGroupId(),
+                            course.getDate()
+                    );
+
+            for (Course existing : existingCourses) {
+
+                // éviter de comparer avec lui-même (cas update)
+                if (course.getCourseId() != null &&
+                        course.getCourseId().equals(existing.getCourseId())) {
+                    continue;
+                }
+
+                LocalTime existingStart = existing.getStartTime();
+                LocalTime existingEnd = existingStart.plusMinutes(existing.getDuration().toMinutes());
+
+                boolean overlap =
+                        newStart.isBefore(existingEnd) &&
+                                existingStart.isBefore(newEnd);
+
+                if (overlap) {
+                    throw new IllegalArgumentException(
+                            "Overlap detected for group " + group.getGroupId()
+                    );
+                }
+            }
+        }
+    }
+
+    private void checkRoomAvailability(Course course) {
+        if (course.getRoom() == null) return;
+
+        LocalTime newStart = course.getStartTime();
+        LocalTime newEnd = newStart.plusMinutes(course.getDuration().toMinutes());
+
+        List<Course> courses =
+                courseRepository.findByRoomIdAndDate(
+                        course.getRoom().getIdRoom(),
+                        course.getDate()
+                );
+
+        for (Course c : courses) {
+
+            if (course.getCourseId() != null &&
+                    course.getCourseId().equals(c.getCourseId())) {
+                continue;
+            }
+
+            if (course.overlapsWith(c)) {
+                throw new IllegalArgumentException(
+                        "Room already occupied at this time"
+                );
+            }
+        }
+    }
+
+    private void checkTeacherAvailability(Course course) {
+
+        if (course.getProfessors() == null || course.getProfessors().isEmpty()) {
+            return;
+        }
+
+        LocalTime newStart = course.getStartTime();
+        LocalTime newEnd = newStart.plusMinutes(course.getDuration().toMinutes());
+
+        for (Professor teacher : course.getProfessors()) {
+
+            List<Course> courses =
+                    courseRepository.findByTeacherIdAndDate(
+                            teacher.getUserId(),
+                            course.getDate()
+                    );
+
+            for (Course c : courses) {
+
+                if (course.getCourseId() != null &&
+                        course.getCourseId().equals(c.getCourseId())) {
+                    continue;
+                }
+
+                if (course.overlapsWith(c)) {
+                    throw new IllegalArgumentException(
+                            "Teacher " + teacher.getUserId() + " has a time conflict"
+                    );
+                }
+            }
+        }
+    }
+
+    private void checkPromoGroupConflicts(Course course) {
+
+        if (course.getGroups() == null || course.getGroups().isEmpty()) {
+            return;
+        }
+
+        // On suppose qu’un cours appartient à une seule promo via ses groupes
+        Group anyGroup = course.getGroups().iterator().next();
+        Long promoId = anyGroup.getPromo().getPromoId();
+
+        List<Group> promoGroups = groupRepository.findGroupsByPromoId(promoId);
+
+        LocalTime newStart = course.getStartTime();
+        LocalTime newEnd = newStart.plusMinutes(course.getDuration().toMinutes());
+
+        for (Group group : promoGroups) {
+
+            List<Course> courses =
+                    courseRepository.findByGroupIdAndDate(
+                            group.getGroupId(),
+                            course.getDate()
+                    );
+
+            for (Course c : courses) {
+
+                if (course.getCourseId() != null &&
+                        course.getCourseId().equals(c.getCourseId())) {
+                    continue;
+                }
+
+                if (course.overlapsWith(c)) {
+                    throw new IllegalArgumentException(
+                            "Conflict detected across groups of the same promo (groupId=" +
+                                    group.getGroupId() + ")"
+                    );
+                }
+            }
+        }
+    }
+
+    // simple version on universal update to be tested
+    @Transactional
+    public CourseEntity update(Long id, CourseEntity entity) {
+        Course existing = courseRepository.findById(id)
+                .orElseThrow();
+        Course updated = CourseMapper.toJpa(entity);
+        updated.setCourseId(id); // important, sets id of existing course on that one with updated information and
+        // so, after save in reality the old course will be updated (
+        checkAllConstraints(updated);
+        Course saved = courseRepository.save(updated);
+        return CourseMapper.toDomain(saved);
     }
 
     /*

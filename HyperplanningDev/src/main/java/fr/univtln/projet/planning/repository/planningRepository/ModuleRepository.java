@@ -22,7 +22,7 @@ public class ModuleRepository extends JpaRepository<Module, Long > {
     }
 
     public Module findByCode(String code) {
-        String jpql = "SELECT m FROM Module m WHERE m.code = :code";
+        String jpql = "SELECT m FROM Module m WHERE UPPER(m.code) = UPPER(:code)";
         TypedQuery<Module> query = em.createQuery(jpql, Module.class);
         return query.setParameter("code", code).getSingleResult();
     }

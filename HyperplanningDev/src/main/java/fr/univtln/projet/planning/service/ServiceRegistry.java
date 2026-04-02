@@ -115,7 +115,7 @@ public class ServiceRegistry {
 
             // Step 7: Initialize planning services
             moduleService = new ModuleService(moduleRepo, professorService);
-            courseService = new CourseService(courseRepo);
+            courseService = new CourseService(courseRepo, groupRepo); // modification here !
             System.out.println("Planning services initialized (Module, Course)");
 
             System.out.println("ServiceRegistry fully initialized successfully!");

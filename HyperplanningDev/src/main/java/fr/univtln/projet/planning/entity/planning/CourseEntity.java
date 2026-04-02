@@ -142,6 +142,7 @@ public class CourseEntity implements Comparable<CourseEntity>{
                 ", professors=" + professors +
                 ", room=" + room +
                 ", courseType=" + courseType +
+                ", courseState=" + state +
                 '}';
     }
 
