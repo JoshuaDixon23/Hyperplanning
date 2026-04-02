@@ -2,7 +2,6 @@ package fr.univtln.projet.planning.entity.person;
 
 import fr.univtln.projet.planning.entity.academic.PromoEntity;
 import fr.univtln.projet.planning.entity.academic.GroupEntity;
-import fr.univtln.projet.planning.entity.international.BasketEntity;
 import lombok.Getter;
 import lombok.Setter;
 

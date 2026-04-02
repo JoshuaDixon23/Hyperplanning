@@ -1,0 +1,94 @@
+/* Fond global */
+.login-root {
+    -fx-background-color: #f5f6f8;
+    -fx-alignment: center;
+}
+
+/* Carte principale */
+.login-card {
+    -fx-background-color: white;
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+    -fx-border-color: #dfe1e6;
+    -fx-padding: 0;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 20, 0, 0, 4);
+}
+
+/* Header (rouge comme ton image) */
+.login-header {
+    -fx-background-color: #a3002a;
+    -fx-background-radius: 12 12 0 0;
+    -fx-padding: 10 16;
+}
+
+.login-title {
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+/* Contenu */
+.login-content {
+    -fx-padding: 20;
+    -fx-spacing: 12;
+}
+
+/* Labels */
+.login-label {
+    -fx-text-fill: #555b65;
+    -fx-font-size: 12px;
+}
+
+/* Champs */
+.login-input {
+    -fx-background-color: #f0f2f5;
+    -fx-background-radius: 6;
+    -fx-border-radius: 6;
+    -fx-border-color: #d5d7db;
+    -fx-padding: 6 8;
+}
+
+/* Focus */
+.login-input:focused {
+    -fx-border-color: #1877d2;
+    -fx-background-color: white;
+}
+
+/* Boutons */
+.login-button {
+    -fx-background-color: #1877d2;
+    -fx-text-fill: white;
+    -fx-background-radius: 8;
+    -fx-padding: 6 16;
+    -fx-font-weight: bold;
+}
+
+.login-button:hover {
+    -fx-background-color: #1666b2;
+    -fx-cursor: hand;
+}
+
+/* Bouton secondaire */
+.login-button-secondary {
+    -fx-background-color: transparent;
+    -fx-border-color: #d5d7db;
+    -fx-border-radius: 8;
+    -fx-text-fill: #555b65;
+}
+
+.login-button-secondary:hover {
+    -fx-background-color: #f0f2f5;
+    -fx-cursor: hand;
+}
+
+/* Zone logo */
+.login-left {
+    -fx-padding: 20;
+    -fx-alignment: center;
+}
+
+/* Séparateur */
+.login-divider {
+    -fx-background-color: #e4e6eb;
+    -fx-pref-width: 1;
+}

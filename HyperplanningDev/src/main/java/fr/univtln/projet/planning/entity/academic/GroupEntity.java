@@ -30,7 +30,7 @@ public class GroupEntity {
 
     //factory
 
-    private GroupEntity(int num, GroupType type) {
+    public GroupEntity(int num, GroupType type) {
         this.num = num;
         this.type = type;
     }
@@ -109,5 +109,8 @@ public class GroupEntity {
                 ", type=" + type +
                 ", promo=" + (promo != null ? promo.getName() + "-" + promo.getYear() + "-" + promo.getStudyLevel(): "null") +
                 '}';
+    }
+
+    public void setNum(int i) {
     }
 }

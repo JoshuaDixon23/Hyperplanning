@@ -44,8 +44,8 @@ public class BasketFinal {
 
     public void setStudent(InternationalStudent student) {
         this.student = student;
-        if (student.getBasket() != this) {
-            student.setBasket(this);
+        if (student.getBasketFinal() != this) {
+            student.setBasketFinal(this);
         }
     }
 

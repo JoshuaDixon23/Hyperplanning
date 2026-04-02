@@ -18,7 +18,7 @@ public class BasketModuleService {
 
     // créer une méthode pour rajouter un d
     // créer un panier pour un étudiant
-    public BasketModule createBasket(InternationalStudent student) {
+    public BasketModule create(InternationalStudent student) {
         BasketModule basket = new BasketModule();
         basket.setInternationalStudent(student);
         return basketModuleRepository.save(basket);

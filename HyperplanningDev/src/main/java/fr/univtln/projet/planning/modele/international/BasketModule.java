@@ -46,5 +46,6 @@ public class BasketModule {
     }
 
     public void setInternationalStudent(InternationalStudent student) {
+        this.internationalStudent = student;
     }
 }

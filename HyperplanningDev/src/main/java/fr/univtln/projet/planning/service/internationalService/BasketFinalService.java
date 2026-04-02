@@ -1,8 +1,8 @@
 package fr.univtln.projet.planning.service.internationalService;
 
 
+import fr.univtln.projet.planning.modele.academic.Group;
 import fr.univtln.projet.planning.modele.international.BasketFinal;
-import fr.univtln.projet.planning.entity.academic.GroupEntity;
 import fr.univtln.projet.planning.entity.planning.ModuleEntity;
 import fr.univtln.projet.planning.modele.planning.Module;
 import fr.univtln.projet.planning.repository.internationalRepository.BasketFinalRepository;
@@ -18,7 +18,7 @@ public class BasketFinalService {
     }
 
     // création panier
-    public BasketFinal createBasket() {
+    public BasketFinal create() {
         return basketFinalRepository.save(new BasketFinal());
     }
 
@@ -38,7 +38,7 @@ public class BasketFinalService {
     }
 
     // ajout de module
-    public BasketFinal addModule(Long id, Module module, GroupEntity group) {
+    public BasketFinal addModule(Long id, Module module, Group group) {
         Optional<BasketFinal> opt = basketFinalRepository.findWithAll(id);
         if (opt.isEmpty()) return null;
 

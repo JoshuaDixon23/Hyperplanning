@@ -1,6 +1,7 @@
 package fr.univtln.projet.planning.modele.planning;
 
 import fr.univtln.projet.planning.entity.TextTransformation; // Adjust package if needed
+import fr.univtln.projet.planning.entity.academic.GroupEntity;
 import fr.univtln.projet.planning.modele.academic.Group;
 import fr.univtln.projet.planning.modele.person.Professor;
 import jakarta.persistence.*;
@@ -41,7 +42,7 @@ public class Module {
     private List<Course> planning = new ArrayList<>();
      */
     
-    protected Module() {
+    public Module() {
     }
 
     private Module(Builder b) {
@@ -73,6 +74,9 @@ public class Module {
 
     public float getEcts() {
         return ects;
+    }
+
+    public void addGroup(GroupEntity group) {
     }
 
     public static final class Builder {

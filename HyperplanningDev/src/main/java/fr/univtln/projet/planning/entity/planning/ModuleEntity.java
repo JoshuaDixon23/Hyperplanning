@@ -22,7 +22,7 @@ public class ModuleEntity {
     private ProfessorEntity responsible;
     private Map<CourseType, Float> courseHours; // Dictionary for CM/TD/TP hours in module
 
-    private ModuleEntity(Builder b){
+    public ModuleEntity(String b){
         code = b.code;
         name = b.name;
         language = b.language;

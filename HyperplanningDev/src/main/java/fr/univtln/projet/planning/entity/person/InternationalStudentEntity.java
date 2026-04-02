@@ -5,7 +5,7 @@ import fr.univtln.projet.planning.entity.international.BasketFinalEntity;
 public class InternationalStudentEntity extends StudentEntity {
     private BasketFinalEntity basketFinal;
 
-    private InternationalStudentEntity(String fname, String lname){
+    public InternationalStudentEntity(String fname, String lname){
         super(fname, lname);
         this.basketFinal = new BasketFinalEntity();
     }
@@ -20,5 +20,9 @@ public class InternationalStudentEntity extends StudentEntity {
         InternationalStudentEntity s =  UserFactory(fname, lname, InternationalStudentEntity::new);
         s.setEmailPersonal(emailPersonal.toLowerCase());
         return s;
+    }
+
+    public void setEmailUniv(String mail) {
+
     }
 }

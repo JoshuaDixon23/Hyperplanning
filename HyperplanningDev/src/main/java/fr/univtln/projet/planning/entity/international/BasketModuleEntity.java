@@ -1,5 +1,7 @@
 package fr.univtln.projet.planning.entity.international;
+
 import fr.univtln.projet.planning.entity.person.InternationalStudentEntity;
+import fr.univtln.projet.planning.modele.planning.Module;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,13 +13,13 @@ public class BasketModuleEntity {
 
     @Setter
     private InternationalStudentEntity internationalStudentEntity;
+
     private Set<Module> modules;
 
-    public void BasketModule(InternationalStudentEntity internationalStudentEntity) {
-        this.internationalStudentEntity = internationalStudentEntity;
+    public BasketModuleEntity(InternationalStudentEntity student) {
+        this.internationalStudentEntity = student;
         this.modules = new HashSet<>();
     }
-
 
     public void addModule(Module module) {
         modules.add(module);
