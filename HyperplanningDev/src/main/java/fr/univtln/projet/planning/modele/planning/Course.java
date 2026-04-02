@@ -1,5 +1,6 @@
 package fr.univtln.projet.planning.modele.planning;
 
+import fr.univtln.projet.planning.entity.planning.CourseEntity;
 import fr.univtln.projet.planning.modele.academic.Group;
 import fr.univtln.projet.planning.modele.infrastructure.Room;
 import fr.univtln.projet.planning.modele.person.Professor;
@@ -60,6 +61,9 @@ public class Course implements Comparable<Course> {
     )
     private Set<Professor> professors = new HashSet<>();
 
+    @Enumerated(EnumType.STRING)
+    private CourseState state;
+
     protected Course() {
     }
 
@@ -87,6 +91,7 @@ public class Course implements Comparable<Course> {
         private Set<Group> groups = new HashSet<>();
         private Room room = null;
         private CourseType courseType = null;
+        private CourseState state;
 
         public Builder() {}
 
@@ -109,12 +114,14 @@ public class Course implements Comparable<Course> {
 
         public Builder room(Room r) { this.room = r; return this; }
         public Builder courseType(CourseType t) { this.courseType = t; return this; }
+        public Builder courseState(CourseState s) { this.state = s; return this; }
 
         public Course build() {
             // Strict Validation
             Objects.requireNonNull(module, "module is required");
             Objects.requireNonNull(date, "date is required");
             Objects.requireNonNull(startTime, "startTime is required");
+            Objects.requireNonNull(duration, "duration required");
             Objects.requireNonNull(courseType, "courseType is required");
             if (duration.getSeconds() == 0) {
                 throw new IllegalArgumentException("duration must be strictly positive");
@@ -134,27 +141,6 @@ public class Course implements Comparable<Course> {
         }
         return this.startTime.compareTo(c.startTime);
     }
-
-    /*
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Course course = (Course) o;
-        return duration == course.duration &&
-                Objects.equals(date, course.date) &&
-                Objects.equals(startTime, course.startTime) &&
-                Objects.equals(module, course.module) &&
-                Objects.equals(room, course.room) &&
-                Objects.equals(courseType, course.courseType);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(date, startTime, duration, module, room, courseType);
-    }
-
-     */
 
     @Override
     public boolean equals(Object o) {

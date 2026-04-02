@@ -2,12 +2,14 @@ package fr.univtln.projet.planning.entity.planning;
 
 import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
 
 import fr.univtln.projet.planning.entity.academic.GroupEntity;
 import fr.univtln.projet.planning.entity.infrastructure.RoomEntity;
 import fr.univtln.projet.planning.entity.person.ProfessorEntity;
+import fr.univtln.projet.planning.modele.planning.CourseState;
 import fr.univtln.projet.planning.modele.planning.CourseType;
 import lombok.Getter;
 import lombok.Setter;
@@ -24,8 +26,8 @@ public class CourseEntity implements Comparable<CourseEntity>{
     private Set<ProfessorEntity> professors;
     private RoomEntity room;
     private CourseType courseType; // may be final
-    // private State state; (State has to be an Enum of "annulated", "in progress"... respectively to state diagram
     private Set<GroupEntity> groups = new HashSet<>();
+    private CourseState state;
 
     public CourseEntity(Builder b) {
         module = b.module;
@@ -35,6 +37,7 @@ public class CourseEntity implements Comparable<CourseEntity>{
         professors = b.professors;
         room = b.room;
         courseType = b.courseType;
+        state = b.state;
     }
 
     public ModuleEntity module() { return module; }
@@ -61,6 +64,7 @@ public class CourseEntity implements Comparable<CourseEntity>{
         private Set<ProfessorEntity> professors = new HashSet<>();
         private RoomEntity room = null;
         private CourseType courseType = null;
+        private CourseState state = CourseState.SCHEDULED;
 
         public Builder() {
         }
@@ -83,13 +87,17 @@ public class CourseEntity implements Comparable<CourseEntity>{
 
         public Builder courseType(CourseType t) { this.courseType = t; return this; }
 
+        public Builder courseState(CourseState s) { this.state = s; return this; }
+
         public CourseEntity build() {
             Objects.requireNonNull(module, "module required");
             Objects.requireNonNull(date, "date required");
             Objects.requireNonNull(startTime, "startTime required");
             Objects.requireNonNull(duration, "duration required");
             Objects.requireNonNull(courseType, "courseType required");
-            //Objects.requireNonNull(professors, "at least one professor required");
+            if (duration.getSeconds() == 0) {
+                throw new IllegalArgumentException("duration must be strictly positive");
+            }
 
             return new CourseEntity(this);
         }
@@ -162,6 +170,24 @@ public class CourseEntity implements Comparable<CourseEntity>{
         if (p != null && professors.contains(p)) {
             professors.remove(p);
             p.removeCourse(this);
+        }
+    }
+
+    public String getTemporalStatus() {
+        LocalDateTime now = LocalDateTime.now();
+
+        // Combiner date + heure de début
+        LocalDateTime startDateTime = LocalDateTime.of(date, startTime);
+
+        // Calcul de la fin (en supposant duration en minutes)
+        LocalDateTime endDateTime = startDateTime.plusMinutes(duration.getSeconds()/60);
+
+        if (now.isBefore(startDateTime)) {
+            return "PLANNED";
+        } else if (now.isBefore(endDateTime)) {
+            return "IN_PROGRESS";
+        } else {
+            return "FINISHED";
         }
     }
 }

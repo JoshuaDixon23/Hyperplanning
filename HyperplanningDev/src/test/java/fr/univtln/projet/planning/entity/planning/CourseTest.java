@@ -28,7 +28,7 @@ public class CourseTest {
         LocalDate date = LocalDate.now();
         LocalTime time = LocalTime.now();
         Instant startTime = Instant.now();
-        Duration duration = Duration.between(startTime, Instant.now());
+        Duration duration = Duration.between(startTime, Instant.now().plusSeconds(60*60));
 
         CourseEntity c = CourseEntity.builder()
                 .module(m)
@@ -43,6 +43,7 @@ public class CourseTest {
         System.out.println("Les professeurs : " + c.getProfessors());
 
         assertEquals(CourseType.CM, c.getCourseType());
+        System.out.println(c.getState());
 
     }
 }
