@@ -67,4 +67,8 @@ public class BasketFinal {
         entries.removeIf(e -> e.getModule().equals(module));
     }
 
+
+    public String getModuleGroup() {
+        return entries.toString();
+    }
 }

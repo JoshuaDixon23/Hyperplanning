@@ -31,6 +31,10 @@ public class InternationalStudent extends Student {
         this.basketFinal = basketFinal;
     }
 
+    public Long getId() {
+        return super.getId();
+    }
+
     /*
     public static InternationalStudent InternationalStudentFactory(String fname, String lname, String emailPersonal) {
         

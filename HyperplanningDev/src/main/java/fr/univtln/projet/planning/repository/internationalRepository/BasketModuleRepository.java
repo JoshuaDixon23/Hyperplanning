@@ -16,7 +16,7 @@ public class BasketModuleRepository extends JpaRepository<BasketModule, Long> {
     }
 
 
-    // 🔹 Trouver le panier d’un étudiant
+    // find basket
     public Optional<BasketModule> findByStudent(InternationalStudentEntity student) {
         String jpql = "SELECT b FROM BasketModule b WHERE b.internationalStudent = :student";
         TypedQuery<BasketModule> query = em.createQuery(jpql, BasketModule.class);
@@ -26,7 +26,7 @@ public class BasketModuleRepository extends JpaRepository<BasketModule, Long> {
         return result.stream().findFirst();
     }
 
-    // 🔹 Trouver un panier avec ses modules
+    // find basket by module
     public Optional<BasketModule> findWithModules(Long basketId) {
         String jpql = "SELECT b FROM BasketModule b LEFT JOIN FETCH b.modules WHERE b.id = :id";
         TypedQuery<BasketModule> query = em.createQuery(jpql, BasketModule.class);
