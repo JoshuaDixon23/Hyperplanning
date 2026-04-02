@@ -1,0 +1,36 @@
+@startuml
+
+[*] --> Draft : create
+
+state Draft {
+  [*] --> Editing
+  Editing : awaiting data (startime, duration, groups, module)
+}
+
+Draft --> Incomplete
+
+state Incomplete {
+
+  state Scheduled 
+
+  [*] --> Scheduled
+}
+
+Scheduled--> Completed: set room, set prof
+state Completed
+
+state Reported : Entry / mark on planning 
+Completed --> Reported : demand of hour change
+Reported --> Completed : hour modify
+
+
+state Annulated : Entry / delete from planning
+Reported --> Annulated : no possible hour
+Annulated --> [*]
+
+state ModificationRequest : Entry / mark on admin's planning
+Completed --> ModificationRequest : ask modification 
+ModificationRequest --> Completed : modify
+ModificationRequest --> Annulated : no modification possible 
+
+@enduml
