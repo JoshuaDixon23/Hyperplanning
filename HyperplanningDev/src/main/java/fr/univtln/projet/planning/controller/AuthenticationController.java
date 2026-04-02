@@ -49,6 +49,7 @@ public class AuthenticationController {
 
         errorLabel.setText("");
         errorLabel.setVisible(false);
+        errorLabel.setManaged(false);
 
         // liaison avec le service d'authentification
         emf = Persistence.createEntityManagerFactory("HyperplanningPU");
@@ -73,17 +74,22 @@ public class AuthenticationController {
                         if (!authenticationService.isPasswordDefined(newValue)) {
                             errorLabel.setText("Première connexion :\n          le mot de passe sera défini avec votre saisie.");
                             errorLabel.setVisible(true);
+                            errorLabel.setManaged(true);
                         } else {
                             errorLabel.setVisible(false);
+                            errorLabel.setManaged(false);
                         }
                     } else {
                         errorLabel.setVisible(false);
+                        errorLabel.setManaged(false);
                     }
                 } catch (Exception e) {
                     errorLabel.setVisible(false);
+                    errorLabel.setManaged(false);
                 }
             } else {
                 errorLabel.setVisible(false);
+                errorLabel.setManaged(false);
             }
         });
 
@@ -141,6 +147,7 @@ public class AuthenticationController {
         usernameField.clear();
         passwordField.clear();
         errorLabel.setVisible(false);
+        errorLabel.setManaged(false);
     }
 
     /**
@@ -182,12 +189,14 @@ public class AuthenticationController {
     private void showError(String message) {
         errorLabel.setText(message);
         errorLabel.setTextFill(Color.RED);
+        errorLabel.setManaged(true);
         errorLabel.setVisible(true);
     }
 
     private void showSuccess(String message) {
         errorLabel.setText(message);
         errorLabel.setTextFill(Color.GREEN);
+        errorLabel.setManaged(true);
         errorLabel.setVisible(true);
     }
 

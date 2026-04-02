@@ -68,18 +68,19 @@ public class Main extends Application {
                 getClass().getResource("/view/connexion-view.fxml")
         );
 
-        Scene scene = new Scene(root, 700, 500);
+        Scene scene = new Scene(root, 900, 700);
 
         scene.getStylesheets().addAll(
                 getClass().getResource("/css/base.css").toExternalForm(),
                 getClass().getResource("/css/sidebar.css").toExternalForm(),
                 getClass().getResource("/css/components.css").toExternalForm(),
-                getClass().getResource("/css/planning.css").toExternalForm()
+                getClass().getResource("/css/planning.css").toExternalForm(),
+                getClass().getResource("/css/connexion.css").toExternalForm()
         );
 
         stage.setTitle("Hyperplanning");
-        stage.setMinWidth(700);
-        stage.setMinHeight(500);
+        stage.setMinWidth(900);
+        stage.setMinHeight(700);
         stage.setScene(scene);
         stage.show();
     }

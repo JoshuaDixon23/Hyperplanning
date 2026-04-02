@@ -3,54 +3,96 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.control.*?>
 
-<HBox xmlns:fx="http://javafx.com/fxml"
-      fx:controller="fr.univtln.projet.planning.controller.AuthenticationController"
-      stylesheets="@/css/connexion.css"
-      styleClass="login-root">
+<?import javafx.geometry.Insets?>
 
-<HBox styleClass="login-card" prefWidth="550">
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="fr.univtln.projet.planning.controller.AuthenticationController"
+            stylesheets="@/css/connexion.css"
+            styleClass="login-root">
 
-    <!-- Partie gauche -->
-    <VBox styleClass="login-left" prefWidth="150">
-        <Label text="Planning 2026"/>
-    </VBox>
-
-    <Pane styleClass="login-divider"/>
-
-    <!-- Partie droite -->
-    <VBox>
-
-        <HBox styleClass="login-header" prefWidth="400">
-            <Label text="Identification" styleClass="login-title"/>
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="14" styleClass="header-bar">
+            <children>
+                <Label text="📅" styleClass="app-icon"/>
+                <Label text="HyperPlanning" styleClass="app-title"/>
+            </children>
+            <padding>
+                <Insets top="24" right="24" bottom="18" left="24"/>
+            </padding>
         </HBox>
+    </top>
 
-        <VBox styleClass="login-content">
+    <!-- Centre -->
+    <center>
+        <StackPane alignment="CENTER" styleClass="content-area">
+            <children>
+                <VBox styleClass="login-card"
+                      alignment="TOP_CENTER"
+                      spacing="0"
+                      prefWidth="420"
+                      maxWidth="420"
+                      prefHeight="560"
+                      maxHeight="560">
 
-            <Label text="Connexion au planning :" styleClass="login-label"/>
-            <Label fx:id="planningLabel" text="Planning 2024" styleClass="login-label"/>
+                    <padding>
+                        <Insets top="42" right="32" bottom="28" left="32"/>
+                    </padding>
 
-            <Label text="Identifiant de connexion :" styleClass="login-label"/>
-            <TextField fx:id="usernameField" styleClass="login-input"/>
+                    <Label text="Connexion" styleClass="login-main-title"/>
 
-            <Label text="Mot de passe :" styleClass="login-label"/>
-            <PasswordField fx:id="passwordField" styleClass="login-input"/>
+                    <Region prefHeight="28"/>
 
-            <!-- Message erreur -->
-            <Label fx:id="errorLabel" styleClass="login-label"/>
+                    <VBox spacing="8" maxWidth="345" prefWidth="345" alignment="TOP_LEFT">
+                        <Label text="identifiant" styleClass="field-label"/>
+                        <TextField fx:id="usernameField"
+                                   promptText="entrer votre identifiant ..."
+                                   styleClass="login-input"
+                                   maxWidth="1.7976931348623157E308"/>
+                    </VBox>
 
-            <HBox spacing="10">
-                <Button text="Annuler"
-                        styleClass="login-button-secondary"
-                        onAction="#handleCancel"/>
+                    <Region prefHeight="20"/>
 
-                <Button fx:id="loginButton" text="Valider"
-                        styleClass="login-button"
-                        onAction="#handleLogin"/>
-            </HBox>
+                    <VBox spacing="8" maxWidth="345" prefWidth="345" alignment="TOP_LEFT">
+                        <Label text="mot de passe" styleClass="field-label"/>
+                        <PasswordField fx:id="passwordField"
+                                       promptText="entrer votre mot de passe ..."
+                                       styleClass="login-input"
+                                       maxWidth="1.7976931348623157E308"/>
+                    </VBox>
 
-        </VBox>
+                    <Region prefHeight="22"/>
 
-    </VBox>
+                    <Label fx:id="errorLabel"
+                           text=""
+                           wrapText="true"
+                           visible="false"
+                           styleClass="error-label"
+                           maxWidth="345"/>
 
-</HBox>
-</HBox>
+                    <Button fx:id="loginButton"
+                            text="se connecter"
+                            styleClass="login-button"
+                            onAction="#handleLogin"
+                            maxWidth="345"
+                            prefWidth="345"/>
+
+                    <Region prefHeight="14"/>
+
+                    <Button fx:id="cancelButton"
+                            text="annuler"
+                            styleClass="login-button-secondary"
+                            onAction="#handleCancel"/>
+
+                    <Label fx:id="planningLabel"
+                           text="Planning 2026"
+                           managed="false"
+                           visible="false"/>
+                </VBox>
+            </children>
+            <BorderPane.margin>
+                <Insets top="10" right="20" bottom="20" left="20"/>
+            </BorderPane.margin>
+        </StackPane>
+    </center>
+
+</BorderPane>
