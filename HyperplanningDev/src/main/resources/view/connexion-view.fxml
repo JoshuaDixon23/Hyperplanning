@@ -58,6 +58,15 @@
                                        promptText="entrer votre mot de passe ..."
                                        styleClass="login-input"
                                        maxWidth="1.7976931348623157E308"/>
+
+                    </VBox>
+
+                    <VBox spacing="8" maxWidth="345" prefWidth="345" alignment="TOP_LEFT">
+                        <Label text="confirmer mot de passe" styleClass="field-label"/>
+                        <PasswordField fx:id="confirmPasswordField"
+                                       promptText="confirmer votre mot de passe ..."
+                                       styleClass="login-input"
+                                       maxWidth="1.7976931348623157E308"/>
                     </VBox>
 
                     <Region prefHeight="22"/>

@@ -1,6 +1,5 @@
 package fr.univtln.projet.planning.controller;
 
-import fr.univtln.projet.planning.entity.authentication.AuthenticationEntity;
 import fr.univtln.projet.planning.modele.person.User;
 import fr.univtln.projet.planning.repository.personRepository.UserRepository;
 import fr.univtln.projet.planning.repository.planningRepository.CourseRepository;
@@ -30,6 +29,8 @@ public class AuthenticationController {
     @FXML private Label errorLabel;
     @FXML private Button loginButton;
     @FXML private Button cancelButton;
+    @FXML private PasswordField confirmPasswordField;
+
     private EntityManagerFactory emf;
     private EntityManager em;
 
@@ -72,10 +73,19 @@ public class AuthenticationController {
                 try {
                     if (authenticationService.isEmailExiste(newValue)) {
                         if (!authenticationService.isPasswordDefined(newValue)) {
-                            errorLabel.setText("Première connexion :\n          le mot de passe sera défini avec votre saisie.");
+
+                            confirmPasswordField.setVisible(true);
+                            confirmPasswordField.setManaged(true);
+
+                            errorLabel.setText("Première connexion : \n veuillez créer et confirmer votre mot de passe");
                             errorLabel.setVisible(true);
                             errorLabel.setManaged(true);
+
                         } else {
+
+                            confirmPasswordField.setVisible(false);
+                            confirmPasswordField.setManaged(false);
+
                             errorLabel.setVisible(false);
                             errorLabel.setManaged(false);
                         }
@@ -156,20 +166,20 @@ public class AuthenticationController {
     private boolean authenticate(String username, String password) {
         try {
             if (authenticationService.isPasswordDefined(username)) {
-                Optional<AuthenticationEntity> auth = authenticationService.authenticate(username, password);
-                if (auth.isPresent()) {
-                    // Connexion réussie
+
+                Optional<User> userOpt = authenticationService.authenticate(username, password);
+                if (userOpt.isPresent()) {
                     return true;
                 } else {
                     showError("Identifiants incorrects");
                     return false;
                 }
+
             } else {
-                // la méthode passe par cette instruction si il n'y a pas de mdp
-                Optional<AuthenticationEntity> auth = authenticationService.setPasswordFirstTime(username, password);
-                if (auth.isPresent()) {
+
+                Optional<User> userOpt = authenticationService.setPasswordFirstTime(username, password);
+                if (userOpt.isPresent()) {
                     showSuccess("Mot de passe configuré");
-                    // mot de passe défini pour la première fois, on considère que l'authentification est réussie
                     return true;
                 } else {
                     showError("Erreur lors de la configuration du mot de passe");

@@ -105,4 +105,8 @@ public abstract class User {
     public int hashCode() {
         return Objects.hashCode(emailUniv);
     }
+
+    public String getEmail() {
+        return emailUniv;
+    }
 }

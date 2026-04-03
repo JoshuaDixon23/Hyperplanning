@@ -1,7 +1,7 @@
 package fr.univtln.projet.planning.service.authenticationService;
 
-import fr.univtln.projet.planning.entity.authentication.AuthenticationEntity;
 import fr.univtln.projet.planning.modele.person.LocalStudent;
+import fr.univtln.projet.planning.modele.person.User;
 import fr.univtln.projet.planning.repository.personRepository.UserRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
@@ -53,7 +53,7 @@ public class AuthentificationServiceTest {
 
         // 4. Définir le mot de passe pour la première fois
         String password = "MonMotDePasse123!";
-        Optional<AuthenticationEntity> result = authService.setPasswordFirstTime(testEmail, password);
+        Optional<User> result = authService.setPasswordFirstTime(testEmail, password);
 
         assertTrue(result.isPresent(), "La création du mot de passe devrait réussir");
         assertEquals(testEmail, result.get().getEmail(), "L'email doit correspondre");
@@ -64,7 +64,7 @@ public class AuthentificationServiceTest {
         System.out.println("-Vérification: mot de passe défini");
 
         // 6. Vérifier l'authentification avec le mot de passe
-        Optional<AuthenticationEntity> authenticated = authService.authenticate(testEmail, password);
+        Optional<User> authenticated = authService.authenticate(testEmail, password);
         assertTrue(authenticated.isPresent(), "L'authentification doit réussir");
         System.out.println("-Authentification réussie avec le mot de passe");
 
