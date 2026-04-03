@@ -9,7 +9,7 @@
       fx:controller="fr.univtln.projet.planning.controller.SidebarController">
 
     <HBox spacing="14" alignment="CENTER_LEFT" styleClass="sidebar-header">
-        <Region style="-fx-shape: 'VOTRE_SVG_LOGO_ICI';" 
+        <Region style="-fx-shape: 'SVG A DEFINIR';" 
                 prefWidth="32" prefHeight="32" minWidth="32" minHeight="32" 
                 styleClass="sidebar-logo"/>
         <Label fx:id="userNameLabel" text="Username" styleClass="sidebar-username"/>

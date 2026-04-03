@@ -1,19 +1,32 @@
 package fr.univtln.projet.planning.modele.planning;
 
-import fr.univtln.projet.planning.modele.academic.Group;
-import fr.univtln.projet.planning.modele.infrastructure.Room;
-import fr.univtln.projet.planning.modele.person.Professor;
-import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
+
+import fr.univtln.projet.planning.modele.academic.Group;
+import fr.univtln.projet.planning.modele.infrastructure.Room;
+import fr.univtln.projet.planning.modele.person.Professor;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
-@Table(name = "Course" /*,
+@Table(name = "Courses" /*,
         uniqueConstraints = @UniqueConstraint(columnNames = {"module", "date", "startTime"} )*/
 )
 @Getter
@@ -46,7 +59,7 @@ public class Course implements Comparable<Course> {
 
     @ManyToMany
     @JoinTable(
-            name = "Group_Course",
+            name = "Group_Courses",
             joinColumns = @JoinColumn(name = "courseId"),
             inverseJoinColumns = @JoinColumn(name = "groupId")
     )
@@ -54,7 +67,7 @@ public class Course implements Comparable<Course> {
 
     @ManyToMany
     @JoinTable(
-            name = "Professor_Course",
+            name = "Professor_Courses",
             joinColumns = @JoinColumn(name = "courseId"),
             inverseJoinColumns = @JoinColumn(name = "userId")
     )
@@ -64,6 +77,7 @@ public class Course implements Comparable<Course> {
     }
 
     private Course(Builder b) {
+        this.courseId = b.courseId;
         this.module = b.module;
         this.date = b.date;
         this.startTime = b.startTime;
@@ -79,6 +93,7 @@ public class Course implements Comparable<Course> {
     }
 
     public static final class Builder {
+        private Long courseId = null;
         private Module module = null;
         private LocalDate date = null;
         private LocalTime startTime = null;
@@ -90,6 +105,7 @@ public class Course implements Comparable<Course> {
 
         public Builder() {}
 
+        public Builder courseId(Long id) { this.courseId = id; return this; }
         public Builder module(Module m) { this.module = m; return this; }
         public Builder date(LocalDate d) { this.date = d; return this; }
         public Builder startTime(LocalTime t) { this.startTime = t; return this; }
@@ -186,9 +202,15 @@ public class Course implements Comparable<Course> {
     }
 
     public void addGroup(Group g) {
-        if (g != null && !groups.contains(g)) {
-            groups.add(g);
-            g.getPlanning().add(this);
+        if (g != null && !this.groups.contains(g)) {
+            this.groups.add(g);
+            g.addCourse(this); 
+        }
+    }
+    public void removeGroup(Group g) {
+        if (g != null && this.groups.contains(g)) {
+            this.groups.remove(g);
+            g.removeCourse(this); 
         }
     }
 

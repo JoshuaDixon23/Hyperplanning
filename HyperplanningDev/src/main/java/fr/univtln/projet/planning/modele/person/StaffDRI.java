@@ -1,11 +1,12 @@
 package fr.univtln.projet.planning.modele.person;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table(name = "StaffDRI")
+@Table(name = "StaffDRIs")
 @Getter
 @Setter
 public class StaffDRI extends User{

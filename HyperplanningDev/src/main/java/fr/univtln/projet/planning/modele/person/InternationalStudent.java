@@ -1,12 +1,13 @@
 package fr.univtln.projet.planning.modele.person;
 
 //import fr.univtln.projet.planning.modele.international.Basket; // Assure-toi que Basket est bien dans modele
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table(name = "InternationalStudent")
+@Table(name = "InternationalStudents")
 @Getter
 @Setter
 public class InternationalStudent extends Student {

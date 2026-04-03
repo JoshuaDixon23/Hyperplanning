@@ -1,17 +1,22 @@
 package fr.univtln.projet.planning.modele.person;
 
-import fr.univtln.projet.planning.modele.academic.Group; 
-import fr.univtln.projet.planning.modele.academic.Promo;
-import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import fr.univtln.projet.planning.modele.academic.Group;
+import fr.univtln.projet.planning.modele.academic.Promo;
+import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
+
 @Entity
-@Table(name = "LocalStudent")
+@Table(name = "LocalStudents")
 @Getter
 @Setter
 public class LocalStudent extends Student {
@@ -23,7 +28,7 @@ public class LocalStudent extends Student {
     // "localStudents" correspond au nom exact de l'attribut dans ta classe Group
     @ManyToMany
     @JoinTable(
-            name = "Student_Group",
+            name = "Student_Groups",
             joinColumns = @JoinColumn(name = "idStudent"),
             inverseJoinColumns = @JoinColumn(name = "idGroup")
     )

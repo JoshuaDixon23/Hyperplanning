@@ -1,16 +1,17 @@
 package fr.univtln.projet.planning.modele.person;
 
-import fr.univtln.projet.planning.entity.planning.CourseEntity;
+import java.util.HashSet;
+import java.util.Set;
+
 import fr.univtln.projet.planning.modele.planning.Course;
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Set;
-import java.util.HashSet;
-
 @Entity
-@Table(name = "Professor")
+@Table(name = "Professors")
 @Getter
 @Setter
 public class Professor extends User {

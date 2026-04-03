@@ -38,4 +38,6 @@ public class GroupRepository extends JpaRepository<Group, Long> {
         query.setParameter("promo", promo);
         return query.getSingleResult();
     }
+
+
 }
