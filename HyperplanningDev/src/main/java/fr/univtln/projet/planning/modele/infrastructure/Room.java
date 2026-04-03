@@ -1,16 +1,24 @@
 package fr.univtln.projet.planning.modele.infrastructure;
 
-import fr.univtln.projet.planning.modele.planning.Course;
-import jakarta.persistence.*;
+import java.util.Objects;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.Getter;
 import lombok.Setter;
 
 
-import java.util.Objects;
-
-
 @Entity
-@Table(name = "Room",
+@Table(name = "Rooms",
     uniqueConstraints = @UniqueConstraint(columnNames = {"number", "idBuilding"})
 )
 @Getter

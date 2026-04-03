@@ -46,4 +46,6 @@ public class GroupRepository extends JpaRepository<Group, Long> {
                 .setParameter("promoId", promoId)
                 .getResultList();
     }
+
+
 }

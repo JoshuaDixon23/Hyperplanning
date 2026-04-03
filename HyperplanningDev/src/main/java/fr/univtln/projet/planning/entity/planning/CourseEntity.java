@@ -4,7 +4,9 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 
 import fr.univtln.projet.planning.entity.academic.GroupEntity;
 import fr.univtln.projet.planning.entity.infrastructure.RoomEntity;
@@ -16,10 +18,9 @@ import lombok.Setter;
 
 @Getter
 @Setter
-
-public class CourseEntity implements Comparable<CourseEntity>{
+public class CourseEntity implements Comparable<CourseEntity> {
+    private Long courseId;
     private final ModuleEntity module;
-
     private LocalDate date;
     private LocalTime startTime;
     private Duration duration;
@@ -30,6 +31,7 @@ public class CourseEntity implements Comparable<CourseEntity>{
     private CourseState state;
 
     public CourseEntity(Builder b) {
+        courseId = b.courseId; // Ajout de l'ID
         module = b.module;
         date = b.date;
         startTime = b.startTime;
@@ -39,6 +41,8 @@ public class CourseEntity implements Comparable<CourseEntity>{
         courseType = b.courseType;
         state = b.state;
     }
+
+    public Long courseId() { return courseId; } // Ajout de l'ID
 
     public ModuleEntity module() { return module; }
 
@@ -57,6 +61,7 @@ public class CourseEntity implements Comparable<CourseEntity>{
     public static Builder builder() { return new Builder(); }
 
     public static final class Builder {
+        private Long courseId = null; // Ajout de l'ID
         private ModuleEntity module = null;
         private LocalDate date = null;
         private LocalTime startTime = null;
@@ -66,8 +71,9 @@ public class CourseEntity implements Comparable<CourseEntity>{
         private CourseType courseType = null;
         private CourseState state = CourseState.SCHEDULED;
 
-        public Builder() {
-        }
+        public Builder() {}
+
+        public Builder courseId(Long id) { this.courseId = id; return this; } // Ajout de l'ID
 
         public Builder module(ModuleEntity m) { this.module = m; return this; }
 
@@ -105,11 +111,13 @@ public class CourseEntity implements Comparable<CourseEntity>{
 
     @Override
     public boolean equals(Object o) {
-
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         CourseEntity course = (CourseEntity) o;
-        return Objects.equals(module, course.module)
+        
+        // Ajout de courseId dans la comparaison
+        return Objects.equals(courseId, course.courseId)
+                && Objects.equals(module, course.module)
                 && Objects.equals(date, course.date)
                 && Objects.equals(startTime, course.startTime)
                 && Objects.equals(duration, course.duration)
@@ -120,8 +128,8 @@ public class CourseEntity implements Comparable<CourseEntity>{
 
     @Override
     public int hashCode() {
-
-        return Objects.hash(module, date, startTime, duration, professors, room, courseType);
+        // Ajout de courseId dans le hash
+        return Objects.hash(courseId, module, date, startTime, duration, professors, room, courseType);
     }
 
     @Override
@@ -131,11 +139,11 @@ public class CourseEntity implements Comparable<CourseEntity>{
         return this.startTime.compareTo(c.startTime);
     }
 
-
     @Override
     public String toString() {
         return "CourseEntity{" +
-                "module=" + module +
+                "courseId=" + courseId + // Ajout de l'ID
+                ", module=" + module +
                 ", date=" + date +
                 ", startTime=" + startTime +
                 ", duration=" + duration +

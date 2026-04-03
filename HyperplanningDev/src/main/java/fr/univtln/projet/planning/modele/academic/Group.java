@@ -1,10 +1,13 @@
 package fr.univtln.projet.planning.modele.academic;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 
 import fr.univtln.projet.planning.modele.person.LocalStudent;
-import fr.univtln.projet.planning.modele.planning.Module;
 import fr.univtln.projet.planning.modele.planning.Course;
+import fr.univtln.projet.planning.modele.planning.Module;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -21,7 +24,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table(name = "PlanningGroup") // doubtable name of table
+@Table(name = "Groups") // doubtable name of table
 @Setter
 @Getter
 public class Group {
@@ -64,7 +67,7 @@ public class Group {
 
     @ManyToMany
     @JoinTable(
-            name = "Group_Module",
+            name = "Group_Modules",
             joinColumns = @JoinColumn(name = "groupId"),
             inverseJoinColumns = @JoinColumn(name = "moduleCode")
     )
@@ -103,16 +106,16 @@ public class Group {
     }
 
     public void addCourse(Course c) {
-        if (c != null) {
-            planning.add(c);
-            c.getGroups().add(this);
+        if (c != null && !this.planning.contains(c)) { 
+            this.planning.add(c);
+            c.addGroup(this); 
         }
     }
 
     public void removeCourse(Course c) {
-        if (c != null) {
-            planning.remove(c);
-            c.getGroups().remove(this);
+        if (c != null && this.planning.contains(c)) {
+            this.planning.remove(c);
+            c.removeGroup(this); 
         }
     }
 

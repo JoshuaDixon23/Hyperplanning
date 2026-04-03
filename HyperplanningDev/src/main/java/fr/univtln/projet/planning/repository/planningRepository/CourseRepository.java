@@ -1,9 +1,13 @@
 package fr.univtln.projet.planning.repository.planningRepository;
 
 
+import java.time.LocalDate;
+import java.util.List;
+
 import fr.univtln.projet.planning.modele.academic.Group;
 import fr.univtln.projet.planning.modele.person.Professor;
 import fr.univtln.projet.planning.modele.planning.Course;
+import fr.univtln.projet.planning.modele.planning.Module;
 import fr.univtln.projet.planning.repository.JpaRepository;
 import jakarta.persistence.EntityManager;
 
