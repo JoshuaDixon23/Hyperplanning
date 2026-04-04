@@ -12,6 +12,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
@@ -29,6 +30,7 @@ public class AuthenticationController {
     @FXML private Label errorLabel;
     @FXML private Button loginButton;
     @FXML private Button cancelButton;
+    @FXML private VBox confirmPasswordBox;
     @FXML private PasswordField confirmPasswordField;
 
     private EntityManagerFactory emf;
@@ -38,10 +40,12 @@ public class AuthenticationController {
 
     private AuthenticationService authenticationService;
     private UserRepository userRepository;
+    private boolean firstConnectionMode = false;
 
     /**
      * Called automatically after FXML load
      */
+
 
 
     @FXML
@@ -52,6 +56,10 @@ public class AuthenticationController {
         errorLabel.setVisible(false);
         errorLabel.setManaged(false);
 
+        confirmPasswordBox.setVisible(false);
+        confirmPasswordBox.setManaged(false);
+        firstConnectionMode = false;
+
         // liaison avec le service d'authentification
         emf = Persistence.createEntityManagerFactory("HyperplanningPU");
         em = emf.createEntityManager();
@@ -61,51 +69,70 @@ public class AuthenticationController {
         this.authenticationService = authService;
         this.userRepository = userRepo;
 
-
         // Entrée clavier = login
         usernameField.setOnAction(e -> handleLogin());
         passwordField.setOnAction(e -> handleLogin());
+        confirmPasswordField.setOnAction(e -> handleLogin());
 
         // cas de la première authentification
-
         usernameField.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue != null && !newValue.isEmpty()) {
+            if (newValue != null && !newValue.isBlank()) {
                 try {
                     if (authenticationService.isEmailExiste(newValue)) {
                         if (!authenticationService.isPasswordDefined(newValue)) {
 
-                            confirmPasswordField.setVisible(true);
-                            confirmPasswordField.setManaged(true);
+                            firstConnectionMode = true;
 
-                            errorLabel.setText("Première connexion : \n veuillez créer et confirmer votre mot de passe");
+                            confirmPasswordBox.setVisible(true);
+                            confirmPasswordBox.setManaged(true);
+
+                            errorLabel.setText("Première connexion : veuillez créer votre mot de passe");
+                            errorLabel.setTextFill(Color.DARKBLUE);
                             errorLabel.setVisible(true);
                             errorLabel.setManaged(true);
 
                         } else {
 
-                            confirmPasswordField.setVisible(false);
-                            confirmPasswordField.setManaged(false);
+                            firstConnectionMode = false;
+
+                            confirmPasswordField.clear();
+                            confirmPasswordBox.setVisible(false);
+                            confirmPasswordBox.setManaged(false);
 
                             errorLabel.setVisible(false);
                             errorLabel.setManaged(false);
                         }
                     } else {
+                        firstConnectionMode = false;
+
+                        confirmPasswordField.clear();
+                        confirmPasswordBox.setVisible(false);
+                        confirmPasswordBox.setManaged(false);
+
                         errorLabel.setVisible(false);
                         errorLabel.setManaged(false);
                     }
                 } catch (Exception e) {
+                    firstConnectionMode = false;
+
+                    confirmPasswordField.clear();
+                    confirmPasswordBox.setVisible(false);
+                    confirmPasswordBox.setManaged(false);
+
                     errorLabel.setVisible(false);
                     errorLabel.setManaged(false);
                 }
             } else {
+                firstConnectionMode = false;
+
+                confirmPasswordField.clear();
+                confirmPasswordBox.setVisible(false);
+                confirmPasswordBox.setManaged(false);
+
                 errorLabel.setVisible(false);
                 errorLabel.setManaged(false);
             }
         });
-
-
-
-
 
     }
 
@@ -118,6 +145,12 @@ public class AuthenticationController {
         String password = passwordField.getText();
 
         // Validation simple
+
+        if(! authenticationService.isValidEmail(username)){
+            showError("Cet email est invalide: " + username);
+            return;
+        }
+
         if (username.isEmpty() || password.isEmpty()) {
             showError("Veuillez remplir tous les champs");
             return;
@@ -127,6 +160,27 @@ public class AuthenticationController {
             showError("Cet email n'existe pas: " + username);
             return;
         }
+
+        if (firstConnectionMode) {
+            String confirmPassword = confirmPasswordField.getText();
+
+            if (confirmPassword == null || confirmPassword.isEmpty()) {
+                showError("Veuillez confirmer votre mot de passe");
+                return;
+            }
+
+            if (!password.equals(confirmPassword)) {
+                showError("Les mots de passe ne correspondent pas");
+                return;
+            }
+
+            if (!authenticationService.isValidPassword(password)) {
+                showError("Le mot de passe doit contenir 8 caractère dont 1 spécial");
+                return;
+
+            }
+        }
+
 
         Optional<User> optionalUser = userRepository.findByEmailUniv(username);
         // Simulation d'authentification

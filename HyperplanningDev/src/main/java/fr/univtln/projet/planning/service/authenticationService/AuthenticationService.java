@@ -17,7 +17,7 @@ public class AuthenticationService {
         this.userRepository = userRepository;
     }
 
-    private boolean isValidEmail(String email) {
+    public boolean isValidEmail(String email) {
         String emailRegex = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
         return email != null && email.matches(emailRegex);
     }
@@ -156,7 +156,7 @@ public class AuthenticationService {
     // verification d'un mdp valide minimum 8 caractères + 1 caractère spécial
 
 
-    private boolean isValidPassword(String password) {
+    public boolean isValidPassword(String password) {
         String regex = "^(?=.*[!@#$%^&*(),.?\":{}|<>]).{8,}$";
         return password != null && password.matches(regex);
     }

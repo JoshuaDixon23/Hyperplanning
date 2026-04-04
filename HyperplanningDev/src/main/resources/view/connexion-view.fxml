@@ -61,7 +61,13 @@
 
                     </VBox>
 
-                    <VBox spacing="8" maxWidth="345" prefWidth="345" alignment="TOP_LEFT">
+                    <VBox fx:id="confirmPasswordBox"
+                          spacing="8"
+                          maxWidth="345"
+                          prefWidth="345"
+                          alignment="TOP_LEFT"
+                          visible="false"
+                          managed="false">
                         <Label text="confirmer mot de passe" styleClass="field-label"/>
                         <PasswordField fx:id="confirmPasswordField"
                                        promptText="confirmer votre mot de passe ..."
