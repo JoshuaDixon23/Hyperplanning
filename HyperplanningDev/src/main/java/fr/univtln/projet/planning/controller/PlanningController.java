@@ -407,7 +407,7 @@ public class PlanningController {
                     ? course.getRoom().getName()
                     : "Salle non définie";
 
-            addCourse(dayIndex, startHour, startMinute, durationMinutes, moduleName, courseType, teacher, room);
+            addCourse(dayIndex, startHour, startMinute, durationMinutes, moduleName, courseType, teacher, room, course);
         }
     }
 
@@ -496,17 +496,21 @@ public class PlanningController {
 
     }
 
-    private VBox buildCourseCard(String title, String type, String teacher, String room) {
-        VBox card = new VBox(2);
+    private VBox buildCourseCard(String title, String type, String teacher, String room, CourseEntity course) {
+        VBox card = new VBox(4);
         card.getStyleClass().add("course-card");
         card.setFillWidth(true);
         card.setAlignment(Pos.TOP_LEFT);
         card.setManaged(false);
+        card.setPadding(new Insets(10));
 
         Label t = createSingleLineLabel(title, "course-title");
         Label ty = createSingleLineLabel(type, "course-meta");
         Label te = createSingleLineLabel(teacher, "course-meta");
         Label r = createSingleLineLabel(room, "course-meta");
+
+        Region spacer = new Region();
+        VBox.setVgrow(spacer, Priority.ALWAYS);
 
         Button button = new Button("More");
         button.getStyleClass().add("button-more");
@@ -520,7 +524,9 @@ public class PlanningController {
         te.setTooltip(new Tooltip(teacher));
         r.setTooltip(new Tooltip(room));
 
-        card.getChildren().addAll(t, ty, te, r, button);
+        button.setOnAction(e -> showCourseDetails(course));
+
+        card.getChildren().addAll(t, ty, te, r, spacer, button);
 
         Rectangle clip = new Rectangle();
         clip.widthProperty().bind(card.widthProperty());
@@ -542,9 +548,9 @@ public class PlanningController {
 
 
     private void addCourse(int dayIndex, int startHour, int startMinute, int durationMinutes,
-                           String title, String type, String teacher, String room) {
+                           String title, String type, String teacher, String room, CourseEntity course) {
 
-        VBox card = buildCourseCard(title, type, teacher, room);
+        VBox card = buildCourseCard(title, type, teacher, room, course);
 
         card.getProperties().put("dayIndex", dayIndex);
         card.getProperties().put("startMinutes", startHour * 60 + startMinute);
@@ -552,6 +558,55 @@ public class PlanningController {
         card.getProperties().put("durationMinutes", durationMinutes);
 
         sourceCourseCards.add(card);
+    }
+
+    private void showCourseDetails(CourseEntity course) {
+        if (course == null) return;
+
+        String module = course.getModule() != null
+                ? course.getModule().getName()
+                : "Non défini";
+
+        String type = course.getCourseType() != null
+                ? course.getCourseType().name()
+                : "Non défini";
+
+        String date = course.getDate() != null
+                ? course.getDate().toString()
+                : "Non définie";
+
+        String startTime = course.getStartTime() != null
+                ? course.getStartTime().toString()
+                : "Non définie";
+
+        String duration = course.getDuration() != null
+                ? course.getDuration().toNanos() + " min"
+                : "Non définie";
+
+        String room = course.getRoom() != null
+                ? course.getRoom().getName()
+                : "Non définie";
+
+        String teachers = (course.getProfessors() != null && !course.getProfessors().isEmpty())
+                ? course.getProfessors().stream()
+                .map(p -> p.getFirstName() + " " + p.getLastName())
+                .reduce((a, b) -> a + ", " + b)
+                .orElse("Non défini")
+                : "Non défini";
+
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Détails du cours");
+        alert.setHeaderText(module);
+        alert.setContentText(
+                "Type : " + type + "\n" +
+                        "Date : " + date + "\n" +
+                        "Heure de début : " + startTime + "\n" +
+                        "Durée : " + duration + "\n" +
+                        "Enseignant(s) : " + teachers + "\n" +
+                        "Salle : " + room
+        );
+
+        alert.showAndWait();
     }
 
     // ==========================================================
