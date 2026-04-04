@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Locale;
 import javafx.animation.*;
 import javafx.application.Platform;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 import javafx.geometry.Insets;
@@ -505,6 +506,14 @@ public class PlanningController {
         card.setPadding(new Insets(10));
 
         Label t = createSingleLineLabel(title, "course-title");
+
+        Circle colorDot = new Circle(5);
+        colorDot.setStyle("-fx-fill: " + colorFromTitle(title) + ";");
+
+        HBox titleRow = new HBox(8);
+        titleRow.setAlignment(Pos.CENTER_LEFT);
+        HBox.setHgrow(t, Priority.ALWAYS);
+        titleRow.getChildren().addAll(colorDot, t);
         Label ty = createSingleLineLabel(type, "course-meta");
         Label te = createSingleLineLabel(teacher, "course-meta");
         Label r = createSingleLineLabel(room, "course-meta");
@@ -526,7 +535,7 @@ public class PlanningController {
 
         button.setOnAction(e -> showCourseDetails(course));
 
-        card.getChildren().addAll(t, ty, te, r, spacer, button);
+        card.getChildren().addAll(titleRow, ty, te, r, spacer, button);
 
         Rectangle clip = new Rectangle();
         clip.widthProperty().bind(card.widthProperty());
@@ -894,5 +903,14 @@ public class PlanningController {
 
     private double computeCourseHeight(int durationMinutes) {
         return (durationMinutes / (double) SLOT_MINUTES) * ROW_HEIGHT;
+    }
+
+    private String colorFromTitle(String title) {
+        if (title == null || title.isBlank()) {
+            return "#999999";
+        }
+
+        int hash = title.hashCode();
+        return String.format("#%06X", (0xFFFFFF & hash));
     }
 }
