@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="fr.univtln.projet.planning.controller.MainController"
+            styleClass="root">
+
+    <left>
+        <fx:include fx:id="sidebar" source="/components/sidebar.fxml"/>
+    </left>
+
+    <center>
+        <StackPane fx:id="contentArea"/>
+    </center>
+
+</BorderPane>

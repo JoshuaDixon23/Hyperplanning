@@ -48,6 +48,7 @@ public class PlanningController {
     @FXML private Pane coursesPane;
     @FXML private StackPane planningContent;
 
+
     private static final int GRID_START_HOUR = 8;
     private static final int SLOT_MINUTES = 30;
     private static final double ROW_HEIGHT = 60;
@@ -328,12 +329,10 @@ public class PlanningController {
         this.connectedUser = user;
 
         if (user == null) {
-            userNameLabel.setText("Utilisateur inconnu");
             connectedUserPromoId = null;
             return;
         }
 
-        userNameLabel.setText(user.getFirstName() + " " + user.getLastName());
 
         if (user instanceof LocalStudent student) {
             connectedUserPromoId = extractStudentPromoId(student);

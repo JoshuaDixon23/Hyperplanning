@@ -228,7 +228,7 @@ public class AuthenticationController {
     private void goToPlanning(User connectedUser) {
         try {
             FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/view/planning-view.fxml")
+                    getClass().getResource("/view/main-view.fxml")
             );
 
             Scene scene = new Scene(loader.load());
@@ -240,7 +240,7 @@ public class AuthenticationController {
                     getClass().getResource("/css/planning.css").toExternalForm()
             );
 
-            PlanningController planningController = loader.getController();
+            MainController mainController = loader.getController();
 
             CourseRepository courseRepository = new CourseRepository(em);
             CourseService courseService = new CourseService(courseRepository);
@@ -255,9 +255,10 @@ public class AuthenticationController {
             UFRService ufrService = new UFRService(ufrRepository, adminService, campusService);
             PromoService promoService = new PromoService(promoRepository, ufrService);
 
-            planningController.setCourseService(courseService);
-            planningController.setPromoService(promoService);
-            planningController.setConnectedUser(connectedUser);
+            mainController.setCourseService(courseService);
+            mainController.setPromoService(promoService);
+            mainController.setConnectedUser(connectedUser);
+            mainController.initData();
 
             Stage stage = (Stage) loginButton.getScene().getWindow();
             stage.setScene(scene);
