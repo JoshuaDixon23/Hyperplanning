@@ -121,23 +121,21 @@ class CourseServiceTest {
         ProfessorRepository professorRepo = new ProfessorRepository(em);
         ProfessorService professorService = new ProfessorService(professorRepo);
         ModuleService moduleRepository = new ModuleService(moduleRepo, professorService);
-        System.out.println(professorRepo.findAll());
-        /*
         ModuleEntity module = moduleRepository.findByCode("DATA10");
         CourseEntity course = CourseEntity.builder()
                 .module(module)
                 .date(LocalDate.now().plusDays(1))
-                .startTime(LocalTime.now().minusHours(10))
+                .startTime(LocalTime.now())
                 .duration(Duration.ofHours(1))
                 .courseType(CourseType.CM)
                 .build();
+
+        System.out.println(course);
 
         CourseRepository courseRepo = new CourseRepository(em);
         GroupRepository groupRepo = new GroupRepository(em);
         CourseService courseService = new CourseService(courseRepo, groupRepo);
         CourseEntity saved = courseService.create(course);
         System.out.println(saved);
-
-         */
     }
 }

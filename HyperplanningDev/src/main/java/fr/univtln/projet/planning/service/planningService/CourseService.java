@@ -1,7 +1,6 @@
 package fr.univtln.projet.planning.service.planningService;
 
 import fr.univtln.projet.planning.entity.planning.CourseEntity;
-import fr.univtln.projet.planning.mapper.infrastracture.RoomMapper;
 import fr.univtln.projet.planning.entity.planning.ModuleEntity;
 import fr.univtln.projet.planning.mapper.planning.CourseMapper;
 import fr.univtln.projet.planning.mapper.planning.ModuleMapper;
@@ -12,8 +11,12 @@ import fr.univtln.projet.planning.repository.academicRepository.GroupRepository;
 import fr.univtln.projet.planning.modele.planning.Module;
 import fr.univtln.projet.planning.repository.planningRepository.CourseRepository;
 
-import fr.univtln.projet.planning.service.infrastructureService.RoomService;
 import jakarta.transaction.Transactional;
+
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.List;
+import java.util.Optional;
 
 public class CourseService {
 

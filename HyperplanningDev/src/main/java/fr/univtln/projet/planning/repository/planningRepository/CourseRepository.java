@@ -11,14 +11,28 @@ import fr.univtln.projet.planning.modele.planning.Module;
 import fr.univtln.projet.planning.repository.JpaRepository;
 import jakarta.persistence.EntityManager;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.List;
 
 public class CourseRepository extends JpaRepository<Course, Long> {
 
     public CourseRepository(EntityManager entityManager) {
         super(Course.class, entityManager);
+    }
+
+    @Override
+    public Course save(Course entity) {
+        em.getTransaction().begin();
+
+        Object id = em.getEntityManagerFactory()
+                .getPersistenceUnitUtil()
+                .getIdentifier(entity);
+
+        if (id == null) {
+            entity = em.merge(entity);
+        } else {
+            em.persist(entity);
+        }
+        em.getTransaction().commit();
+        return entity;
     }
 
     // ----------------- Find All -----------------

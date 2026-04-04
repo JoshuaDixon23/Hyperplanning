@@ -80,7 +80,7 @@ public class Course implements Comparable<Course> {
     }
 
     private Course(Builder b) {
-        this.courseId = b.courseId;
+        //this.courseId = b.courseId;
         this.module = b.module;
         this.date = b.date;
         this.startTime = b.startTime;
@@ -96,7 +96,7 @@ public class Course implements Comparable<Course> {
     }
 
     public static final class Builder {
-        private Long courseId = null;
+        //private Long courseId;
         private Module module = null;
         private LocalDate date = null;
         private LocalTime startTime = null;
@@ -109,7 +109,7 @@ public class Course implements Comparable<Course> {
 
         public Builder() {}
 
-        public Builder courseId(Long id) { this.courseId = id; return this; }
+        //public Builder courseId(Long id) { this.courseId = id; return this; }
         public Builder module(Module m) { this.module = m; return this; }
         public Builder date(LocalDate d) { this.date = d; return this; }
         public Builder startTime(LocalTime t) { this.startTime = t; return this; }
@@ -185,6 +185,7 @@ public class Course implements Comparable<Course> {
                 ", professors=" + professors +
                 '}';
     }
+
 
     public void addGroup(Group g) {
         if (g != null && !this.groups.contains(g)) {

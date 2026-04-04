@@ -30,7 +30,6 @@ public class CourseMapper {
         if (c == null) return null;
         Course.Builder builder = Course.builder()
                 .module(ModuleMapper.toJpa(c.getModule()))
-                .courseId(c.courseId())
                 .date(c.getDate())
                 .startTime(c.getStartTime())
                 .duration(c.getDuration())
@@ -48,6 +47,10 @@ public class CourseMapper {
             c.getGroups().forEach(group -> builder.group(GroupMapper.toJpa(group)));
         }
 
-        return builder.build();
+        Course jpa = builder.build();
+
+        if (c.getCourseId() != null) jpa.setCourseId(c.getCourseId());
+
+        return jpa;
     }
 }
