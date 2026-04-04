@@ -82,8 +82,8 @@
                     <ColumnConstraints hgrow="ALWAYS"/>
                 </columnConstraints>
 
-                <ToggleButton fx:id="btnMonPlan"
-                              text="Mon plan"
+                <ToggleButton fx:id="btnMonEdt"
+                              text="Mon edt"
                               styleClass="filter-button"
                               selected="true"
                               GridPane.columnIndex="0"
@@ -95,8 +95,8 @@
                               GridPane.columnIndex="1"
                               GridPane.halignment="CENTER"/>
 
-                <ToggleButton fx:id="btnAutrePromo"
-                              text="Autre promo"
+                <ComboBox fx:id="promoBox"
+                              promptText="Une promo"
                               styleClass="filter-button"
                               GridPane.columnIndex="2"
                               GridPane.halignment="LEFT"/>

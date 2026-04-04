@@ -36,12 +36,7 @@ public class PromoEntity {
 
     @Override
     public String toString() {
-        return "PromoEntity{" +
-                "name='" + name + '\'' +
-                ", studyLevel=" + studyLevel +
-                ", year=" + year +
-                ", ufr=" + ufr +
-                '}';
+        return name + " - " + studyLevel;
     }
 
     /*
