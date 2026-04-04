@@ -1,5 +1,8 @@
 package fr.univtln.projet.planning.controller;
 
+import fr.univtln.projet.planning.modele.person.Admin;
+import fr.univtln.projet.planning.modele.person.Professor;
+import fr.univtln.projet.planning.modele.person.Student;
 import fr.univtln.projet.planning.modele.person.User;
 import fr.univtln.projet.planning.repository.personRepository.UserRepository;
 import fr.univtln.projet.planning.repository.planningRepository.CourseRepository;
@@ -182,7 +185,8 @@ public class AuthenticationController {
         }
 
 
-        Optional<User> optionalUser = userRepository.findByEmailUniv(username);
+        Optional<User> optionalUser = authenticationService.findUserByEmail(username);
+
         // Simulation d'authentification
         if (authenticate(username, password)) {
             showSuccess("Connexion réussie : " + username);
@@ -194,7 +198,22 @@ public class AuthenticationController {
 
             User connectedUser = optionalUser.get();
             showSuccess("Connexion réussie : " + connectedUser.getFirstName() + " " + connectedUser.getLastName());
+            
+            //if (connectedUser instanceof Admin) {
+            //    System.out.println("je suis un admin");
+            //}
+//
 
+            //=====================================================================
+            //thomas ici décomente et régle la méthode en bas pour qu'elle te convienne
+            // en gros on charge la classe de l'user en question
+            // puis redirect te permet d'amener sur la vue d'un planning ou la vue d'un admin par exemple .
+            //il faut aussi décommenter en bas
+            //=====================================================================
+
+            // redirectUser(connectedUser);
+
+            // à enelever
             goToPlanning(connectedUser);
 
 
@@ -303,6 +322,22 @@ public class AuthenticationController {
             showError("Erreur lors du chargement du planning : " + e.getMessage());
         }
     }
+
+
+
+//    private void redirectUser(User connectedUser) {
+//
+//        // fais gaffe si tudent local ou étrangé
+//        if (connectedUser instanceof Student) {
+//            goToPlanning(connectedUser);
+//        } else if (connectedUser instanceof Admin) {
+//            goToAdminInterface(connectedUser);
+//        } else if (connectedUser instanceof Professor){
+//            goToPlanningProf(connectedUser); // si c'est différent
+//        }else {
+//            showError("Rôle utilisateur non reconnu");
+//        }
+//    }
 
 }
 

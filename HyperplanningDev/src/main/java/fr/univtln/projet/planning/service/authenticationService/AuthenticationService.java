@@ -160,4 +160,8 @@ public class AuthenticationService {
         String regex = "^(?=.*[!@#$%^&*(),.?\":{}|<>]).{8,}$";
         return password != null && password.matches(regex);
     }
+
+    public Optional<User> findUserByEmail(String email) {
+        return userRepository.findByEmailUniv(email);
+    }
 }
