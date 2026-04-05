@@ -80,7 +80,7 @@ class Campus {
 ' ─────────────────────────────────────────────
 class BasketModule
 class BasketFinal
-class ModuleGroup <<association>>
+class BasketEntry <<association>>
 
 ' ─────────────────────────────────────────────
 '  LAYOUT — paysage réel
@@ -161,13 +161,13 @@ Room "0..1"        -u-> "*" Course
 ' Basket
 BasketModule       o-u- Module
 BasketModule       <-l- InternationalStudent
-BasketFinal        *--  ModuleGroup
-BasketFinal        -u-> InternationalStudent
+BasketFinal        *--  BasketEntry 
+BasketFinal        -u-* InternationalStudent
 
 ' ModuleGroup association class
 '(Group, Module) .. ModuleGroup
-ModuleGroup        -u- Group
-ModuleGroup        -u- Module
+BasketEntry        <-u- Group
+BasketEntry        <-u- Module
 
 ' UFR / Admin
 UFR                <-u- Admin
