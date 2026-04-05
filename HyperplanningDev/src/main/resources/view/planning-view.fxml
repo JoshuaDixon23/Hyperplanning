@@ -59,7 +59,14 @@
     <center>
         <VBox spacing="14" styleClass="content" fillWidth="true" maxWidth="Infinity">
 
-            <Label text="Planning" styleClass="page-title"/>
+            <HBox alignment="CENTER_LEFT" spacing="12">
+                <Label text="Planning" styleClass="page-title"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Button fx:id="logoutButton"
+                        text="Déconnexion"
+                        styleClass="logout-button"
+                        onAction="#handleLogout"/>
+            </HBox>
 
             <HBox spacing="12" alignment="CENTER" styleClass="weeks-row" fillHeight="true" maxWidth="Infinity" VBox.vgrow="NEVER">
                 <Button fx:id="prevWeeksBtn" text="❮" styleClass="week-arrow" onAction="#onPrevWeeks"/>

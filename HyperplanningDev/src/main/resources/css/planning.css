@@ -172,3 +172,23 @@
     -fx-background-color: #2f3540;
 }
 
+.logout-button {
+    -fx-background-color: #2f333a;
+    -fx-text-fill: #e9eaed;
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+    -fx-padding: 7 14 7 14;
+    -fx-font-size: 12px;
+    -fx-font-weight: 600;
+    -fx-cursor: hand;
+    -fx-border-color: transparent;
+}
+
+.logout-button:hover {
+    -fx-background-color: #23272d;
+}
+
+.logout-button:pressed {
+    -fx-background-color: #1b1e23;
+}
+

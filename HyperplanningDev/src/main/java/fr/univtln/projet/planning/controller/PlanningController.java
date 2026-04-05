@@ -6,6 +6,8 @@ import fr.univtln.projet.planning.modele.person.Professor;
 import fr.univtln.projet.planning.modele.person.User;
 import fr.univtln.projet.planning.service.planningService.CourseService;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.Node;
@@ -18,6 +20,7 @@ import java.util.Locale;
 import javafx.animation.*;
 import javafx.application.Platform;
 import javafx.scene.shape.Rectangle;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -43,6 +46,7 @@ public class PlanningController {
     @FXML private ScrollPane timeScroll;
     @FXML private Pane coursesPane;
     @FXML private StackPane planningContent;
+    @FXML private Button logoutButton;
 
     private static final int GRID_START_HOUR = 8;
     private static final int SLOT_MINUTES = 30;
@@ -756,5 +760,34 @@ public class PlanningController {
 
     private double computeCourseHeight(int durationMinutes) {
         return (durationMinutes / (double) SLOT_MINUTES) * ROW_HEIGHT;
+    }
+
+
+
+    @FXML
+    private void handleLogout() {
+        logoutButton.setText("Chargement...");
+        logoutButton.setDisable(true);
+        try {
+
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/view/connexion-view.fxml")
+            );
+
+            Scene scene = new Scene(loader.load());
+
+            scene.getStylesheets().add(
+                    getClass().getResource("/css/connexion.css").toExternalForm()
+            );
+
+            Stage stage = (Stage) logoutButton.getScene().getWindow();
+            stage.setScene(scene);
+            stage.show();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            logoutButton.setText("Déconnexion");
+            logoutButton.setDisable(false);
+        }
     }
 }
