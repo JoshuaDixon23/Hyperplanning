@@ -9,25 +9,88 @@ import fr.univtln.projet.planning.entity.planning.ModuleEntity;
 import fr.univtln.projet.planning.mapper.planning.CourseMapper;
 import fr.univtln.projet.planning.mapper.planning.ModuleMapper;
 import fr.univtln.projet.planning.modele.academic.Group;
+import fr.univtln.projet.planning.modele.infrastructure.Room;
 import fr.univtln.projet.planning.modele.person.Professor;
 import fr.univtln.projet.planning.modele.planning.Course;
 import fr.univtln.projet.planning.modele.planning.Module;
 import fr.univtln.projet.planning.repository.planningRepository.CourseRepository;
+import fr.univtln.projet.planning.service.academicService.GroupService;
+import fr.univtln.projet.planning.service.infrastructureService.RoomService;
+import fr.univtln.projet.planning.service.personService.ProfessorService;
 import jakarta.transaction.Transactional;
 
 public class CourseService {
 
     private final CourseRepository courseRepository;
 
-    public CourseService(CourseRepository courseRepository) {
+    private final ModuleService moduleService;
+
+    private final RoomService roomService;
+    private final ProfessorService professorService;
+    private final GroupService groupService;
+
+    public CourseService(
+            CourseRepository courseRepository,
+            ModuleService moduleService,
+            RoomService roomService,
+            ProfessorService professorService,
+            GroupService groupService) {
         
         this.courseRepository = courseRepository;
+        this.moduleService = moduleService;
+        this.roomService = roomService;
+        this.professorService = professorService;
+        this.groupService = groupService;
+    }
+
+    public CourseService(CourseRepository courseRepository) {
+        this.courseRepository = courseRepository;
+        this.moduleService = null;
+        this.roomService = null;
+        this.professorService = null;
+        this.groupService = null;
     }
 
     @Transactional
-    public CourseEntity create(CourseEntity courseEntity) {
-        System.out.println("Not implemented yet");
-        return null;
+    public void create(CourseEntity courseEntity) {
+        Module moduleJpa = null;
+        if (courseEntity.getModule() != null) {
+            moduleJpa = moduleService.findJpaByCode(courseEntity.getModule().getCode());
+            if (moduleJpa == null) {
+                throw new IllegalArgumentException("Module introuvable en base");
+            }
+        }
+        
+        Course courseJpa = Course.builder()
+                .date(courseEntity.getDate())
+                .startTime(courseEntity.getStartTime())
+                .duration(courseEntity.getDuration())
+                .courseType(courseEntity.getCourseType())
+                .module(moduleJpa)
+                .build();
+
+        
+
+        if (courseEntity.getRoom() != null) {
+            Room roomJpa = roomService.findByNumber(courseEntity.getRoom().getNumber());
+            courseJpa.setRoom(roomJpa);
+        }
+
+        if (courseEntity.getGroups() != null) {
+            courseEntity.getGroups().forEach(groupEntity -> {
+                Group groupJpa = groupService.findJpaByNumAndTypeAndPromo(groupEntity.getNum(), groupEntity.getType(), groupEntity.getPromo().getName() ,groupEntity.getPromo().getStudyLevel(), groupEntity.getPromo().getYear());
+                courseJpa.addGroup(groupJpa);
+            });
+        }
+
+        if (courseEntity.getProfessors() != null) {
+            courseEntity.getProfessors().forEach(profEntity -> {
+                Professor profJpa = professorService.findJpaByEmailUniv(profEntity.getEmailUniv());
+                courseJpa.addProfessor(profJpa);
+            });
+        }
+
+        courseRepository.save(courseJpa);
     }
 
     @Transactional

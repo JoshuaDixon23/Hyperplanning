@@ -47,6 +47,10 @@ public class RoomService {
                 .orElse(null);
     }
 
+    public Room findByNumber(String number) {
+        return roomRepository.findByNumber(number);
+    }
+
     public List<RoomEntity> findAll() {
         return roomRepository.findAll()
                 .stream()

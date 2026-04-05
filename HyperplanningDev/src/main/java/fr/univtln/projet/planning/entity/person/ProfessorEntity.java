@@ -1,7 +1,7 @@
 package fr.univtln.projet.planning.entity.person;
 
-import java.util.Set;
 import java.util.HashSet;
+import java.util.Set;
 
 import fr.univtln.projet.planning.entity.planning.CourseEntity;
 
@@ -14,6 +14,11 @@ public class ProfessorEntity extends UserEntity {
 
     public static ProfessorEntity ProfessorFactory(String fname, String lname) {
         ProfessorEntity p = UserFactory(fname, lname, ProfessorEntity::new);
+        return p;
+    }
+
+    public static ProfessorEntity ProfessorFactory(String fname, String lname, String emailUniv) {
+        ProfessorEntity p = UserFactory(fname, lname, emailUniv, ProfessorEntity::new);
         return p;
     }
 

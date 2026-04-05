@@ -35,9 +35,20 @@ public class GroupEntity {
         this.type = type;
     }
 
+    private GroupEntity(int num, GroupType type, PromoEntity promo) {
+        this.num = num;
+        this.type = type;
+        this.promo = promo;
+    }
+
     public static GroupEntity GroupFactory(int num,GroupType type) {
         //conditions ??
         return new GroupEntity(num,type);
+    }
+
+    public static GroupEntity GroupFactory(int num,GroupType type, PromoEntity promo) {
+        //conditions ??
+        return new GroupEntity(num,type,promo);
     }
 
     //setter getter

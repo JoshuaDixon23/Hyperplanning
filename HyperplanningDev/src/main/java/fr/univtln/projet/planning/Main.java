@@ -1,71 +1,22 @@
 package fr.univtln.projet.planning;
 
-// Imports de l'académique
-import fr.univtln.projet.planning.controller.PlanningContext;
-import fr.univtln.projet.planning.controller.PlanningController;
-import fr.univtln.projet.planning.modele.academic.Group;
-import fr.univtln.projet.planning.modele.academic.GroupType;
-import fr.univtln.projet.planning.modele.academic.Promo;
-import fr.univtln.projet.planning.modele.academic.StudyLevel;
-import fr.univtln.projet.planning.modele.academic.UFR;
-
-// Imports de l'infrastructure
-import fr.univtln.projet.planning.modele.infrastructure.Building;
-import fr.univtln.projet.planning.modele.infrastructure.Campus;
-import fr.univtln.projet.planning.modele.infrastructure.Day;
-import fr.univtln.projet.planning.modele.infrastructure.Room;
-import fr.univtln.projet.planning.modele.infrastructure.RoomType;
-
-// Imports des personnes (Sans InternationalStudent)
-import fr.univtln.projet.planning.modele.person.Admin;
-import fr.univtln.projet.planning.modele.person.LocalStudent;
-import fr.univtln.projet.planning.modele.person.Professor;
-
-// Imports du planning
-import fr.univtln.projet.planning.modele.planning.Course;
-import fr.univtln.projet.planning.modele.planning.CourseType;
-import fr.univtln.projet.planning.modele.planning.Language;
-import fr.univtln.projet.planning.modele.planning.Module;
-
-import fr.univtln.projet.planning.repository.academicRepository.UFRRepository;
-import fr.univtln.projet.planning.repository.infrastructureRepository.BuildingRepository;
-import fr.univtln.projet.planning.repository.infrastructureRepository.CampusRepository;
-import fr.univtln.projet.planning.repository.infrastructureRepository.RoomRepository;
-import fr.univtln.projet.planning.repository.personRepository.AdminRepository;
-import fr.univtln.projet.planning.repository.personRepository.ProfessorRepository;
-import fr.univtln.projet.planning.repository.planningRepository.CourseRepository;
-import fr.univtln.projet.planning.repository.planningRepository.ModuleRepository;
-import fr.univtln.projet.planning.service.academicService.UFRService;
-import fr.univtln.projet.planning.service.infrastructureService.BuildingService;
-import fr.univtln.projet.planning.service.infrastructureService.CampusService;
-import fr.univtln.projet.planning.service.infrastructureService.RoomService;
-import fr.univtln.projet.planning.service.personService.AdminService;
-import fr.univtln.projet.planning.service.personService.ProfessorService;
+import fr.univtln.projet.planning.service.ServiceRegistry;
 import fr.univtln.projet.planning.service.planningService.CourseService;
-import fr.univtln.projet.planning.service.planningService.ModuleService;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.Persistence;
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-
-import java.time.Duration;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.EnumMap;
-import java.util.Map;
 
 public class Main extends Application {
     private CourseService courseService;
 
     @Override
     public void start(Stage stage) throws Exception {
+        ServiceRegistry.initialize();
+
         Parent root = FXMLLoader.load(
-                getClass().getResource("/view/connexion-view.fxml")
+                getClass().getResource("/view/admin-course-view.fxml")
         );
 
         Scene scene = new Scene(root, 900, 700);
@@ -79,10 +30,16 @@ public class Main extends Application {
         );
 
         stage.setTitle("Hyperplanning");
-        stage.setMinWidth(900);
-        stage.setMinHeight(700);
+        stage.setMinWidth(980);
+        stage.setMinHeight(720);
         stage.setScene(scene);
+         stage.setOnCloseRequest(event -> {
+            ServiceRegistry.shutdown();
+        });
+
         stage.show();
+
+       
     }
 
 

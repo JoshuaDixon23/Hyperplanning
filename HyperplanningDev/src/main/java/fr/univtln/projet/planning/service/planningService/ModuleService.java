@@ -1,5 +1,6 @@
 package fr.univtln.projet.planning.service.planningService;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -27,10 +28,28 @@ public class ModuleService {
 
     @Transactional
     public ModuleEntity create(ModuleEntity entity) {
-        Module module = ModuleMapper.toJpa(entity);
-        Module saved = moduleRepository.save(module);
+        Professor responsibleJpa = null;
+        if (entity.getResponsible() != null) {
+            responsibleJpa = professorService.findJpaByEmailUniv(entity.getResponsible().getEmailUniv());
+            
+            if (responsibleJpa == null) {
+                throw new IllegalArgumentException("Professeur responsable introuvable en base avec l'email : " + entity.getResponsible().getEmailUniv());
+            }
+        }
+
+        Module moduleJpa = Module.builder()
+                .code(entity.getCode())
+                .name(entity.getName())
+                .language(entity.getLanguage())
+                .ects(entity.getECTS())
+                .responsible(responsibleJpa) 
+                .build();
+
+        Module saved = moduleRepository.save(moduleJpa);
+
         return ModuleMapper.toDomain(saved);
     }
+
 
     @Transactional
     public ModuleEntity create(String code, String name, Language language, float ects, String responsibleEmailUniv,
@@ -44,6 +63,33 @@ public class ModuleService {
                 .responsible(responsible)
                 .build();
         Module saved = moduleRepository.save(jpa);
+        return ModuleMapper.toDomain(saved);
+    }
+
+    @Transactional
+    public ModuleEntity update(ModuleEntity entity) {
+        Module existingModule = findJpaByCode(entity.getCode());
+        
+        if (existingModule == null) {
+            throw new IllegalArgumentException("Module introuvable en base : " + entity.getCode());
+        }
+
+        Professor responsibleJpa = null;
+        if (entity.getResponsible() != null) {
+            responsibleJpa = professorService.findJpaByEmailUniv(entity.getResponsible().getEmailUniv());
+            
+            if (responsibleJpa == null) {
+                throw new IllegalArgumentException("Professeur responsable introuvable en base avec l'email : " + entity.getResponsible().getEmailUniv());
+            }
+        }
+
+        existingModule.setName(entity.getName());
+        existingModule.setLanguage(entity.getLanguage());
+        existingModule.setEcts(entity.getECTS());
+        existingModule.setResponsible(responsibleJpa);
+
+        Module saved = moduleRepository.save(existingModule);
+
         return ModuleMapper.toDomain(saved);
     }
 
@@ -75,11 +121,12 @@ public class ModuleService {
     }
 
     public List<ModuleEntity> findAll() {
-        return moduleRepository.findAll()
-                .stream()
-                .map(ModuleMapper::toDomain)
-                .toList();
-    }
+            return moduleRepository.findAll()
+                    .stream()
+                    .map(ModuleMapper::toDomain)
+                    .sorted(Comparator.comparing(ModuleEntity::getName, String.CASE_INSENSITIVE_ORDER))
+                    .toList();
+        }
 
 }
 

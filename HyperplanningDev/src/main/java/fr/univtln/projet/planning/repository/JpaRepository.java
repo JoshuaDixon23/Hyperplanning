@@ -1,9 +1,9 @@
 package fr.univtln.projet.planning.repository;
 
-import jakarta.persistence.EntityManager;
-
 import java.util.List;
 import java.util.Optional;
+
+import jakarta.persistence.EntityManager;
 
 public abstract class JpaRepository<T, ID> implements GenericRepository<T, ID> {
     //A fournir dans le constructeur ou autre (cf. CDI ou Spring)
@@ -43,7 +43,7 @@ public abstract class JpaRepository<T, ID> implements GenericRepository<T, ID> {
         em.getTransaction().commit();
         return entity;
     }
-    
+
     @Override
     public void delete(T entity) {
         em.getTransaction().begin();

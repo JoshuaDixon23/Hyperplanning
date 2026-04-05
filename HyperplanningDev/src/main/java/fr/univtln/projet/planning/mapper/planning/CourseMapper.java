@@ -23,6 +23,10 @@ public class CourseMapper {
             c.getProfessors().forEach(prof -> builder.professor(ProfessorMapper.toDomain(prof)));
         }
 
+        if (c.getGroups() != null) {
+            c.getGroups().forEach(group -> builder.group(GroupMapper.toDomain(group)));
+        }
+
         return builder.build();
     }
 
@@ -34,16 +38,13 @@ public class CourseMapper {
                 .date(c.getDate())
                 .startTime(c.getStartTime())
                 .duration(c.getDuration())
-                .room(RoomMapper.toJpa(c.getRoom()))
+                .room(RoomMapper.toJpa(c.getRoom())) 
                 .courseType(c.getCourseType());
-
-        if (c.getRoom() != null) {
-            builder.room(RoomMapper.toJpa(c.getRoom()));
-        }
 
         if (c.getProfessors() != null) {
             c.getProfessors().forEach(prof -> builder.professor(ProfessorMapper.toJpa(prof)));
         }
+        
         if (c.getGroups() != null) {
             c.getGroups().forEach(group -> builder.group(GroupMapper.toJpa(group)));
         }

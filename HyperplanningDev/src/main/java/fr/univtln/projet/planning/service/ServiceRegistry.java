@@ -69,12 +69,10 @@ public class ServiceRegistry {
         System.out.println("Initializing ServiceRegistry...");
 
         try {
-            // Step 1: Initialize JPA context
             emf = Persistence.createEntityManagerFactory("HyperplanningPU");
             em = emf.createEntityManager();
             System.out.println("JPA EntityManager initialized");
 
-            // Step 2: Initialize all repositories
             CampusRepository campusRepo = new CampusRepository(em);
             BuildingRepository buildingRepo = new BuildingRepository(em);
             RoomRepository roomRepo = new RoomRepository(em);
@@ -90,12 +88,10 @@ public class ServiceRegistry {
             CourseRepository courseRepo = new CourseRepository(em);
             System.out.println("All repositories initialized");
 
-            // Step 3: Initialize simple services (no complex dependencies)
             campusService = new CampusService(campusRepo);
             adminService = new AdminService(adminRepo);
             System.out.println("Simple services initialized (Campus, Admin)");
 
-            // Step 4: Initialize services with single dependencies
             ufrService = new UFRService(ufrRepo, adminService, campusService);
             professorService = new ProfessorService(professorRepo);
             localStudentService = new LocalStudentService(localStudentRepo, promoService);
@@ -103,19 +99,17 @@ public class ServiceRegistry {
             staffDRIService = new StaffDRIService(staffDRIRepo);
             System.out.println("Person and UFR services initialized");
 
-            // Step 5: Initialize infrastructure services (depend on UFR, Campus)
+
             buildingService = new BuildingService(buildingRepo, campusService, ufrService);
             roomService = new RoomService(roomRepo, buildingService);
             System.out.println("Infrastructure services initialized (Building, Room)");
 
-            // Step 6: Initialize academic services (depend on UFR)
             promoService = new PromoService(promoRepo, ufrService);
             groupService = new GroupService(groupRepo, promoService, moduleService);
             System.out.println("Academic services initialized (Promo, Group)");
 
-            // Step 7: Initialize planning services
             moduleService = new ModuleService(moduleRepo, professorService);
-            courseService = new CourseService(courseRepo);
+            courseService = new CourseService(courseRepo, moduleService, roomService, professorService, groupService);
             System.out.println("Planning services initialized (Module, Course)");
 
             System.out.println("ServiceRegistry fully initialized successfully!");
