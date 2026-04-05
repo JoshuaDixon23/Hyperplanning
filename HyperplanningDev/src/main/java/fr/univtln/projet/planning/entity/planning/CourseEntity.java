@@ -24,41 +24,35 @@ public class CourseEntity implements Comparable<CourseEntity> {
     private Duration duration;
     private Set<ProfessorEntity> professors;
     private RoomEntity room;
-    private CourseType courseType; // may be final
-    // private State state; (State has to be an Enum of "annulated", "in progress"... respectively to state diagram
-    private Set<GroupEntity> groups = new HashSet<>();
+    private CourseType courseType;
+    private Set<GroupEntity> groups; 
 
     public CourseEntity(Builder b) {
-        courseId = b.courseId; // Ajout de l'ID
-        module = b.module;
-        date = b.date;
-        startTime = b.startTime;
-        duration = b.duration;
-        professors = b.professors;
-        room = b.room;
-        courseType = b.courseType;
+        this.courseId = b.courseId;
+        this.module = b.module;
+        this.date = b.date;
+        this.startTime = b.startTime;
+        this.duration = b.duration;
+        this.professors = b.professors;
+        this.room = b.room;
+        this.courseType = b.courseType;
+        this.groups = b.groups;
     }
 
-    public Long courseId() { return courseId; } // Ajout de l'ID
-
+    public Long courseId() { return courseId; }
     public ModuleEntity module() { return module; }
-
     public LocalDate date() { return date; }
-
     public LocalTime startTime() { return startTime; }
-
     public Duration duration() { return duration; }
-
     public Set<ProfessorEntity> professors() { return professors; }
-
     public RoomEntity room() { return room; }
-
     public CourseType courseType() { return courseType; }
+    public Set<GroupEntity> groups() { return groups; }
 
     public static Builder builder() { return new Builder(); }
 
     public static final class Builder {
-        private Long courseId = null; // Ajout de l'ID
+        private Long courseId = null;
         private ModuleEntity module = null;
         private LocalDate date = null;
         private LocalTime startTime = null;
@@ -66,28 +60,27 @@ public class CourseEntity implements Comparable<CourseEntity> {
         private Set<ProfessorEntity> professors = new HashSet<>();
         private RoomEntity room = null;
         private CourseType courseType = null;
+        private Set<GroupEntity> groups = new HashSet<>(); // Initialisation dans le builder
 
         public Builder() {}
 
-        public Builder courseId(Long id) { this.courseId = id; return this; } // Ajout de l'ID
-
+        public Builder courseId(Long id) { this.courseId = id; return this; }
         public Builder module(ModuleEntity m) { this.module = m; return this; }
-
         public Builder date(LocalDate date) { this.date = date; return this; }
-
         public Builder startTime(LocalTime t) { this.startTime = t; return this; }
-
         public Builder duration(Duration d) { this.duration = d; return this; }
+        public Builder room(RoomEntity r) { this.room = r; return this; }
+        public Builder courseType(CourseType t) { this.courseType = t; return this; }
 
-        // name in singular in order to add professors one by one
         public Builder professor(ProfessorEntity p) {
             this.professors.add(p);
             return this;
         }
 
-        public Builder room(RoomEntity r) { this.room = r; return this; }
-
-        public Builder courseType(CourseType t) { this.courseType = t; return this; }
+        public Builder group(GroupEntity g) {
+            this.groups.add(g);
+            return this;
+        }
 
         public CourseEntity build() {
             Objects.requireNonNull(module, "module required");
@@ -95,8 +88,6 @@ public class CourseEntity implements Comparable<CourseEntity> {
             Objects.requireNonNull(startTime, "startTime required");
             Objects.requireNonNull(duration, "duration required");
             Objects.requireNonNull(courseType, "courseType required");
-            //Objects.requireNonNull(professors, "at least one professor required");
-
             return new CourseEntity(this);
         }
     }
@@ -107,21 +98,20 @@ public class CourseEntity implements Comparable<CourseEntity> {
         if (o == null || getClass() != o.getClass()) return false;
         CourseEntity course = (CourseEntity) o;
         
-        // Ajout de courseId dans la comparaison
         return Objects.equals(courseId, course.courseId)
                 && Objects.equals(module, course.module)
                 && Objects.equals(date, course.date)
                 && Objects.equals(startTime, course.startTime)
                 && Objects.equals(duration, course.duration)
                 && Objects.equals(professors, course.professors)
+                && Objects.equals(groups, course.groups) 
                 && Objects.equals(room, course.room)
                 && courseType == course.courseType;
     }
 
     @Override
     public int hashCode() {
-        // Ajout de courseId dans le hash
-        return Objects.hash(courseId, module, date, startTime, duration, professors, room, courseType);
+        return Objects.hash(courseId, module, date, startTime, duration, professors, groups, room, courseType);
     }
 
     @Override
@@ -134,12 +124,13 @@ public class CourseEntity implements Comparable<CourseEntity> {
     @Override
     public String toString() {
         return "CourseEntity{" +
-                "courseId=" + courseId + // Ajout de l'ID
+                "courseId=" + courseId +
                 ", module=" + module +
                 ", date=" + date +
                 ", startTime=" + startTime +
                 ", duration=" + duration +
                 ", professors=" + professors +
+                ", groups=" + groups + 
                 ", room=" + room +
                 ", courseType=" + courseType +
                 '}';
@@ -148,7 +139,7 @@ public class CourseEntity implements Comparable<CourseEntity> {
     public void addGroup(GroupEntity g) {
         if (g != null && !groups.contains(g)) {
             groups.add(g);
-            g.addCourse(this); // sync bidirectionnelle
+            g.addCourse(this); 
         }
     }
 

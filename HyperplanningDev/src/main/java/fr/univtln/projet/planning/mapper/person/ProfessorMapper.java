@@ -14,7 +14,8 @@ public class ProfessorMapper {
 
         return ProfessorEntity.ProfessorFactory(
                 professor.getFirstName(),
-                professor.getLastName()
+                professor.getLastName(),
+                professor.getEmailUniv()
         );
     }
 

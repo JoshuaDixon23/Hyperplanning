@@ -13,9 +13,9 @@ public class GroupMapper {
         if (g == null) return null;
         GroupEntity entity = GroupEntity.GroupFactory(
                 g.getNum(),
-                g.getType()
+                g.getType(),
+                g.getPromo() != null ? PromoMapper.toDomain(g.getPromo()) : null
         );
-        entity.setPromo(PromoMapper.toDomain(g.getPromo()));
         // toDomain of planning to add ?
         return entity;
     }

@@ -1,10 +1,10 @@
 package fr.univtln.projet.planning.entity.person;
 
-import fr.univtln.projet.planning.entity.TextTransformation;
-import lombok.Getter;
-
 import java.util.Objects;
 import java.util.function.BiFunction;
+
+import fr.univtln.projet.planning.entity.TextTransformation;
+import lombok.Getter;
 
 @Getter
 public abstract class UserEntity {
@@ -30,6 +30,21 @@ public abstract class UserEntity {
         T user = constructor.apply(formattedFname, formattedLname);
 
         user.emailUniv = functionUnivMail.apply(user);
+
+        return user;
+    }
+
+    protected static <T extends UserEntity> T UserFactory(String fname, String lname, String emailUniv, BiFunction<String, String, T> constructor) {
+        // verification of entries to do !!!
+
+        // format : Firstname LASTNAME
+        String formattedFname = TextTransformation.capitalize(fname);
+        String formattedLname = lname.toUpperCase();
+
+        // Call of real constructor of subclass
+        T user = constructor.apply(formattedFname, formattedLname);
+
+        user.emailUniv = emailUniv;
 
         return user;
     }

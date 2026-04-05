@@ -13,6 +13,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 import fr.univtln.projet.planning.entity.academic.GroupEntity;
 import fr.univtln.projet.planning.entity.infrastructure.RoomEntity;
@@ -32,10 +33,13 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.CustomMenuItem;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuButton;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -165,7 +169,7 @@ public class ModuleController implements Initializable {
             // 2. Lancement du chargement des cours en arrière-plan
             Thread loaderThread = new Thread(() -> {
                 for (ModuleEntity module : pageItems) {
-                    List<CourseEntity> courses = courseService.findPlanningByModule(module, startOfAcademicYear, endOfAcademicYear);
+                    List<CourseEntity> courses = courseService.findPlanningByModuleCode(module.getCode(), startOfAcademicYear, endOfAcademicYear);
 
                     // 3. Mise à jour de la carte spécifique sur le Thread UI
                     Platform.runLater(() -> {
@@ -256,7 +260,12 @@ public class ModuleController implements Initializable {
                 noCourseLabel.setStyle("-fx-font-style: italic; -fx-text-fill: #999;");
                 container.getChildren().add(noCourseLabel);
             } else {
-                for (CourseEntity c : courses) {
+                List<CourseEntity> sortedCourses = courses.stream()
+                        .sorted(java.util.Comparator.comparing(CourseEntity::getDate)
+                                .thenComparing(CourseEntity::getStartTime))
+                        .collect(Collectors.toList());
+
+                for (CourseEntity c : sortedCourses) {
                     container.getChildren().add(createCourseItem(c));
                 }
             }
@@ -285,19 +294,19 @@ public class ModuleController implements Initializable {
             }
         }
 
-        GroupEntity assignedGroup = null;
-        try {
-            assignedGroup = course.getGroups().stream().findFirst().orElse(null);
-        } catch (Exception e) {
-            System.err.println("Impossible de charger le groupe pour ce cours : " + e.getMessage());
+        // --- AFFICHAGE MULTI-GROUPES ---
+        String groupName = "Pas de groupe";
+        if (course.getGroups() != null && !course.getGroups().isEmpty()) {
+            groupName = course.getGroups().stream()
+                    .map(g -> "Gr." + g.getNum() + " (" + g.getType() + ")")
+                    .collect(Collectors.joining(", "));
         }
-
-        String groupName = (assignedGroup != null) ? "Groupe " + assignedGroup.getNum() : "Pas de groupe"; 
 
         String infoText = String.format("%s - %s | %s\n%s | %s", startTime, endTime, groupName, profName, roomName);
         
         Label infoLabel = new Label(infoText);
         infoLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: #333;");
+        infoLabel.setWrapText(true); // Permet le retour à la ligne si beaucoup de groupes
         
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
@@ -372,6 +381,14 @@ public class ModuleController implements Initializable {
     private boolean validateNotNull(Object obj, String fieldName) {
         if (obj == null) {
             showErrorAlert("Sélection obligatoire", "Veuillez sélectionner une option pour : " + fieldName + ".");
+            return false;
+        }
+        return true;
+    }
+
+    private boolean validateNotEmptyList(List<?> list, String fieldName) {
+        if (list == null || list.isEmpty()) {
+            showErrorAlert("Sélection obligatoire", "Veuillez sélectionner au moins une option pour : " + fieldName + ".");
             return false;
         }
         return true;
@@ -454,7 +471,6 @@ public class ModuleController implements Initializable {
         grid.setHgap(10); grid.setVgap(10); grid.setPadding(new Insets(20, 150, 10, 10));
 
         DatePicker datePicker = new DatePicker(LocalDate.now());
-
         TextField timeField = new TextField("08:00"); 
         TextField durationField = new TextField("120"); 
         
@@ -469,22 +485,40 @@ public class ModuleController implements Initializable {
         roomComboBox.setItems(cachedRooms);
         roomComboBox.setPromptText("Sélectionnez une salle");
 
-        ComboBox<GroupEntity> groupComboBox = new ComboBox<>();
-        groupComboBox.setItems(cachedGroups);
-        groupComboBox.setPromptText("Sélectionnez un groupe");
-        groupComboBox.setConverter(new javafx.util.StringConverter<GroupEntity>() {
-            @Override public String toString(GroupEntity g) { return g != null ? "Groupe " + g.getNum() + " (" + g.getType() + ")" : ""; }
-            @Override public GroupEntity fromString(String string) { return null; }
-        });
+        // --- MENU BUTTON MULTI-SELECTION POUR LES GROUPES ---
+        MenuButton groupMenuButton = new MenuButton("Aucun groupe sélectionné");
+        List<GroupEntity> selectedGroups = new ArrayList<>();
 
-        grid.add(new Label("Date:"), 0, 0); 
-        grid.add(datePicker, 1, 0);
+        for (GroupEntity g : cachedGroups) {
+                CheckBox cb = new CheckBox(g.getPromo().getName() + " " + 
+                                        g.getPromo().getStudyLevel() + " - Groupe " + 
+                                        g.getNum() + " (" + g.getType() + ")");
+            CustomMenuItem item = new CustomMenuItem(cb);
+            item.setHideOnClick(false); // Le menu reste ouvert quand on coche
+
+            cb.selectedProperty().addListener((obs, wasSelected, isNowSelected) -> {
+                if (isNowSelected) {
+                    selectedGroups.add(g);
+                } else {
+                    selectedGroups.remove(g);
+                }
+                
+                if (selectedGroups.isEmpty()) {
+                    groupMenuButton.setText("Aucun groupe sélectionné");
+                } else {
+                    groupMenuButton.setText(selectedGroups.size() + " groupe(s) sélectionné(s)");
+                }
+            });
+            groupMenuButton.getItems().add(item);
+        }
+
+        grid.add(new Label("Date:"), 0, 0); grid.add(datePicker, 1, 0);
         grid.add(new Label("Heure de début (HH:mm):"), 0, 1); grid.add(timeField, 1, 1);
         grid.add(new Label("Durée (minutes):"), 0, 2); grid.add(durationField, 1, 2);
         grid.add(new Label("Type:"), 0, 3); grid.add(typeComboBox, 1, 3);
         grid.add(new Label("Professeur:"), 0, 4); grid.add(profComboBox, 1, 4);
         grid.add(new Label("Salle:"), 0, 5); grid.add(roomComboBox, 1, 5);
-        grid.add(new Label("Groupe:"), 0, 6); grid.add(groupComboBox, 1, 6); 
+        grid.add(new Label("Groupes:"), 0, 6); grid.add(groupMenuButton, 1, 6); 
 
         dialog.getDialogPane().setContent(grid);
 
@@ -497,7 +531,7 @@ public class ModuleController implements Initializable {
                 !validateNotNull(typeComboBox.getValue(), "Type") ||          
                 !validateNotNull(profComboBox.getValue(), "Professeur") ||
                 !validateNotNull(roomComboBox.getValue(), "Salle") ||          
-                !validateNotNull(groupComboBox.getValue(), "Groupe") ||
+                !validateNotEmptyList(selectedGroups, "Groupes") || // Validation multi-sélection
                 !validateNotNull(datePicker.getValue(), "Date")) {        
                 event.consume();
             }
@@ -518,9 +552,9 @@ public class ModuleController implements Initializable {
                         .room(roomComboBox.getValue()) 
                         .build();
                 
-                GroupEntity selectedGroup = groupComboBox.getValue();
-                if (selectedGroup != null) {
-                    newCourse.addGroup(selectedGroup); 
+                // Ajout de tous les groupes sélectionnés au cours
+                for (GroupEntity group : selectedGroups) {
+                    newCourse.addGroup(group);
                 }
 
                 return newCourse;
@@ -530,8 +564,7 @@ public class ModuleController implements Initializable {
 
         dialog.showAndWait().ifPresent(courseToSave -> {
             try {
-                courseService.create(courseToSave); 
-                
+                courseService.create(courseToSave); // Reste identique, ton Service s'occupe de tout !
                 loadModulesAndCoursesFromService(); 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -583,25 +616,70 @@ public class ModuleController implements Initializable {
         });
         roomComboBox.getSelectionModel().select(course.getRoom());
 
-        ComboBox<GroupEntity> groupComboBox = new ComboBox<>();
-        groupComboBox.setItems(cachedGroups);
-        groupComboBox.setConverter(new javafx.util.StringConverter<GroupEntity>() {
-            @Override public String toString(GroupEntity g) { return g != null ? "Groupe " + g.getNum() + " (" + g.getType() + ")" : ""; }
-            @Override public GroupEntity fromString(String string) { return null; }
-        });
+        // --- MENU BUTTON MULTI-SELECTION POUR L'EDITION ---
+        MenuButton groupMenuButton = new MenuButton("Aucun groupe sélectionné");
+        List<GroupEntity> selectedGroups = new ArrayList<>();
+
+        for (GroupEntity g : cachedGroups) {
+            CheckBox cb = new CheckBox(g.getPromo().getName() + " " + 
+                                    g.getPromo().getStudyLevel() + " - Groupe " + 
+                                    g.getNum() + " (" + g.getType() + ")");
+            CustomMenuItem item = new CustomMenuItem(cb);
+            item.setHideOnClick(false);
+
+            // 1. On place le Listener AVANT de cocher (pour qu'il mette à jour le texte automatiquement)
+            cb.selectedProperty().addListener((obs, wasSelected, isNowSelected) -> {
+                if (isNowSelected) {
+                    if (!selectedGroups.contains(g)) {
+                        selectedGroups.add(g);
+                    }
+                } else {
+                    selectedGroups.remove(g);
+                }
+                
+                if (selectedGroups.isEmpty()) {
+                    groupMenuButton.setText("Aucun groupe sélectionné");
+                } else {
+                    groupMenuButton.setText(selectedGroups.size() + " groupe(s) sélectionné(s)");
+                }
+            });
+
+            // 2. Vérification robuste par ID (clé primaire) au lieu de .contains()
+            boolean isAlreadyLinked = false;
+            if (course.getGroups() != null) {
+                for (GroupEntity courseGroup : course.getGroups()) {
+                    // On compare les IDs pour être sûr à 100% que c'est le même groupe
+                   if (courseGroup.getNum() == g.getNum() && 
+                        courseGroup.getType()== g.getType() && 
+                        courseGroup.getPromo().getName().equals(g.getPromo().getName())) {
+                        
+                        isAlreadyLinked = true;
+                        break;
+                    }
+                }
+            }
+
+            // 3. On coche si nécessaire (ce qui déclenchera le listener et mettra à jour le texte du bouton !)
+            if (isAlreadyLinked) {
+                cb.setSelected(true);
+            }
+
+            groupMenuButton.getItems().add(item);
+        }
         
-        GroupEntity oldGroup = null;
-        try {
-            oldGroup = course.getGroups().stream().findFirst().orElse(null);
-        } catch(Exception ignored){}
-        groupComboBox.getSelectionModel().select(oldGroup);
+        // Initialisation du texte du bouton
+        if (selectedGroups.isEmpty()) {
+            groupMenuButton.setText("Aucun groupe sélectionné");
+        } else {
+            groupMenuButton.setText(selectedGroups.size() + " groupe(s) sélectionné(s)");
+        }
 
         grid.add(new Label("Heure de début (HH:mm):"), 0, 0); grid.add(timeField, 1, 0);
         grid.add(new Label("Durée (minutes):"), 0, 1); grid.add(durationField, 1, 1);
         grid.add(new Label("Type:"), 0, 2); grid.add(typeComboBox, 1, 2);
         grid.add(new Label("Professeur:"), 0, 3); grid.add(profComboBox, 1, 3);
         grid.add(new Label("Salle:"), 0, 4); grid.add(roomComboBox, 1, 4);
-        grid.add(new Label("Groupe:"), 0, 5); grid.add(groupComboBox, 1, 5);
+        grid.add(new Label("Groupes:"), 0, 5); grid.add(groupMenuButton, 1, 5);
 
         dialog.getDialogPane().setContent(grid);
         
@@ -614,13 +692,11 @@ public class ModuleController implements Initializable {
                 !validateNotNull(typeComboBox.getValue(), "Type") ||           
                 !validateNotNull(profComboBox.getValue(), "Professeur") ||     
                 !validateNotNull(roomComboBox.getValue(), "Salle") ||          
-                !validateNotNull(groupComboBox.getValue(), "Groupe")) {     
+                !validateNotEmptyList(selectedGroups, "Groupes")) {     
                 event.consume();
             }
         });
 
-        final GroupEntity finalOldGroup = oldGroup; 
-        
         dialog.setResultConverter(dialogButton -> {
             if (dialogButton == saveButtonType) {
                 LocalTime localTime = LocalTime.parse(timeField.getText());
@@ -636,14 +712,15 @@ public class ModuleController implements Initializable {
                 course.setProfessors(updatedProfs);
                 course.setRoom(roomComboBox.getValue());
 
-                GroupEntity newGroup = groupComboBox.getValue();
-                if (finalOldGroup != null && !finalOldGroup.equals(newGroup)) {
-                    finalOldGroup.removeCourse(course);
-                    groupService.create(finalOldGroup); 
+                // Mise à jour propre de la liste des groupes du cours
+                // 1. On retire proprement tous les anciens groupes
+                List<GroupEntity> currentGroups = new ArrayList<>(course.getGroups());
+                for (GroupEntity g : currentGroups) {
+                    course.removeGroup(g);
                 }
-                if (newGroup != null && !newGroup.equals(finalOldGroup)) {
-                    newGroup.addCourse(course);
-                    groupService.create(newGroup); 
+                // 2. On ajoute les nouveaux (et on laisse le CourseService s'occuper de la DB)
+                for (GroupEntity g : selectedGroups) {
+                    course.addGroup(g);
                 }
                 
                 return course;
@@ -653,6 +730,7 @@ public class ModuleController implements Initializable {
 
         dialog.showAndWait().ifPresent(updatedCourse -> {
             try {
+                courseService.delete(course.getCourseId());
                 courseService.create(updatedCourse); 
                 loadModulesAndCoursesFromService(); 
             } catch (Exception e) {
@@ -674,22 +752,33 @@ public class ModuleController implements Initializable {
         grid.setHgap(10); grid.setVgap(10); grid.setPadding(new Insets(20, 150, 10, 10));
 
         TextField nameField = new TextField(oldModule.getName()); 
+        
         TextField codeField = new TextField(oldModule.getCode()); 
+        codeField.setEditable(false); 
+        codeField.setStyle("-fx-background-color: #f0f0f0;"); 
+        
         TextField ectsField = new TextField(String.valueOf(oldModule.getECTS())); 
         
         ComboBox<ProfessorEntity> profComboBox = new ComboBox<>();
         profComboBox.setItems(cachedProfessors);
         profComboBox.setConverter(new javafx.util.StringConverter<ProfessorEntity>() {
-            @Override public String toString(ProfessorEntity p) { return p != null ? p.getName() : ""; }
+            @Override public String toString(ProfessorEntity p) { 
+                return p != null ? p.getFirstName() + " " + p.getLastName() : ""; 
+            }
             @Override public ProfessorEntity fromString(String string) { return null; }
         });
         
-        if (oldModule.responsible() != null) {
-            profComboBox.getSelectionModel().select(oldModule.responsible());
+        if (oldModule.getResponsible() != null) {
+            ProfessorEntity currentResp = cachedProfessors.stream()
+                .filter(p -> p.getEmailUniv().equals(oldModule.getResponsible().getEmailUniv()))
+                .findFirst()
+                .orElse(oldModule.getResponsible());
+                
+            profComboBox.getSelectionModel().select(currentResp);
         }
 
         grid.add(new Label("Nom du module:"), 0, 0); grid.add(nameField, 1, 0);
-        grid.add(new Label("Code:"), 0, 1); grid.add(codeField, 1, 1);
+        grid.add(new Label("Code (Fixe):"), 0, 1); grid.add(codeField, 1, 1);
         grid.add(new Label("ECTS:"), 0, 2); grid.add(ectsField, 1, 2);
         grid.add(new Label("Responsable:"), 0, 3); grid.add(profComboBox, 1, 3);
 
@@ -698,7 +787,6 @@ public class ModuleController implements Initializable {
         final Button btSave = (Button) dialog.getDialogPane().lookupButton(saveButtonType);
         btSave.addEventFilter(ActionEvent.ACTION, event -> {
             if (!validateNotEmpty(nameField.getText(), "Nom du module") ||
-                !validateNotEmpty(codeField.getText(), "Code") ||
                 !validateNotEmpty(ectsField.getText(), "ECTS") ||
                 !validateFloat(ectsField.getText(), "ECTS") ||
                 !validateNotNull(profComboBox.getValue(), "Responsable")) { 
@@ -709,9 +797,9 @@ public class ModuleController implements Initializable {
         dialog.setResultConverter(dialogButton -> {
             if (dialogButton == saveButtonType) {
                 oldModule.setName(nameField.getText());
-                oldModule.setCode(codeField.getText());
                 oldModule.setECTS(Float.parseFloat(ectsField.getText()));
                 oldModule.setResponsible(profComboBox.getValue());
+                
                 return oldModule;
             }
             return null;
@@ -719,8 +807,13 @@ public class ModuleController implements Initializable {
 
         dialog.showAndWait().ifPresent(updatedModule -> {
             try {
-                moduleService.create(updatedModule); 
+                // Le ModuleService.create(entity) va mapper ça en objet JPA.
+                // Puisque l'objet JPA aura un "code" (ID) existant en BDD, 
+                // Hibernate fera un UPDATE intelligent.
+                moduleService.update(updatedModule); 
+                
                 loadModulesAndCoursesFromService(); 
+                
             } catch (Exception e) {
                 System.err.println("Error updating module: " + e.getMessage());
                 showErrorAlert("Erreur DB", "Impossible de mettre à jour le module.");
@@ -730,8 +823,27 @@ public class ModuleController implements Initializable {
 
     private void handleDeleteModule(ModuleEntity module) {
         try {
-            moduleService.delete(module); 
+            List<CourseEntity> moduleCourses = courseService.findPlanningByModule(
+                    module, 
+                    LocalDate.of(2000, 1, 1), 
+                    LocalDate.of(2100, 12, 31)
+            );
+
+            for (CourseEntity course : moduleCourses) {
+                if (course.getGroups() != null) {
+                    List<GroupEntity> groups = new ArrayList<>(course.getGroups());
+                    for(GroupEntity g : groups) {
+                        g.removeCourse(course);
+                    }
+                }
+
+                courseService.delete(course.getCourseId());
+            }
+
+            moduleService.delete(module);
+            
             loadModulesAndCoursesFromService();
+            
         } catch (Exception e) {
             System.err.println("Error deleting module: " + e.getMessage());
             showErrorAlert("Erreur DB", "Impossible de supprimer le module.");
@@ -740,10 +852,10 @@ public class ModuleController implements Initializable {
 
     private void handleDeleteCourse(CourseEntity course) {
         try {
-            GroupEntity g = course.getGroups().stream().findFirst().orElse(null);
-            if(g != null) {
+            // Nettoyage de la relation avec TOUS les groupes du cours
+            List<GroupEntity> groups = new ArrayList<>(course.getGroups());
+            for(GroupEntity g : groups) {
                 g.removeCourse(course);
-                groupService.create(g); 
             }
 
             courseService.delete(course.getCourseId()); 
