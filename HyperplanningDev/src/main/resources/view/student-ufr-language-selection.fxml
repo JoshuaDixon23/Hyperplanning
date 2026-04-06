@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="fr.univtln.projet.planning.controller.InternationalStudentUFRLanguageController"
+            style="-fx-background-color: #f8f9fa;">
+
+    <!-- SIDEBAR -->
+    <left>
+        <fx:include source="/components/sidebar-staffDri.fxml"/>
+    </left>
+
+    <!-- CONTENU -->
+    <center>
+        <VBox spacing="20"
+              style="-fx-padding: 40;"
+              BorderPane.alignment="CENTER">
+
+            <!-- HEADER -->
+            <Label fx:id="studentNameLabel"
+                   text="Prénom NOM"
+                   style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #333333;"/>
+
+            <!-- SOUS-TITRE -->
+            <Label text="Choose UFR(s) and study language(s) for this student"
+                   style="-fx-font-size: 14px; -fx-text-fill: #666666;"/>
+
+            <!-- COLONNES -->
+            <HBox spacing="30" VBox.vgrow="ALWAYS">
+
+                <!-- UFR -->
+                <VBox spacing="10" HBox.hgrow="ALWAYS">
+                    <Label text="UFRs "
+                           style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #333;"/>
+
+                    <ScrollPane fitToWidth="true"
+                                VBox.vgrow="ALWAYS"
+                                prefHeight="400"
+                                style="-fx-border-color: #e2e4e8; -fx-border-radius: 8;">
+
+                        <content>
+                            <VBox fx:id="ufrListContainer"
+                                  spacing="8"
+                                  style="-fx-padding: 12; -fx-background-color: white;"/>
+                        </content>
+
+                    </ScrollPane>
+                </VBox>
+
+                <!-- LANGUES -->
+                <VBox spacing="10" HBox.hgrow="ALWAYS">
+                    <Label text="Study languages"
+                           style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #333;"/>
+
+                    <ScrollPane fitToWidth="true"
+                                VBox.vgrow="ALWAYS"
+                                prefHeight="400"
+                                style="-fx-border-color: #e2e4e8; -fx-border-radius: 8;">
+
+                        <content>
+                            <VBox fx:id="languageListContainer"
+                                  spacing="8"
+                                  style="-fx-padding: 12; -fx-background-color: white;"/>
+                        </content>
+
+                    </ScrollPane>
+                </VBox>
+
+            </HBox>
+
+            <!-- BOUTON -->
+            <HBox alignment="CENTER_RIGHT">
+                <Button text="Valider et continuer →"
+                        onAction="#handleValidate"
+                        style="-fx-background-color: black;
+                               -fx-text-fill: white;
+                               -fx-font-weight: bold;
+                               -fx-padding: 10 30;
+                               -fx-cursor: hand;"/>
+            </HBox>
+
+        </VBox>
+    </center>
+
+</BorderPane>

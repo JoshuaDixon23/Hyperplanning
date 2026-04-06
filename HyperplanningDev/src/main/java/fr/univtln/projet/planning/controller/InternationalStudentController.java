@@ -5,12 +5,17 @@ import fr.univtln.projet.planning.service.personService.InternationalStudentServ
 import fr.univtln.projet.planning.service.ServiceRegistry;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -306,41 +311,67 @@ public class InternationalStudentController implements Initializable {
 
     /**
      * Clic sur une carte étudiant → ouvre un dialog de détail / édition.
-     *
-     * TODO: si tu veux naviguer vers une vraie vue FXML séparée,
-     *       remplacer le contenu de cette méthode par un FXMLLoader
-     *       (comme dans le StudentController générique précédent).
      */
     private void handleSelectStudent(InternationalStudentEntity student) {
         Dialog<Void> dialog = new Dialog<>();
         dialog.setTitle("Détail étudiant");
-        dialog.setHeaderText(student.getFirstName() + " " + student.getLastName());
+        dialog.setHeaderText(student.getFirstName() + " " + student.getLastName().toUpperCase());
 
-        ButtonType deleteButtonType = new ButtonType("Supprimer", ButtonBar.ButtonData.LEFT);
-        dialog.getDialogPane().getButtonTypes().addAll(deleteButtonType, ButtonType.CLOSE);
+        ButtonType planningButtonType = new ButtonType("Gérer le planning", ButtonBar.ButtonData.LEFT);
+        ButtonType deleteButtonType   = new ButtonType("Supprimer",         ButtonBar.ButtonData.LEFT);
+        dialog.getDialogPane().getButtonTypes().addAll(
+                planningButtonType, deleteButtonType, ButtonType.CLOSE
+        );
 
         VBox content = new VBox(10);
         content.setPadding(new Insets(20));
-
-        // TODO: adapter les getters selon les vrais champs de InternationalStudentEntity
         content.getChildren().addAll(
-                new Label("Email univ : " + student.getEmailUniv()),
+                new Label("Email univ  : " + student.getEmailUniv()),
                 new Label("Email perso : " + student.getEmailPersonal())
-                // TODO: ajouter d'autres champs si InternationalStudentEntity en possède
-                //       ex: nationalité, université d'origine, etc.
         );
-
         dialog.getDialogPane().setContent(content);
 
         dialog.setResultConverter(btn -> {
             if (btn == deleteButtonType) {
                 dialog.close();
                 handleDeleteStudent(student);
+            } else if (btn == planningButtonType) {
+                dialog.close();
+                navigateToPlanningSetup(student);
             }
             return null;
         });
 
         dialog.showAndWait();
+    }
+
+    /**
+     * Ouvre la page de sélection UFR / Langues pour cet étudiant.
+     */
+    private void navigateToPlanningSetup(InternationalStudentEntity student) {
+        try {
+            // TODO: vérifier ici si un ModuleBasket existe déjà pour cet étudiant
+            //       Si oui, naviguer directement vers la page de planning existant
+            //       ex: if (moduleBasketService.existsByStudent(student)) { ... }
+
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/view/student-ufr-language-selection.fxml")
+            );
+            Parent root = loader.load();
+
+            InternationalStudentUFRLanguageController controller = loader.getController();
+            controller.setStudent(student);
+
+            // Réutilise la même fenêtre (comme ton collègue avec les modules)
+            Stage stage = (Stage) studentsGrid.getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.show();
+
+        } catch (IOException e) {
+            System.err.println("Erreur navigation planning : " + e.getMessage());
+            // showErrorAlert est déjà disponible dans ce controller
+            showErrorAlert("Erreur", "Impossible d'ouvrir la page de gestion du planning.");
+        }
     }
 
     @FXML
