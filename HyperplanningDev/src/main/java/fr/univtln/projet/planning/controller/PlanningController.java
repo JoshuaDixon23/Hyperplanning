@@ -347,16 +347,35 @@ public class PlanningController {
 
         if (user instanceof LocalStudent student) {
             connectedUserPromoId = extractStudentPromoId(student);
+
+            if (btnMaPromo != null) {
+                btnMaPromo.setVisible(true);
+                btnMaPromo.setManaged(true);
+            }
+
             btnMonEdt.setSelected(true);
             loadPlanning(PlanningContext.forStudent(student.getUserId()));
 
         } else if (user instanceof Professor professor) {
             connectedUserPromoId = null;
+
             btnMonEdt.setSelected(true);
+
+            if (btnMaPromo != null) {
+                btnMaPromo.setVisible(false);
+                btnMaPromo.setManaged(false);
+            }
+
             loadPlanning(PlanningContext.forProfessor(professor.getUserId()));
 
         } else if (user instanceof Admin) {
             connectedUserPromoId = null;
+
+            if (btnMaPromo != null) {
+                btnMaPromo.setVisible(false);
+                btnMaPromo.setManaged(false);
+            }
+
             userNameLabel.setText(userNameLabel.getText() + " (Admin)");
             viewGroup.selectToggle(null);
 
@@ -430,7 +449,6 @@ public class PlanningController {
             int startMinute = course.getStartTime().getMinute();
             int durationMinutes = extractDurationMinutes(course);
 
-
             String moduleName = course.getModule() != null
                     ? course.getModule().getName()
                     : "Cours";
@@ -448,7 +466,9 @@ public class PlanningController {
                     ? course.getRoom().getName()
                     : "Salle non définie";
 
-            addCourse(dayIndex, startHour, startMinute, durationMinutes, moduleName, courseType, teacher, room, course);
+            String promoLabel = extractPromoLabel(course);
+
+            addCourse(dayIndex, startHour, startMinute, durationMinutes, moduleName, courseType, teacher, room, promoLabel, course);
         }
     }
 
@@ -537,7 +557,7 @@ public class PlanningController {
 
     }
 
-    private VBox buildCourseCard(String title, String type, String teacher, String room, CourseEntity course) {
+    private VBox buildCourseCard(String title, String type, String teacher, String room, String promoLabel, CourseEntity course) {
         VBox card = new VBox(4);
         card.getStyleClass().add("course-card");
         card.setFillWidth(true);
@@ -554,9 +574,15 @@ public class PlanningController {
         titleRow.setAlignment(Pos.CENTER_LEFT);
         HBox.setHgrow(t, Priority.ALWAYS);
         titleRow.getChildren().addAll(colorDot, t);
+
         Label ty = createSingleLineLabel(type, "course-meta");
         Label te = createSingleLineLabel(teacher, "course-meta");
         Label r = createSingleLineLabel(room, "course-meta");
+
+        t.setTooltip(new Tooltip(title));
+        ty.setTooltip(new Tooltip(type));
+        te.setTooltip(new Tooltip(teacher));
+        r.setTooltip(new Tooltip(room));
 
         Region spacer = new Region();
         VBox.setVgrow(spacer, Priority.ALWAYS);
@@ -567,15 +593,17 @@ public class PlanningController {
         button.setPrefHeight(20);
         button.setMinHeight(20);
         button.setFocusTraversable(false);
-
-        t.setTooltip(new Tooltip(title));
-        ty.setTooltip(new Tooltip(type));
-        te.setTooltip(new Tooltip(teacher));
-        r.setTooltip(new Tooltip(room));
-
         button.setOnAction(e -> showCourseDetails(course));
 
-        card.getChildren().addAll(titleRow, ty, te, r, spacer, button);
+        card.getChildren().addAll(titleRow, ty, te, r);
+
+        if (connectedUser instanceof Professor) {
+            Label promo = createSingleLineLabel(promoLabel, "course-meta");
+            promo.setTooltip(new Tooltip(promoLabel));
+            card.getChildren().add(promo);
+        }
+
+        card.getChildren().addAll(spacer, button);
 
         Rectangle clip = new Rectangle();
         clip.widthProperty().bind(card.widthProperty());
@@ -597,9 +625,9 @@ public class PlanningController {
 
 
     private void addCourse(int dayIndex, int startHour, int startMinute, int durationMinutes,
-                           String title, String type, String teacher, String room, CourseEntity course) {
+                           String title, String type, String teacher, String room, String promoLabel, CourseEntity course) {
 
-        VBox card = buildCourseCard(title, type, teacher, room, course);
+        VBox card = buildCourseCard(title, type, teacher, room, promoLabel, course);
 
         card.getProperties().put("dayIndex", dayIndex);
         card.getProperties().put("startMinutes", startHour * 60 + startMinute);
@@ -643,17 +671,23 @@ public class PlanningController {
                 .orElse("Non défini")
                 : "Non défini";
 
+        StringBuilder content = new StringBuilder();
+        content.append("Type : ").append(type).append("\n")
+                .append("Date : ").append(date).append("\n")
+                .append("Heure de début : ").append(startTime).append("\n")
+                .append("Durée : ").append(duration).append("\n")
+                .append("Enseignant(s) : ").append(teachers).append("\n")
+                .append("Salle : ").append(room);
+
+        if (connectedUser instanceof Professor) {
+            String promoLabel = extractPromoLabel(course);
+            content.append("\n").append("Promo : ").append(promoLabel);
+        }
+
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Détails du cours");
         alert.setHeaderText(module);
-        alert.setContentText(
-                "Type : " + type + "\n" +
-                        "Date : " + date + "\n" +
-                        "Heure de début : " + startTime + "\n" +
-                        "Durée : " + duration + "\n" +
-                        "Enseignant(s) : " + teachers + "\n" +
-                        "Salle : " + room
-        );
+        alert.setContentText(content.toString());
 
         alert.showAndWait();
     }
@@ -981,5 +1015,30 @@ public class PlanningController {
 
         int hash = title.hashCode();
         return String.format("#%06X", (0xFFFFFF & hash));
+    }
+
+    private String extractPromoLabel(CourseEntity course) {
+        if (course == null || course.getGroups() == null || course.getGroups().isEmpty()) {
+            return "Promo non définie";
+        }
+
+        return course.getGroups().stream()
+                .map(group -> {
+                    if (group == null || group.getPromo() == null) {
+                        return null;
+                    }
+
+                    PromoEntity promo = group.getPromo();
+
+                    String promoName = promo.getName() != null ? promo.getName() : "Promo";
+                    String studyLevel = promo.getStudyLevel() != null ? promo.getStudyLevel().toString() : "";
+                    int year = promo.getYear();
+
+                    return promoName + " - " + studyLevel + " - " + year;
+                })
+                .filter(label -> label != null && !label.isBlank())
+                .distinct()
+                .reduce((a, b) -> a + ", " + b)
+                .orElse("Promo non définie");
     }
 }
