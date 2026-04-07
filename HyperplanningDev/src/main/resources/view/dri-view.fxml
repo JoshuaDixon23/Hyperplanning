@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="fr.univtln.projet.planning.controller.DRIController"
+            styleClass="root">
+
+    <left>
+        <VBox prefWidth="280" styleClass="sidebar">
+            <HBox spacing="14" alignment="CENTER_LEFT" styleClass="sidebar-header">
+                <Label text="📅" styleClass="sidebar-logo"/>
+                <Label fx:id="userNameLabel" text="Staff DRI" styleClass="sidebar-username"/>
+            </HBox>
+            <Separator styleClass="sidebar-sep"/>
+            <VBox spacing="6" styleClass="sidebar-menu">
+                <HBox spacing="12" alignment="CENTER_LEFT" styleClass="nav-item">
+                    <Label text="⬛" styleClass="nav-icon"/>
+                    <Label text="Dashboard" styleClass="nav-text"/>
+                </HBox>
+                <HBox spacing="12" alignment="CENTER_LEFT" styleClass="nav-item, nav-item-selected">
+                    <Label text="📅" styleClass="nav-icon, nav-icon-selected"/>
+                    <Label text="Planning DRI" styleClass="nav-text, nav-text-selected"/>
+                </HBox>
+            </VBox>
+            <VBox VBox.vgrow="ALWAYS"/>
+        </VBox>
+    </left>
+
+    <center>
+        <VBox spacing="14" styleClass="content" fillWidth="true" maxWidth="Infinity">
+
+            <HBox spacing="20" VBox.vgrow="ALWAYS">
+
+                <VBox spacing="10" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS">
+                    <HBox spacing="12" alignment="CENTER" styleClass="weeks-row">
+                        <Button fx:id="prevWeeksBtn" text="❮" styleClass="week-arrow" onAction="#onPrevWeeks"/>
+                        <StackPane fx:id="weeksViewport" styleClass="weeks-viewport" HBox.hgrow="ALWAYS">
+                            <HBox fx:id="weeksContainer" spacing="12" alignment="CENTER_LEFT"/>
+                        </StackPane>
+                        <Button fx:id="nextWeeksBtn" text="❯" styleClass="week-arrow" onAction="#onNextWeeks"/>
+                    </HBox>
+
+                    <VBox spacing="0" styleClass="planning-block" VBox.vgrow="ALWAYS">
+                        <HBox spacing="0" styleClass="days-header-row">
+                            <Region prefWidth="70"/>
+                            <GridPane fx:id="daysHeaderGrid" styleClass="days-header" hgap="0" vgap="0" HBox.hgrow="ALWAYS">
+                                <columnConstraints>
+                                    <ColumnConstraints percentWidth="16.666"/>
+                                    <ColumnConstraints percentWidth="16.666"/>
+                                    <ColumnConstraints percentWidth="16.666"/>
+                                    <ColumnConstraints percentWidth="16.666"/>
+                                    <ColumnConstraints percentWidth="16.666"/>
+                                    <ColumnConstraints percentWidth="16.67"/>
+                                </columnConstraints>
+                                <Label text="lundi" GridPane.columnIndex="0" styleClass="day-title" maxWidth="Infinity"/>
+                                <Label text="mardi" GridPane.columnIndex="1" styleClass="day-title" maxWidth="Infinity"/>
+                                <Label text="mercredi" GridPane.columnIndex="2" styleClass="day-title" maxWidth="Infinity"/>
+                                <Label text="jeudi" GridPane.columnIndex="3" styleClass="day-title" maxWidth="Infinity"/>
+                                <Label text="vendredi" GridPane.columnIndex="4" styleClass="day-title" maxWidth="Infinity"/>
+                                <Label text="samedi" GridPane.columnIndex="5" styleClass="day-title" maxWidth="Infinity"/>
+                            </GridPane>
+                        </HBox>
+                        <HBox spacing="0" styleClass="planning-row" VBox.vgrow="ALWAYS">
+                            <ScrollPane fx:id="timeScroll" prefWidth="70" hbarPolicy="NEVER" vbarPolicy="NEVER" styleClass="time-scroll">
+                                <VBox fx:id="timeColumn" styleClass="time-column"/>
+                            </ScrollPane>
+                            <StackPane fx:id="planningCard" styleClass="planning-card" HBox.hgrow="ALWAYS">
+                                <ScrollPane fx:id="planningScroll" fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" styleClass="planning-scroll">
+                                    <StackPane fx:id="planningContent">
+                                        <GridPane fx:id="planningGrid" styleClass="planning-grid" hgap="0" vgap="0" maxWidth="Infinity">
+                                            <columnConstraints>
+                                                <ColumnConstraints percentWidth="16.666"/>
+                                                <ColumnConstraints percentWidth="16.666"/>
+                                                <ColumnConstraints percentWidth="16.666"/>
+                                                <ColumnConstraints percentWidth="16.666"/>
+                                                <ColumnConstraints percentWidth="16.666"/>
+                                                <ColumnConstraints percentWidth="16.67"/>
+                                            </columnConstraints>
+                                        </GridPane>
+                                        <Pane fx:id="coursesPane" pickOnBounds="false"/>
+                                    </StackPane>
+                                </ScrollPane>
+                            </StackPane>
+                        </HBox>
+                    </VBox>
+
+                    <HBox spacing="20" alignment="CENTER_LEFT">
+                        <HBox alignment="CENTER" spacing="0" style="-fx-border-color: #d1d1d1; -fx-border-radius: 5; -fx-background-radius: 5; -fx-background-color: white;">
+                            <Label text="Nombre d'ECTS" style="-fx-padding: 10 20; -fx-font-weight: bold;"/>
+                            <Label fx:id="ectsLabel" text="0" style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-padding: 10 20; -fx-font-weight: bold; -fx-background-radius: 0 4 4 0;"/>
+                        </HBox>
+                        <HBox alignment="CENTER" spacing="0" style="-fx-border-color: #d1d1d1; -fx-border-radius: 5; -fx-background-radius: 5; -fx-background-color: white;">
+                            <Label text="Superpositions des cours" style="-fx-padding: 10 20; -fx-font-weight: bold;"/>
+                            <Label fx:id="conflictsLabel" text="0" style="-fx-background-color: #F44336; -fx-text-fill: white; -fx-padding: 10 20; -fx-font-weight: bold; -fx-background-radius: 0 4 4 0;"/>
+                        </HBox>
+                    </HBox>
+                </VBox>
+
+                <VBox prefWidth="350" spacing="10" style="-fx-background-color: white; -fx-border-color: #d1d1d1; -fx-border-radius: 10; -fx-background-radius: 10; -fx-padding: 15;">
+                    <Label text="Panier de modules" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+                    <Separator/>
+                    <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" style="-fx-background-color: transparent; -fx-border-color: transparent;">
+                        <VBox fx:id="basketContainer" spacing="15"/>
+                    </ScrollPane>
+                </VBox>
+
+            </HBox>
+        </VBox>
+    </center>
+</BorderPane>
