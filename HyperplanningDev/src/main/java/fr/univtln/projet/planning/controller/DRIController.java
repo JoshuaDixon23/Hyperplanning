@@ -21,14 +21,19 @@ import fr.univtln.projet.planning.modele.person.InternationalStudent;
 import fr.univtln.projet.planning.service.planningService.CourseService;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.OverrunStyle;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -37,6 +42,7 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Rectangle;
+import javafx.stage.Stage;
 
 public class DRIController {
 
@@ -44,6 +50,7 @@ public class DRIController {
     @FXML private Label userNameLabel;
     @FXML private Label ectsLabel;
     @FXML private Label conflictsLabel;
+    @FXML private Button logoutButton;
     
     @FXML private VBox basketContainer;
     @FXML private GridPane planningGrid;
@@ -73,14 +80,14 @@ public class DRIController {
     private InternationalStudent currentStudent;
     private List<ModuleEntity> inputModules = new ArrayList<>();
     
-    // Pour un module, on peut avoir un groupe PROMO obligatoire + 1 groupe TD/TP au choix
-    private final Map<String, GroupEntity> promoGroupsPerModule = new HashMap<>();
-    private final Map<String, GroupEntity> selectedSubGroupsPerModule = new HashMap<>();
+    private final Map<String, Map<GroupType, GroupEntity>> selectedGroupsPerModuleAndType = new HashMap<>();
     private final Map<String, Boolean> moduleSelectionStatus = new HashMap<>();
     
     private final List<CourseEntity> allAcademicYearCourses = new ArrayList<>();
     private List<CourseEntity> currentActiveCourses = new ArrayList<>();
     private Set<CourseEntity> allConflictingCourses = new HashSet<>();
+    
+    private final List<VBox> sourceCourseCards = new ArrayList<>();
 
     @FXML
     public void initialize() {
@@ -97,7 +104,7 @@ public class DRIController {
         buildEmptyGrid(8, 20, 1);
 
         coursesPane.setPickOnBounds(false);
-        planningGrid.widthProperty().addListener((obs, oldVal, newVal) -> renderPlanning());
+        planningGrid.widthProperty().addListener((obs, oldVal, newVal) -> layoutCoursesStacked());
 
         coursesPane.addEventFilter(javafx.scene.input.ScrollEvent.SCROLL, event -> {
             double deltaY = event.getDeltaY();
@@ -147,6 +154,7 @@ public class DRIController {
         
         for (ModuleEntity m : modules) {
             moduleSelectionStatus.put(m.getCode(), true);
+            selectedGroupsPerModuleAndType.put(m.getCode(), new HashMap<>());
         }
 
         buildBasket();
@@ -188,20 +196,18 @@ public class DRIController {
             detailsLbl.setStyle("-fx-font-size: 11px; -fx-text-fill: #555;");
             body.getChildren().add(detailsLbl);
 
-            Map<Integer, GroupEntity> uniqueGroupsMap = new HashMap<>();
+            Map<String, GroupEntity> uniqueGroupsMap = new HashMap<>();
             
             if (courseService != null) {
                 List<CourseEntity> moduleCourses = courseService.findPlanningByModuleCode(
-                        module.getCode(), 
-                        startOfAcademicYear, 
-                        endOfAcademicYear
-                );
+                        module.getCode(), startOfAcademicYear, endOfAcademicYear);
                 
                 if (moduleCourses != null) {
                     for (CourseEntity c : moduleCourses) {
                         if (c.getGroups() != null) {
                             for (GroupEntity g : c.getGroups()) {
-                                uniqueGroupsMap.put(g.getNum(), g);
+                                String key = g.getType().name() + "_" + g.getNum() + "_" + g.getPromo().getName();
+                                uniqueGroupsMap.put(key, g);
                             }
                         }
                     }
@@ -210,47 +216,35 @@ public class DRIController {
             
             List<GroupEntity> availableGroups = new ArrayList<>(uniqueGroupsMap.values());
 
-            // Séparer le groupe PROMO des autres groupes (TD/TP)
-            List<GroupEntity> subGroups = new ArrayList<>();
+            Map<GroupType, List<GroupEntity>> groupsByType = new HashMap<>();
             for (GroupEntity g : availableGroups) {
-                if (g.getType() == GroupType.PROMO) {
-                    promoGroupsPerModule.put(module.getCode(), g); // On le garde en mémoire silencieusement
-                } else {
-                    subGroups.add(g); // On garde les autres pour les boutons radios
+                groupsByType.computeIfAbsent(g.getType(), k -> new ArrayList<>()).add(g);
+            }
+
+            boolean hasGroups = false;
+
+            for (GroupType type : GroupType.values()) {
+                List<GroupEntity> groupsOfThisType = groupsByType.get(type);
+                
+                if (groupsOfThisType != null && !groupsOfThisType.isEmpty()) {
+                    
+                    // NOUVEAU : Tri des groupes par numéro avant affichage
+                    groupsOfThisType.sort(java.util.Comparator.comparingInt(GroupEntity::getNum));
+
+                    if (type == GroupType.PROMO) {
+                        selectedGroupsPerModuleAndType.get(module.getCode()).put(GroupType.PROMO, groupsOfThisType.get(0));
+                        Label cmLabel = new Label("📌 Inclus : Cours Magistraux (CM)");
+                        cmLabel.setStyle("-fx-font-style: italic; -fx-text-fill: #666; -fx-padding: 5 0 0 0;");
+                        body.getChildren().add(cmLabel);
+                    } else {
+                        createGroupSectionUI(body, module, groupsOfThisType, getSectionTitle(type), type);
+                    }
+                    hasGroups = true;
                 }
             }
 
-            if (!subGroups.isEmpty()) {
-                Label grpTitle = new Label("Groupes TD/TP");
-                grpTitle.setStyle("-fx-font-weight: bold; -fx-padding: 5 0 0 0;");
-                body.getChildren().add(grpTitle);
-
-                ToggleGroup groupToggle = new ToggleGroup();
-                boolean first = true;
-                
-                for (GroupEntity grp : subGroups) {
-                    RadioButton rb = new RadioButton(grp.getPromo().getName() + " " + 
-                                        grp.getPromo().getStudyLevel() + " - Groupe " + 
-                                        grp.getNum() + " (" + grp.getType() + ")");
-                    rb.setToggleGroup(groupToggle);
-                    if (first) {
-                        rb.setSelected(true);
-                        selectedSubGroupsPerModule.put(module.getCode(), grp);
-                        first = false;
-                    }
-                    
-                    rb.setOnAction(e -> {
-                        if (rb.isSelected()) {
-                            selectedSubGroupsPerModule.put(module.getCode(), grp);
-                            updateDRIState();
-                        }
-                    });
-                    body.getChildren().add(rb);
-                }
-            } else if (promoGroupsPerModule.containsKey(module.getCode())) {
-                body.getChildren().add(new Label("CM Uniquement (Géré automatiquement)"));
-            } else {
-                body.getChildren().add(new Label("Aucun groupe disponible"));
+            if (!hasGroups) {
+                body.getChildren().add(new Label("Aucun groupe spécifique trouvé."));
             }
 
             body.setVisible(false);
@@ -263,6 +257,65 @@ public class DRIController {
 
             card.getChildren().addAll(header, body);
             basketContainer.getChildren().add(card);
+        }
+
+        // NOUVEAU : Ajout du bouton "Valider" à la fin du panier
+        Button validateBtn = new Button("Valider le planning");
+        validateBtn.setStyle("-fx-background-color: black; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10 20; -fx-background-radius: 5; -fx-cursor: hand;");
+        validateBtn.setMaxWidth(Double.MAX_VALUE);
+        validateBtn.setOnAction(e -> handleValidateBasket());
+        VBox.setMargin(validateBtn, new Insets(15, 0, 0, 0));
+        
+        basketContainer.getChildren().add(validateBtn);
+    }
+
+    /**
+     * Méthode Placeholder appelée par le bouton Valider
+     */
+    @FXML
+    private void handleValidateBasket() {
+        System.out.println("✅ VALIDATION DU PLANNING DRI");
+        System.out.println("Étudiant : " + (currentStudent != null ? currentStudent.getFirstName() + " " + currentStudent.getLastName() : "Inconnu"));
+        System.out.println("Nombre de conflits non résolus : " + allConflictingCourses.size());
+        System.out.println("TODO: Implémenter la sauvegarde en base de données ici.");
+        // Tu pourras récupérer les choix faits via 'selectedGroupsPerModuleAndType'
+    }
+
+    private String getSectionTitle(GroupType type) {
+        return switch (type) {
+            case PROMO -> "Cours Magistraux (CM)";
+            case TD -> "Travaux Dirigés (TD)";
+            case TP -> "Travaux Pratiques (TP)";
+            default -> type.name();
+        };
+    }
+
+    private void createGroupSectionUI(VBox parent, ModuleEntity module, List<GroupEntity> groups, String title, GroupType type) {
+        Label lblTitle = new Label(title);
+        lblTitle.setStyle("-fx-font-weight: bold; -fx-padding: 10 0 2 0; -fx-text-fill: #333;");
+        parent.getChildren().add(lblTitle);
+
+        ToggleGroup tg = new ToggleGroup();
+        boolean first = true;
+        
+        for (GroupEntity grp : groups) {
+            RadioButton rb = new RadioButton(grp.getPromo().getName() + " " + grp.getPromo().getStudyLevel() + " - Groupe " + grp.getNum());
+            rb.setToggleGroup(tg);
+            
+            if (first) {
+                rb.setSelected(true);
+                selectedGroupsPerModuleAndType.get(module.getCode()).put(type, grp);
+                first = false;
+            }
+            
+            rb.setOnAction(e -> {
+                if (rb.isSelected()) {
+                    selectedGroupsPerModuleAndType.get(module.getCode()).put(type, grp);
+                    updateDRIState();
+                }
+            });
+            
+            parent.getChildren().add(rb);
         }
     }
 
@@ -278,14 +331,14 @@ public class DRIController {
         }
 
         currentActiveCourses = getActiveCourses(allAcademicYearCourses);
-        
         allConflictingCourses = findOverlaps(currentActiveCourses);
+        
         if (conflictsLabel != null) {
             conflictsLabel.setText(String.valueOf(allConflictingCourses.size()));
         }
 
         renderWeeksInto(weeksContainer, baseWeekMonday);
-        renderPlanning();
+        buildPlanningCards();
     }
 
     private void loadAllAcademicYearCourses() {
@@ -301,37 +354,26 @@ public class DRIController {
         updateDRIState();
     }
 
-    /**
-     * Garde le cours si :
-     * 1. Il n'a aucun groupe (cours générique)
-     * 2. Il appartient au groupe PROMO de ce module
-     * 3. Il appartient au sous-groupe (TD/TP) sélectionné par l'utilisateur
-     */
     private List<CourseEntity> getActiveCourses(List<CourseEntity> rawCourses) {
         List<CourseEntity> active = new ArrayList<>();
         for (CourseEntity course : rawCourses) {
             ModuleEntity module = course.getModule();
             if (module == null || !moduleSelectionStatus.getOrDefault(module.getCode(), false)) continue;
 
-            GroupEntity promoGroup = promoGroupsPerModule.get(module.getCode());
-            GroupEntity selectedSubGroup = selectedSubGroupsPerModule.get(module.getCode());
+            Map<GroupType, GroupEntity> studentChoicesForModule = selectedGroupsPerModuleAndType.get(module.getCode());
             boolean keepCourse = false;
             
             if (course.getGroups() == null || course.getGroups().isEmpty()) {
                 keepCourse = true; 
             } else {
-                for (GroupEntity cg : course.getGroups()) {
-                    // Est-ce le groupe PROMO obligatoire ?
-                    boolean isPromo = (promoGroup != null && cg.getNum() == promoGroup.getNum() 
-                            && Objects.equals(cg.getType(), promoGroup.getType()) 
-                            && Objects.equals(cg.getPromo().getName(), promoGroup.getPromo().getName()));
+                for (GroupEntity courseGroup : course.getGroups()) {
+                    GroupEntity studentChoice = studentChoicesForModule != null ? studentChoicesForModule.get(courseGroup.getType()) : null;
                     
-                    // Est-ce le groupe TD/TP choisi par l'étudiant ?
-                    boolean isSelectedSubGroup = (selectedSubGroup != null && cg.getNum() == selectedSubGroup.getNum() 
-                            && Objects.equals(cg.getType(), selectedSubGroup.getType()) 
-                            && Objects.equals(cg.getPromo().getName(), selectedSubGroup.getPromo().getName()));
-
-                    if (isPromo || isSelectedSubGroup) {
+                    if (studentChoice != null 
+                            && courseGroup.getNum() == studentChoice.getNum()
+                            && Objects.equals(courseGroup.getType(), studentChoice.getType())
+                            && Objects.equals(courseGroup.getPromo().getName(), studentChoice.getPromo().getName())) {
+                        
                         keepCourse = true;
                         break;
                     }
@@ -343,38 +385,6 @@ public class DRIController {
             }
         }
         return active;
-    }
-
-    private void renderPlanning() {
-        if (coursesPane == null) return;
-        coursesPane.getChildren().clear();
-        
-        if (planningGrid.getWidth() <= 0) return;
-
-        LocalDate endOfWeek = selectedWeekMonday.plusDays(6);
-
-        for (CourseEntity course : currentActiveCourses) {
-            if (course.getDate().isBefore(selectedWeekMonday) || course.getDate().isAfter(endOfWeek)) {
-                continue;
-            }
-
-            int dayIndex = (int) ChronoUnit.DAYS.between(selectedWeekMonday, course.getDate());
-            if (dayIndex < 0 || dayIndex >= 6) continue;
-
-            int startHour = course.getStartTime().getHour();
-            int startMinute = course.getStartTime().getMinute();
-            int durationMinutes = extractDurationMinutes(course);
-
-            boolean isConflict = allConflictingCourses.contains(course);
-            
-            String moduleName = course.getModule() != null ? course.getModule().getName() : "Cours";
-            String courseType = course.getCourseType() != null ? course.getCourseType().name() : "";
-            String room = course.getRoom() != null ? course.getRoom().getName() : "Pas de salle";
-
-            VBox card = buildCourseCard(moduleName, courseType, room, isConflict);
-            placeSingleCard(card, dayIndex, startHour * 60 + startMinute, durationMinutes);
-            coursesPane.getChildren().add(card);
-        }
     }
 
     private Set<CourseEntity> findOverlaps(List<CourseEntity> courses) {
@@ -400,49 +410,352 @@ public class DRIController {
         return conflicts;
     }
 
-    private VBox buildCourseCard(String title, String type, String room, boolean isConflict) {
-        VBox card = new VBox(2);
-        card.setFillWidth(true);
-        card.setPadding(new Insets(5));
+    // ==========================================================
+    // Course Layout and Rendering
+    // ==========================================================
+
+    private void buildPlanningCards() {
+        sourceCourseCards.clear();
+        LocalDate endOfWeek = selectedWeekMonday.plusDays(6);
+
+        for (CourseEntity course : currentActiveCourses) {
+            if (course.getDate().isBefore(selectedWeekMonday) || course.getDate().isAfter(endOfWeek)) {
+                continue;
+            }
+
+            int dayIndex = (int) ChronoUnit.DAYS.between(selectedWeekMonday, course.getDate());
+            if (dayIndex < 0 || dayIndex >= 6) continue;
+
+            int startHour = course.getStartTime().getHour();
+            int startMinute = course.getStartTime().getMinute();
+            int durationMinutes = extractDurationMinutes(course);
+
+            boolean isConflict = allConflictingCourses.contains(course);
+            
+            String moduleName = course.getModule() != null ? course.getModule().getName() : "Cours";
+            String courseType = course.getCourseType() != null ? course.getCourseType().name() : "Type non défini";
+            String room = course.getRoom() != null ? course.getRoom().getName() : "Pas de salle";
+            
+            String teacher = (course.getProfessors() != null && !course.getProfessors().isEmpty())
+                    ? course.getProfessors().iterator().next().getFirstName() + " " + course.getProfessors().iterator().next().getLastName()
+                    : "Prof non défini";
+
+            addCourseCard(dayIndex, startHour, startMinute, durationMinutes, moduleName, courseType, teacher, room, isConflict);
+        }
         
+        layoutCoursesStacked();
+    }
+
+    private void addCourseCard(int dayIndex, int startHour, int startMinute, int durationMinutes,
+                           String title, String type, String teacher, String room, boolean isConflict) {
+
+        VBox card = buildCourseCardUI(title, type, teacher, room, isConflict);
+
+        card.getProperties().put("dayIndex", dayIndex);
+        card.getProperties().put("startMinutes", startHour * 60 + startMinute);
+        card.getProperties().put("endMinutes", startHour * 60 + startMinute + durationMinutes);
+        card.getProperties().put("durationMinutes", durationMinutes);
+
+        sourceCourseCards.add(card);
+    }
+
+    private VBox buildCourseCardUI(String title, String type, String teacher, String room, boolean isConflict) {
+        VBox card = new VBox(2);
+        card.getStyleClass().add("course-card");
+        card.setFillWidth(true);
+        card.setAlignment(Pos.TOP_LEFT);
+        card.setManaged(false);
+
         if (isConflict) {
-            card.setStyle("-fx-background-color: #F44336; -fx-background-radius: 4; -fx-border-color: #D32F2F; -fx-border-radius: 4;");
+            card.setStyle("-fx-background-color: #F44336; -fx-border-color: #D32F2F;");
         } else {
-            card.setStyle("-fx-background-color: #4CAF50; -fx-background-radius: 4; -fx-border-color: #388E3C; -fx-border-radius: 4;");
+            card.setStyle("-fx-background-color: #4CAF50; -fx-border-color: #388E3C;");
         }
 
-        Label t = new Label(title);
-        t.setStyle("-fx-font-weight: bold; -fx-text-fill: white; -fx-font-size: 11px;");
-        t.setWrapText(true);
+        Label t = createSingleLineLabel(title, "course-title");
+        t.setStyle("-fx-text-fill: white; -fx-font-weight: bold;"); 
         
-        Label ty = new Label("Type: " + type + " | Salle: " + room);
-        ty.setStyle("-fx-text-fill: white; -fx-font-size: 10px;");
-        ty.setWrapText(true);
+        Label ty = createSingleLineLabel(type, "course-meta");
+        ty.setStyle("-fx-text-fill: white;");
+        
+        Label te = createSingleLineLabel(teacher, "course-meta");
+        te.setStyle("-fx-text-fill: white;");
+        
+        Label r = createSingleLineLabel(room, "course-meta");
+        r.setStyle("-fx-text-fill: white;");
 
-        card.getChildren().addAll(t, ty);
+        Button button = new Button("More");
+        button.getStyleClass().add("button-more");
+        button.setMaxWidth(Double.MAX_VALUE);
+        button.setPrefHeight(20);
+        button.setMinHeight(20);
+        button.setFocusTraversable(false);
+
+        t.setTooltip(new Tooltip(title));
+        ty.setTooltip(new Tooltip(type));
+        te.setTooltip(new Tooltip(teacher));
+        r.setTooltip(new Tooltip(room));
+
+        card.getChildren().addAll(t, ty, te, r, button);
+
+        Rectangle clip = new Rectangle();
+        clip.widthProperty().bind(card.widthProperty());
+        clip.heightProperty().bind(card.heightProperty());
+        card.setClip(clip);
+
         return card;
     }
 
-    private void placeSingleCard(VBox card, int dayIndex, int startMinutes, int duration) {
-        double horizontalPadding = 4;
-        double columnX = dayIndex * (planningGrid.getWidth() / 6.0);
-        double columnWidth = (planningGrid.getWidth() / 6.0);
+    private Label createSingleLineLabel(String text, String styleClass) {
+        Label label = new Label(text);
+        label.getStyleClass().add(styleClass);
+        label.setWrapText(false);
+        label.setTextOverrun(OverrunStyle.ELLIPSIS);
+        label.setEllipsisString("...");
+        label.setMaxWidth(Double.MAX_VALUE);
+        return label;
+    }
+
+    private void layoutCoursesStacked() {
+        if (planningGrid.getWidth() <= 0) return;
+        coursesPane.getChildren().clear();
+
+        int dayCols = 6;
+        for (int day = 0; day < dayCols; day++) {
+            final int currentDay = day;
+
+            List<Node> dayCards = sourceCourseCards.stream()
+                    .filter(n -> ((int) n.getProperties().get("dayIndex")) == currentDay)
+                    .sorted(java.util.Comparator.comparingInt(n -> (int) n.getProperties().get("startMinutes")))
+                    .map(n -> (Node) n)
+                    .toList();
+
+            List<List<Node>> groups = buildOverlapGroups(dayCards);
+
+            for (List<Node> group : groups) {
+                if (group.size() == 1) {
+                    VBox card = (VBox) group.get(0);
+                    placeSingleCard(card, currentDay);
+                    coursesPane.getChildren().add(card);
+                } else {
+                    Pane overlapPane = buildOverlapPane(group, currentDay);
+                    coursesPane.getChildren().add(overlapPane);
+                }
+            }
+        }
+    }
+
+    private List<List<Node>> buildOverlapGroups(List<Node> cards) {
+        List<List<Node>> groups = new ArrayList<>();
+        if (cards.isEmpty()) return groups;
+
+        List<Node> currentGroup = new ArrayList<>();
+        int currentMaxEnd = -1;
+
+        for (Node card : cards) {
+            int start = (int) card.getProperties().get("startMinutes");
+            int end = (int) card.getProperties().get("endMinutes");
+
+            if (currentGroup.isEmpty()) {
+                currentGroup.add(card);
+                currentMaxEnd = end;
+            } else if (start < currentMaxEnd) {
+                currentGroup.add(card);
+                currentMaxEnd = Math.max(currentMaxEnd, end);
+            } else {
+                groups.add(currentGroup);
+                currentGroup = new java.util.ArrayList<>();
+                currentGroup.add(card);
+                currentMaxEnd = end;
+            }
+        }
+
+        if (!currentGroup.isEmpty()) {
+            groups.add(currentGroup);
+        }
+
+        return groups;
+    }
+
+    private void placeSingleCard(VBox card, int dayIndex) {
+        double horizontalPadding = 6;
+        int start = (int) card.getProperties().get("startMinutes");
+        int duration = (int) card.getProperties().get("durationMinutes");
+
+        double columnX = getDayColumnX(dayIndex);
+        double columnWidth = getDayColumnWidth();
 
         double x = columnX + horizontalPadding;
-        double y = ((startMinutes - GRID_START_HOUR * 60) / (double) SLOT_MINUTES) * ROW_HEIGHT;
+        double y = computeCourseY(start);
         double w = columnWidth - 2 * horizontalPadding;
-        double h = (duration / (double) SLOT_MINUTES) * ROW_HEIGHT;
+        double h = computeCourseHeight(duration);
 
-        if (h < 15) h = 15;
+        if (h < 8) h = 8;
 
         card.setManaged(false);
         card.resizeRelocate(x, y, w, h);
+    }
+
+    private Pane buildOverlapPane(List<Node> group, int dayIndex) {
+        Pane container = new Pane();
+
+        double horizontalPadding = 6;
+        double tabWidth = 18;
+        double gap = 4;
+
+        int minStart = group.stream().mapToInt(n -> (int) n.getProperties().get("startMinutes")).min().orElse(GRID_START_HOUR * 60);
+        int maxEnd = group.stream().mapToInt(n -> (int) n.getProperties().get("endMinutes")).max().orElse(minStart + 60);
+
+        double columnX = getDayColumnX(dayIndex);
+        double columnWidth = getDayColumnWidth();
+
+        double totalWidth = columnWidth - 2 * horizontalPadding;
+        double cardWidth = totalWidth - tabWidth - gap;
+
+        double x = columnX + horizontalPadding;
+        double y = computeCourseY(minStart);
+        double h = computeCourseHeight(maxEnd - minStart);
+
+        if (h < ROW_HEIGHT) h = ROW_HEIGHT;
+
+        container.setManaged(false);
+        container.setLayoutX(x);
+        container.setLayoutY(y);
+        container.setPrefSize(totalWidth, h);
+        container.setMinSize(totalWidth, h);
+        container.setMaxSize(totalWidth, h);
+
+        Pane cardsLayer = new Pane();
+        cardsLayer.setManaged(false);
+        cardsLayer.setLayoutX(0);
+        cardsLayer.setLayoutY(0);
+        cardsLayer.setPrefSize(cardWidth, h);
+        cardsLayer.setMinSize(cardWidth, h);
+        cardsLayer.setMaxSize(cardWidth, h);
+
+        Pane selector = new Pane();
+        selector.setManaged(false);
+        selector.setLayoutX(cardWidth + gap);
+        selector.setLayoutY(0);
+        selector.setPrefSize(tabWidth, h);
+        selector.setMinSize(tabWidth, h);
+        selector.setMaxSize(tabWidth, h);
+
+        container.setClip(new Rectangle(totalWidth, h));
+        cardsLayer.setClip(new Rectangle(cardWidth, h));
+        selector.setClip(new Rectangle(tabWidth, h));
+
+        List<Button> tabButtons = new ArrayList<>();
+        double nextAvailableTabY = 6.0; 
+
+        for (int i = 0; i < group.size(); i++) {
+            VBox card = (VBox) group.get(i);
+
+            int start = (int) card.getProperties().get("startMinutes");
+            int duration = (int) card.getProperties().get("durationMinutes");
+
+            double innerY = computeCourseY(start) - y;
+            double innerH = computeCourseHeight(duration);
+
+            if (innerH < ROW_HEIGHT) innerH = ROW_HEIGHT;
+
+            card.getProperties().put("innerY", innerY);
+            card.getProperties().put("innerH", innerH);
+
+            card.setManaged(false);
+            card.resizeRelocate(0, innerY, cardWidth, innerH);
+
+            if (i == 0) {
+                card.setOpacity(1.0);
+                card.setTranslateX(0);
+                card.setTranslateY(0);
+            } else {
+                card.setOpacity(0.35);
+                card.setTranslateX(6);
+                card.setTranslateY(6);
+            }
+
+            cardsLayer.getChildren().add(card);
+
+            Button indexBtn = new Button(String.valueOf(i + 1));
+            indexBtn.getStyleClass().add("overlap-tab-button");
+            indexBtn.setMinSize(tabWidth, 18);
+            indexBtn.setPrefSize(tabWidth, 18);
+            indexBtn.setMaxSize(tabWidth, 18);
+            
+            double desiredY = innerY + 6;
+            double actualY = Math.max(desiredY, nextAvailableTabY);
+            
+            indexBtn.setLayoutX(0);
+            indexBtn.setLayoutY(actualY);
+            
+            nextAvailableTabY = actualY + 22; 
+
+            final int selectedIndex = i;
+            indexBtn.setOnAction(e -> showCardInStack(cardsLayer, tabButtons, group, selectedIndex));
+
+            tabButtons.add(indexBtn);
+            selector.getChildren().add(indexBtn);
+        }
+
+        container.getChildren().addAll(cardsLayer, selector);
+        showCardInStack(cardsLayer, tabButtons, group, 0);
+
+        return container;
+    }
+
+    private void showCardInStack(Pane cardsLayer, List<Button> tabButtons, List<Node> group, int selectedIndex) {
+        cardsLayer.getChildren().clear();
+
+        for (int i = 0; i < group.size(); i++) {
+            VBox card = (VBox) group.get(i);
+            card.setTranslateX(0);
+            card.setTranslateY(0);
+            card.setOpacity(1.0);
+
+            if (i != selectedIndex) {
+                card.setOpacity(0.35);
+                card.setTranslateX(6);
+                card.setTranslateY(6);
+            }
+        }
+
+        for (int i = 0; i < group.size(); i++) {
+            if (i != selectedIndex) cardsLayer.getChildren().add(group.get(i));
+        }
+        cardsLayer.getChildren().add(group.get(selectedIndex));
+
+        for (int i = 0; i < tabButtons.size(); i++) {
+            Button btn = tabButtons.get(i);
+            btn.getStyleClass().removeAll("overlap-tab-active", "overlap-tab-inactive");
+            btn.getStyleClass().add(i == selectedIndex ? "overlap-tab-active" : "overlap-tab-inactive");
+        }
+    }
+
+    private double getDayColumnWidth() {
+        return planningGrid.getWidth() / 6.0;
+    }
+
+    private double getDayColumnX(int dayIndex) {
+        return dayIndex * getDayColumnWidth();
+    }
+
+    private double computeCourseY(int startMinutes) {
+        return ((startMinutes - GRID_START_HOUR * 60) / (double) SLOT_MINUTES) * ROW_HEIGHT;
+    }
+
+    private double computeCourseHeight(int durationMinutes) {
+        return (durationMinutes / (double) SLOT_MINUTES) * ROW_HEIGHT;
     }
 
     private int extractDurationMinutes(CourseEntity course) {
         if (course.getDuration() == null) return 0;
         return (int) course.getDuration().toMinutes(); 
     }
+
+    // ==========================================================
+    // Navigation et Utilitaires
+    // ==========================================================
 
     private String formatRange(LocalDate start, LocalDate end) {
         String startStr = start.format(dayMonthFmt);
@@ -463,7 +776,7 @@ public class DRIController {
         baseWeekMonday = baseWeekMonday.plusWeeks(weeksShown);
         selectedWeekMonday = selectedWeekMonday.plusWeeks(weeksShown);
         renderWeeksInto(weeksContainer, baseWeekMonday);
-        updateDRIState(); 
+        buildPlanningCards(); 
     }
 
     @FXML
@@ -471,7 +784,7 @@ public class DRIController {
         baseWeekMonday = baseWeekMonday.minusWeeks(weeksShown);
         selectedWeekMonday = selectedWeekMonday.minusWeeks(weeksShown);
         renderWeeksInto(weeksContainer, baseWeekMonday);
-        updateDRIState();
+        buildPlanningCards();
     }
 
     private void renderWeeksInto(HBox container, LocalDate baseMonday) {
@@ -506,7 +819,7 @@ public class DRIController {
             weekBtn.setOnAction(e -> {
                 selectedWeekMonday = weekMonday;
                 renderWeeksInto(container, baseMonday);
-                updateDRIState(); 
+                buildPlanningCards(); 
             });
 
             container.getChildren().add(weekBtn);
@@ -567,5 +880,27 @@ public class DRIController {
         coursesPane.setMinHeight(totalHeight);
         coursesPane.setPrefHeight(totalHeight);
         planningContent.setMinHeight(totalHeight);
+    }
+
+    @FXML
+    private void handleLogout() {
+        if (logoutButton != null) {
+            logoutButton.setText("Chargement...");
+            logoutButton.setDisable(true);
+        }
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/connexion-view.fxml"));
+            Scene scene = new Scene(loader.load());
+            scene.getStylesheets().add(getClass().getResource("/css/connexion.css").toExternalForm());
+            Stage stage = (Stage) logoutButton.getScene().getWindow();
+            stage.setScene(scene);
+            stage.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+            if (logoutButton != null) {
+                logoutButton.setText("Déconnexion");
+                logoutButton.setDisable(false);
+            }
+        }
     }
 }
