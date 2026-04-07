@@ -7,6 +7,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+
 
 import java.io.IOException;
 
@@ -14,10 +16,13 @@ public class MainController {
 
     @FXML private StackPane contentArea;
     @FXML private SidebarController sidebarController;
+    @FXML private VBox sidebar;
+
 
     private CourseService courseService;
     private PromoService promoService;
     private User connectedUser;
+    private boolean guestMode = false;
 
     @FXML
     public void initialize() {
@@ -26,6 +31,9 @@ public class MainController {
         }
     }
 
+    public void setGuestMode(boolean guestMode) {
+        this.guestMode = guestMode;
+    }
     public void setCourseService(CourseService courseService) {
         this.courseService = courseService;
     }
@@ -39,6 +47,15 @@ public class MainController {
 
         if (sidebarController != null && connectedUser != null) {
             sidebarController.setUserName(connectedUser.getFirstName() + " " + connectedUser.getLastName());
+        }
+    }
+
+    public void initGuestData() {
+        loadPlanningView();
+
+        if (sidebarController != null) {
+            sidebarController.setUserName("Invité");
+            sidebarController.setActiveById("btnPlanning");
         }
     }
 
@@ -74,7 +91,12 @@ public class MainController {
             PlanningController planningController = loader.getController();
             planningController.setCourseService(courseService);
             planningController.setPromoService(promoService);
-            planningController.setConnectedUser(connectedUser);
+
+            if (guestMode) {
+                planningController.setGuestMode(true);
+            } else {
+                planningController.setConnectedUser(connectedUser);
+            }
 
             contentArea.getChildren().setAll(view);
 

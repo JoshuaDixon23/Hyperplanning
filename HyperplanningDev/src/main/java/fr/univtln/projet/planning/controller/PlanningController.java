@@ -53,6 +53,7 @@ public class PlanningController {
     @FXML private Button logoutButton;
 
 
+
     private static final int GRID_START_HOUR = 8;
     private static final int SLOT_MINUTES = 30;
     private static final double ROW_HEIGHT = 60;
@@ -80,6 +81,7 @@ public class PlanningController {
     private PromoService promoService;
     private User connectedUser;
     private Long connectedUserPromoId;
+    private boolean guestMode = false;
 
 
     // ==========================================================
@@ -111,11 +113,13 @@ public class PlanningController {
 
 
         btnMonEdt.setOnAction(e -> {
+            if (guestMode) return;
             promoBox.getSelectionModel().clearSelection();
             loadConnectedUserPlanning();
         });
 
         btnMaPromo.setOnAction(e -> {
+            if (guestMode) return;
             promoBox.getSelectionModel().clearSelection();
             loadConnectedUserPromoPlanning();
         });
@@ -330,13 +334,16 @@ public class PlanningController {
     }
 
     public void setConnectedUser(User user) {
+        if (guestMode) {
+            return;
+        }
+
         this.connectedUser = user;
 
         if (user == null) {
             connectedUserPromoId = null;
             return;
         }
-
 
         if (user instanceof LocalStudent student) {
             connectedUserPromoId = extractStudentPromoId(student);
@@ -369,6 +376,36 @@ public class PlanningController {
     public void setPromoService(PromoService promoService) {
         this.promoService = promoService;
         loadPromoChoices();
+    }
+
+    public void setGuestMode(boolean guestMode) {
+        this.guestMode = guestMode;
+
+        if (guestMode) {
+            if (btnMonEdt != null) {
+                btnMonEdt.setVisible(false);
+                btnMonEdt.setManaged(false);
+            }
+
+            if (btnMaPromo != null) {
+                btnMaPromo.setVisible(false);
+                btnMaPromo.setManaged(false);
+            }
+
+            if (promoBox != null) {
+                promoBox.setDisable(false);
+                promoBox.setVisible(true);
+                promoBox.setManaged(true);
+            }
+
+            if (userNameLabel != null) {
+                userNameLabel.setText("Invité");
+            }
+
+            connectedUser = null;
+            connectedUserPromoId = null;
+            viewGroup.selectToggle(null);
+        }
     }
 
     // A corriger proprement par la suite car la c'est une methode qui permet de recuperer la durée qui est en nanos secondes et pas en minutes

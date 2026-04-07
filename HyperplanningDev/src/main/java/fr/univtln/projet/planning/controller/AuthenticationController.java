@@ -40,6 +40,7 @@ public class AuthenticationController {
     @FXML private Button cancelButton;
     @FXML private VBox confirmPasswordBox;
     @FXML private PasswordField confirmPasswordField;
+    @FXML private Button guestButton;
 
     private EntityManagerFactory emf;
     private EntityManager em;
@@ -221,6 +222,11 @@ public class AuthenticationController {
         }
     }
 
+    @FXML
+    private void handleGuestAccess() {
+        goToGuestPlanning();
+    }
+
     /**
      * Action bouton "Annuler"
      */
@@ -283,7 +289,50 @@ public class AuthenticationController {
     }
 
 
+    private void goToGuestPlanning() {
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/view/main-view.fxml")
+            );
 
+            Scene scene = new Scene(loader.load());
+
+            scene.getStylesheets().addAll(
+                    getClass().getResource("/css/base.css").toExternalForm(),
+                    getClass().getResource("/css/sidebar.css").toExternalForm(),
+                    getClass().getResource("/css/components.css").toExternalForm(),
+                    getClass().getResource("/css/planning.css").toExternalForm()
+            );
+
+            MainController mainController = loader.getController();
+
+            CourseRepository courseRepository = new CourseRepository(em);
+            CourseService courseService = new CourseService(courseRepository);
+
+            PromoRepository promoRepository = new PromoRepository(em);
+            UFRRepository ufrRepository = new UFRRepository(em);
+            AdminRepository adminRepository = new AdminRepository(em);
+            CampusRepository campusRepository = new CampusRepository(em);
+
+            AdminService adminService = new AdminService(adminRepository);
+            CampusService campusService = new CampusService(campusRepository);
+            UFRService ufrService = new UFRService(ufrRepository, adminService, campusService);
+            PromoService promoService = new PromoService(promoRepository, ufrService);
+
+            mainController.setCourseService(courseService);
+            mainController.setPromoService(promoService);
+            mainController.setGuestMode(true);
+            mainController.initGuestData();
+
+            Stage stage = (Stage) loginButton.getScene().getWindow();
+            stage.setScene(scene);
+            stage.show();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            showError("Erreur lors du chargement du planning invité : " + e.getMessage());
+        }
+    }
 
     private void goToPlanning(User connectedUser) {
         try {

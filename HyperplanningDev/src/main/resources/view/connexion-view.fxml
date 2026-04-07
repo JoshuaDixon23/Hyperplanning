@@ -98,6 +98,15 @@
                             styleClass="login-button-secondary"
                             onAction="#handleCancel"/>
 
+                    <Region prefHeight="12"/>
+
+                    <Button fx:id="guestButton"
+                            text="continuer en invité"
+                            styleClass="login-button-secondary"
+                            onAction="#handleGuestAccess"
+                            maxWidth="345"
+                            prefWidth="345"/>
+
                     <Label fx:id="planningLabel"
                            text="Planning 2026"
                            managed="false"
