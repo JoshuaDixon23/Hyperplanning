@@ -16,7 +16,7 @@ public class Main extends Application {
         ServiceRegistry.initialize();
 
         Parent root = FXMLLoader.load(
-                getClass().getResource("/view/admin-course-view.fxml")
+                getClass().getResource("/view/connexion-view.fxml")
         );
 
         Scene scene = new Scene(root, 900, 700);

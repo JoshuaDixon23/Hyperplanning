@@ -1,9 +1,12 @@
 package fr.univtln.projet.planning.controller;
 
+import fr.univtln.projet.planning.entity.academic.PromoEntity;
+import fr.univtln.projet.planning.modele.academic.Promo;
 import fr.univtln.projet.planning.modele.person.Admin;
 import fr.univtln.projet.planning.modele.person.LocalStudent;
 import fr.univtln.projet.planning.modele.person.Professor;
 import fr.univtln.projet.planning.modele.person.User;
+import fr.univtln.projet.planning.service.academicService.PromoService;
 import fr.univtln.projet.planning.service.planningService.CourseService;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -19,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Locale;
 import javafx.animation.*;
 import javafx.application.Platform;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -38,15 +42,16 @@ public class PlanningController {
     @FXML private GridPane planningGrid;
     @FXML private HBox weeksContainer;
     @FXML private StackPane weeksViewport;
-    @FXML private ToggleButton btnMonPlan;
+    @FXML private ToggleButton btnMonEdt;
     @FXML private ToggleButton btnMaPromo;
-    @FXML private ToggleButton btnAutrePromo;
+    @FXML private ComboBox<PromoEntity> promoBox;
     @FXML private VBox timeColumn;
     @FXML private ScrollPane planningScroll;
     @FXML private ScrollPane timeScroll;
     @FXML private Pane coursesPane;
     @FXML private StackPane planningContent;
     @FXML private Button logoutButton;
+
 
     private static final int GRID_START_HOUR = 8;
     private static final int SLOT_MINUTES = 30;
@@ -72,6 +77,9 @@ public class PlanningController {
     private final List<VBox> sourceCourseCards = new ArrayList<>();
     private CourseService courseService;
     private PlanningContext planningContext;
+    private PromoService promoService;
+    private User connectedUser;
+    private Long connectedUserPromoId;
 
 
     // ==========================================================
@@ -93,14 +101,42 @@ public class PlanningController {
 
         buildEmptyGrid(8, 20, 1);
 
-        btnMonPlan.setToggleGroup(viewGroup);
+        btnMonEdt.setToggleGroup(viewGroup);
         btnMaPromo.setToggleGroup(viewGroup);
-        btnAutrePromo.setToggleGroup(viewGroup);
-        btnMaPromo.setSelected(true);
+        btnMonEdt.setSelected(true);
 
         coursesPane.setPickOnBounds(false);
 
         planningGrid.widthProperty().addListener((obs, oldVal, newVal) -> layoutCoursesStacked());
+
+
+        btnMonEdt.setOnAction(e -> {
+            promoBox.getSelectionModel().clearSelection();
+            loadConnectedUserPlanning();
+        });
+
+        btnMaPromo.setOnAction(e -> {
+            promoBox.getSelectionModel().clearSelection();
+            loadConnectedUserPromoPlanning();
+        });
+
+
+        promoBox.setOnAction(e -> {
+            PromoEntity selected = promoBox.getValue();
+            if (selected != null) {
+                viewGroup.selectToggle(null);
+
+                Promo promoJpa = promoService.findJpaByNameAndYearAndStudyLevel(
+                        selected.getName(),
+                        selected.getYear(),
+                        selected.getStudyLevel()
+                );
+
+                if (promoJpa != null) {
+                    loadPlanning(PlanningContext.forPromo(promoJpa.getPromoId()));
+                }
+            }
+        });
 
         coursesPane.addEventFilter(javafx.scene.input.ScrollEvent.SCROLL, event -> {
             double deltaY = event.getDeltaY();
@@ -269,25 +305,72 @@ public class PlanningController {
     // Load Data
     // ==========================================================
 
+    private void loadConnectedUserPlanning() {
+        if (connectedUser == null) return;
+
+        if (connectedUser instanceof LocalStudent student) {
+            loadPlanning(PlanningContext.forStudent(student.getUserId()));
+        } else if (connectedUser instanceof Professor professor) {
+            loadPlanning(PlanningContext.forProfessor(professor.getUserId()));
+        }
+    }
+
+
+    private void loadConnectedUserPromoPlanning() {
+        if (connectedUserPromoId != null) {
+            loadPlanning(PlanningContext.forPromo(connectedUserPromoId));
+        }
+    }
+
+    private Long extractStudentPromoId(LocalStudent student) {
+        if (student == null || student.getPromo() == null) {
+            return null;
+        }
+        return student.getPromo().getPromoId();
+    }
 
     public void setConnectedUser(User user) {
+        this.connectedUser = user;
+
         if (user == null) {
-            userNameLabel.setText("Utilisateur inconnu");
+            connectedUserPromoId = null;
             return;
         }
 
-        userNameLabel.setText(user.getFirstName() + " " + user.getLastName());
 
         if (user instanceof LocalStudent student) {
+            connectedUserPromoId = extractStudentPromoId(student);
+            btnMonEdt.setSelected(true);
             loadPlanning(PlanningContext.forStudent(student.getUserId()));
+
         } else if (user instanceof Professor professor) {
+            connectedUserPromoId = null;
+            btnMonEdt.setSelected(true);
             loadPlanning(PlanningContext.forProfessor(professor.getUserId()));
-        } else if (user instanceof Admin admin) {
+
+        } else if (user instanceof Admin) {
+            connectedUserPromoId = null;
             userNameLabel.setText(userNameLabel.getText() + " (Admin)");
+            viewGroup.selectToggle(null);
+
         } else {
+            connectedUserPromoId = null;
             userNameLabel.setText(userNameLabel.getText() + " (type inconnu)");
         }
     }
+
+    private void loadPromoChoices() {
+        if (promoService == null || promoBox == null) return;
+
+        List<PromoEntity> promos = promoService.findAll();
+        promoBox.getItems().setAll(promos);
+    }
+
+    public void setPromoService(PromoService promoService) {
+        this.promoService = promoService;
+        loadPromoChoices();
+    }
+
     // A corriger proprement par la suite car la c'est une methode qui permet de recuperer la durée qui est en nanos secondes et pas en minutes
     private int extractDurationMinutes(CourseEntity course) {
         if (course.getDuration() == null) return 0;
@@ -328,7 +411,7 @@ public class PlanningController {
                     ? course.getRoom().getName()
                     : "Salle non définie";
 
-            addCourse(dayIndex, startHour, startMinute, durationMinutes, moduleName, courseType, teacher, room);
+            addCourse(dayIndex, startHour, startMinute, durationMinutes, moduleName, courseType, teacher, room, course);
         }
     }
 
@@ -417,17 +500,29 @@ public class PlanningController {
 
     }
 
-    private VBox buildCourseCard(String title, String type, String teacher, String room) {
-        VBox card = new VBox(2);
+    private VBox buildCourseCard(String title, String type, String teacher, String room, CourseEntity course) {
+        VBox card = new VBox(4);
         card.getStyleClass().add("course-card");
         card.setFillWidth(true);
         card.setAlignment(Pos.TOP_LEFT);
         card.setManaged(false);
+        card.setPadding(new Insets(10));
 
         Label t = createSingleLineLabel(title, "course-title");
+
+        Circle colorDot = new Circle(5);
+        colorDot.setStyle("-fx-fill: " + colorFromTitle(title) + ";");
+
+        HBox titleRow = new HBox(8);
+        titleRow.setAlignment(Pos.CENTER_LEFT);
+        HBox.setHgrow(t, Priority.ALWAYS);
+        titleRow.getChildren().addAll(colorDot, t);
         Label ty = createSingleLineLabel(type, "course-meta");
         Label te = createSingleLineLabel(teacher, "course-meta");
         Label r = createSingleLineLabel(room, "course-meta");
+
+        Region spacer = new Region();
+        VBox.setVgrow(spacer, Priority.ALWAYS);
 
         Button button = new Button("More");
         button.getStyleClass().add("button-more");
@@ -441,7 +536,9 @@ public class PlanningController {
         te.setTooltip(new Tooltip(teacher));
         r.setTooltip(new Tooltip(room));
 
-        card.getChildren().addAll(t, ty, te, r, button);
+        button.setOnAction(e -> showCourseDetails(course));
+
+        card.getChildren().addAll(titleRow, ty, te, r, spacer, button);
 
         Rectangle clip = new Rectangle();
         clip.widthProperty().bind(card.widthProperty());
@@ -463,9 +560,9 @@ public class PlanningController {
 
 
     private void addCourse(int dayIndex, int startHour, int startMinute, int durationMinutes,
-                           String title, String type, String teacher, String room) {
+                           String title, String type, String teacher, String room, CourseEntity course) {
 
-        VBox card = buildCourseCard(title, type, teacher, room);
+        VBox card = buildCourseCard(title, type, teacher, room, course);
 
         card.getProperties().put("dayIndex", dayIndex);
         card.getProperties().put("startMinutes", startHour * 60 + startMinute);
@@ -473,6 +570,55 @@ public class PlanningController {
         card.getProperties().put("durationMinutes", durationMinutes);
 
         sourceCourseCards.add(card);
+    }
+
+    private void showCourseDetails(CourseEntity course) {
+        if (course == null) return;
+
+        String module = course.getModule() != null
+                ? course.getModule().getName()
+                : "Non défini";
+
+        String type = course.getCourseType() != null
+                ? course.getCourseType().name()
+                : "Non défini";
+
+        String date = course.getDate() != null
+                ? course.getDate().toString()
+                : "Non définie";
+
+        String startTime = course.getStartTime() != null
+                ? course.getStartTime().toString()
+                : "Non définie";
+
+        String duration = course.getDuration() != null
+                ? course.getDuration().toNanos() + " min"
+                : "Non définie";
+
+        String room = course.getRoom() != null
+                ? course.getRoom().getName()
+                : "Non définie";
+
+        String teachers = (course.getProfessors() != null && !course.getProfessors().isEmpty())
+                ? course.getProfessors().stream()
+                .map(p -> p.getFirstName() + " " + p.getLastName())
+                .reduce((a, b) -> a + ", " + b)
+                .orElse("Non défini")
+                : "Non défini";
+
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Détails du cours");
+        alert.setHeaderText(module);
+        alert.setContentText(
+                "Type : " + type + "\n" +
+                        "Date : " + date + "\n" +
+                        "Heure de début : " + startTime + "\n" +
+                        "Durée : " + duration + "\n" +
+                        "Enseignant(s) : " + teachers + "\n" +
+                        "Salle : " + room
+        );
+
+        alert.showAndWait();
     }
 
     // ==========================================================
@@ -789,5 +935,14 @@ public class PlanningController {
             logoutButton.setText("Déconnexion");
             logoutButton.setDisable(false);
         }
+    }
+
+    private String colorFromTitle(String title) {
+        if (title == null || title.isBlank()) {
+            return "#999999";
+        }
+
+        int hash = title.hashCode();
+        return String.format("#%06X", (0xFFFFFF & hash));
     }
 }

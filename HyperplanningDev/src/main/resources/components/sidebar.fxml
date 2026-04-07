@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.shape.SVGPath?>
+
+<VBox xmlns:fx="http://javafx.com/fxml"
+      prefWidth="280"
+      styleClass="sidebar"
+      fx:controller="fr.univtln.projet.planning.controller.SidebarController">
+
+    <HBox spacing="14" alignment="CENTER_LEFT" styleClass="sidebar-header">
+        <Region prefWidth="32" prefHeight="32" minWidth="32" minHeight="32" styleClass="sidebar-logo"/>
+        <Label fx:id="userNameLabel" text="Jean Dupont" styleClass="sidebar-username"/>
+    </HBox>
+
+    <Separator styleClass="sidebar-sep"/>
+
+    <VBox spacing="6" styleClass="sidebar-menu">
+
+        <HBox fx:id="btnDashboard"
+              onMouseClicked="#handleMenuClick"
+              spacing="12"
+              alignment="CENTER_LEFT"
+              styleClass="nav-item">
+            <SVGPath content="M5 6.2C5 5.07989 5 4.51984 5.21799 4.09202C5.40973 3.71569 5.71569 3.40973 6.09202 3.21799C6.51984 3 7.07989 3 8.2 3H15.8C16.9201 3 17.4802 3 17.908 3.21799C18.2843 3.40973 18.5903 3.71569 18.782 4.09202C19 4.51984 19 5.07989 19 6.2V21L12 16L5 21V6.2Z"
+                     styleClass="nav-icon"/>
+            <Label text="Dashboard" styleClass="nav-text"/>
+        </HBox>
+
+        <HBox fx:id="btnPlanning"
+              onMouseClicked="#handleMenuClick"
+              spacing="12"
+              alignment="CENTER_LEFT"
+              styleClass="nav-item">
+            <SVGPath content="M5 0C3.34315 0 2 1.34315 2 3V13C2 14.6569 3.34315 16 5 16H14V14H4V12H14V0H5Z"
+                     styleClass="nav-icon"/>
+            <Label text="Planning" styleClass="nav-text"/>
+        </HBox>
+
+        <HBox fx:id="btnModules"
+              onMouseClicked="#handleMenuClick"
+              spacing="12"
+              alignment="CENTER_LEFT"
+              styleClass="nav-item">
+            <SVGPath content="M12.7848 0.449982C13.8239 0.449982 14.7167 1.16546 14.9122 2.15495L14.9991 2.59495C15.3408 4.32442 17.1859 5.35722 18.9016 4.7794L19.3383 4.63233C20.3199 4.30175 21.4054 4.69358 21.9249 5.56605L22.7097 6.88386C23.2293 7.75636 23.0365 8.86366 22.2504 9.52253L21.9008 9.81555C20.5267 10.9672 20.5267 13.0328 21.9008 14.1844L22.2504 14.4774C23.0365 15.1363 23.2293 16.2436 22.7097 17.1161L21.925 18.4339C21.4054 19.3064 20.3199 19.6982 19.3382 19.3676L18.9017 19.2205C17.1859 18.6426 15.3408 19.6754 14.9991 21.405L14.9122 21.845C14.7167 22.8345 13.8239 23.55 12.7848 23.55H11.2152C10.1761 23.55 9.28331 22.8345 9.08781 21.8451L9.00082 21.4048C8.65909 19.6754 6.81395 18.6426 5.09822 19.2205L4.66179 19.3675C3.68016 19.6982 2.59465 19.3063 2.07505 18.4338L1.2903 17.1161C0.770719 16.2436 0.963446 15.1363 1.74956 14.4774L2.09922 14.1844C3.47324 13.0327 3.47324 10.9672 2.09922 9.8156L1.74956 9.52254C0.963446 8.86366 0.77072 7.75638 1.2903 6.8839L2.07508 5.56608C2.59466 4.69359 3.68014 4.30176 4.66176 4.63236L5.09831 4.77939C6.81401 5.35722 8.65909 4.32449 9.00082 2.59506L9.0878 2.15487C9.28331 1.16542 10.176 0.449982 11.2152 0.449982H12.7848ZM12 15.3C13.8225 15.3 15.3 13.8225 15.3 12C15.3 10.1774 13.8225 8.69998 12 8.69998C10.1774 8.69998 8.69997 10.1774 8.69997 12C8.69997 13.8225 10.1774 15.3 12 15.3Z"
+                     styleClass="nav-icon"/>
+            <Label text="Modules" styleClass="nav-text"/>
+        </HBox>
+
+        <HBox fx:id="btnRooms"
+              onMouseClicked="#handleMenuClick"
+              spacing="12"
+              alignment="CENTER_LEFT"
+              styleClass="nav-item">
+            <SVGPath content="M10.5 9C12.9853 9 15 6.98528 15 4.5C15 2.01472 12.9853 0 10.5 0C8.01475 0 6.00003 2.01472 6.00003 4.5C6.00003 5.38054 6.25294 6.20201 6.69008 6.89574L0.585815 13L3.58292 15.9971L4.99714 14.5829L3.41424 13L5.00003 11.4142L6.58292 12.9971L7.99714 11.5829L6.41424 10L8.10429 8.30995C8.79801 8.74709 9.61949 9 10.5 9ZM10.5 7C11.8807 7 13 5.88071 13 4.5C13 3.11929 11.8807 2 10.5 2C9.11932 2 8.00003 3.11929 8.00003 4.5C8.00003 5.88071 9.11932 7 10.5 7Z"
+                     styleClass="nav-icon"/>
+            <Label text="Rooms" styleClass="nav-text"/>
+        </HBox>
+
+        <HBox fx:id="btnMap"
+              onMouseClicked="#handleMenuClick"
+              spacing="12"
+              alignment="CENTER_LEFT"
+              styleClass="nav-item">
+            <SVGPath content="M3.37892 10.2236L8 16L12.6211 10.2236C13.5137 9.10788 14 7.72154 14 6.29266V6C14 2.68629 11.3137 0 8 0C4.68629 0 2 2.68629 2 6V6.29266C2 7.72154 2.4863 9.10788 3.37892 10.2236ZM8 8C9.10457 8 10 7.10457 10 6C10 4.89543 9.10457 4 8 4C6.89543 4 6 4.89543 6 6C6 7.10457 6.89543 8 8 8Z"
+                     styleClass="nav-icon"/>
+            <Label text="Map" styleClass="nav-text"/>
+        </HBox>
+
+        <HBox fx:id="btnMenu"
+              onMouseClicked="#handleMenuClick"
+              spacing="12"
+              alignment="CENTER_LEFT"
+              styleClass="nav-item">
+            <SVGPath content="M3 5H21V7H3V5ZM3 11H21V13H3V11ZM3 17H21V19H3V17Z"
+                     styleClass="nav-icon"/>
+            <Label text="Menu" styleClass="nav-text"/>
+        </HBox>
+
+    </VBox>
+
+    <VBox VBox.vgrow="ALWAYS"/>
+</VBox>

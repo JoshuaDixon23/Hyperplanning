@@ -3,174 +3,109 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.control.*?>
 
+<VBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="fr.univtln.projet.planning.controller.PlanningController"
+      spacing="14"
+      styleClass="content"
+      fillWidth="true"
+      maxWidth="Infinity">
 
-<BorderPane xmlns:fx="http://javafx.com/fxml"
-            fx:controller="fr.univtln.projet.planning.controller.PlanningController"
-            styleClass="root">
+    <Label text="Planning" styleClass="page-title"/>
 
-    <left>
-        <VBox prefWidth="280" styleClass="sidebar">
+    <HBox spacing="12" alignment="CENTER" styleClass="weeks-row" fillHeight="true" maxWidth="Infinity" VBox.vgrow="NEVER">
+        <Button fx:id="prevWeeksBtn" text="❮" styleClass="week-arrow" onAction="#onPrevWeeks"/>
 
-            <HBox spacing="14" alignment="CENTER_LEFT" styleClass="sidebar-header">
-                <Label text="📅" styleClass="sidebar-logo"/>
-                <Label fx:id="userNameLabel" text="Username" styleClass="sidebar-username"/>
-            </HBox>
+        <StackPane fx:id="weeksViewport" styleClass="weeks-viewport" HBox.hgrow="ALWAYS" maxWidth="Infinity" minWidth="0">
+            <HBox fx:id="weeksContainer" spacing="12" alignment="CENTER_LEFT"/>
+        </StackPane>
 
-            <Separator styleClass="sidebar-sep"/>
+        <Button fx:id="nextWeeksBtn" text="❯" styleClass="week-arrow" onAction="#onNextWeeks"/>
+    </HBox>
 
-            <VBox spacing="6" styleClass="sidebar-menu">
+    <GridPane maxWidth="Infinity" alignment="CENTER" hgap="30" styleClass="filters-row">
+        <columnConstraints>
+            <ColumnConstraints hgrow="ALWAYS"/>
+            <ColumnConstraints/>
+            <ColumnConstraints hgrow="ALWAYS"/>
+        </columnConstraints>
 
-                <HBox spacing="12" alignment="CENTER_LEFT" styleClass="nav-item">
-                    <Label text="⬛" styleClass="nav-icon"/>
-                    <Label text="Dashboard" styleClass="nav-text"/>
-                </HBox>
+        <ToggleButton fx:id="btnMonEdt"
+                      text="Mon edt"
+                      styleClass="filter-button"
+                      selected="true"
+                      GridPane.columnIndex="0"
+                      GridPane.halignment="RIGHT"/>
 
-                <HBox spacing="12" alignment="CENTER_LEFT" styleClass="nav-item, nav-item-selected">
-                    <Label text="📅" styleClass="nav-icon, nav-icon-selected"/>
-                    <Label text="Planning" styleClass="nav-text, nav-text-selected"/>
-                </HBox>
+        <ToggleButton fx:id="btnMaPromo"
+                      text="Ma promo"
+                      styleClass="filter-button"
+                      GridPane.columnIndex="1"
+                      GridPane.halignment="CENTER"/>
 
-                <HBox spacing="12" alignment="CENTER_LEFT" styleClass="nav-item">
-                    <Label text="⬛" styleClass="nav-icon"/>
-                    <Label text="Modules" styleClass="nav-text"/>
-                </HBox>
+        <ComboBox fx:id="promoBox"
+                  promptText="Une promo"
+                  styleClass="filter-button"
+                  GridPane.columnIndex="2"
+                  GridPane.halignment="LEFT"/>
+    </GridPane>
 
-                <HBox spacing="12" alignment="CENTER_LEFT" styleClass="nav-item">
-                    <Label text="🔑" styleClass="nav-icon"/>
-                    <Label text="Rooms" styleClass="nav-text"/>
-                </HBox>
+    <VBox spacing="8" styleClass="planning-block" VBox.vgrow="ALWAYS">
 
-                <HBox spacing="12" alignment="CENTER_LEFT" styleClass="nav-item">
-                    <Label text="📍" styleClass="nav-icon"/>
-                    <Label text="Map" styleClass="nav-text"/>
-                </HBox>
+        <HBox spacing="12" styleClass="days-header-row">
+            <Region prefWidth="70"/>
 
-                <HBox spacing="12" alignment="CENTER_LEFT" styleClass="nav-item">
-                    <Label text="⬛" styleClass="nav-icon"/>
-                    <Label text="Menu" styleClass="nav-text"/>
-                </HBox>
-            </VBox>
-
-            <VBox VBox.vgrow="ALWAYS"/>
-        </VBox>
-    </left>
-
-
-    <center>
-        <VBox spacing="14" styleClass="content" fillWidth="true" maxWidth="Infinity">
-
-            <HBox alignment="CENTER_LEFT" spacing="12">
-                <Label text="Planning" styleClass="page-title"/>
-                <Region HBox.hgrow="ALWAYS"/>
-                <Button fx:id="logoutButton"
-                        text="Déconnexion"
-                        styleClass="logout-button"
-                        onAction="#handleLogout"/>
-            </HBox>
-
-            <HBox spacing="12" alignment="CENTER" styleClass="weeks-row" fillHeight="true" maxWidth="Infinity" VBox.vgrow="NEVER">
-                <Button fx:id="prevWeeksBtn" text="❮" styleClass="week-arrow" onAction="#onPrevWeeks"/>
-
-                <StackPane fx:id="weeksViewport" styleClass="weeks-viewport" HBox.hgrow="ALWAYS" maxWidth="Infinity" minWidth="0">
-                    <HBox fx:id="weeksContainer" spacing="12" alignment="CENTER_LEFT"/>
-                </StackPane>
-
-
-
-                <Button fx:id="nextWeeksBtn" text="❯" styleClass="week-arrow" onAction="#onNextWeeks"/>
-            </HBox>
-
-            <!-- Filters row -->
-
-            <GridPane maxWidth="Infinity" alignment="CENTER" hgap="30" styleClass="filters-row">
+            <GridPane fx:id="daysHeaderGrid" styleClass="days-header" hgap="0" vgap="0" HBox.hgrow="ALWAYS">
                 <columnConstraints>
-                    <ColumnConstraints hgrow="ALWAYS"/>
-                    <ColumnConstraints/>
-                    <ColumnConstraints hgrow="ALWAYS"/>
+                    <ColumnConstraints percentWidth="16.666"/>
+                    <ColumnConstraints percentWidth="16.666"/>
+                    <ColumnConstraints percentWidth="16.666"/>
+                    <ColumnConstraints percentWidth="16.666"/>
+                    <ColumnConstraints percentWidth="16.666"/>
+                    <ColumnConstraints percentWidth="16.67"/>
                 </columnConstraints>
 
-                <ToggleButton fx:id="btnMonPlan"
-                              text="Mon plan"
-                              styleClass="filter-button"
-                              selected="true"
-                              GridPane.columnIndex="0"
-                              GridPane.halignment="RIGHT"/>
-
-                <ToggleButton fx:id="btnMaPromo"
-                              text="Ma promo"
-                              styleClass="filter-button"
-                              GridPane.columnIndex="1"
-                              GridPane.halignment="CENTER"/>
-
-                <ToggleButton fx:id="btnAutrePromo"
-                              text="Autre promo"
-                              styleClass="filter-button"
-                              GridPane.columnIndex="2"
-                              GridPane.halignment="LEFT"/>
+                <Label text="lundi" GridPane.columnIndex="0" styleClass="day-title" maxWidth="Infinity"/>
+                <Label text="mardi" GridPane.columnIndex="1" styleClass="day-title" maxWidth="Infinity"/>
+                <Label text="mercredi" GridPane.columnIndex="2" styleClass="day-title" maxWidth="Infinity"/>
+                <Label text="jeudi" GridPane.columnIndex="3" styleClass="day-title" maxWidth="Infinity"/>
+                <Label text="vendredi" GridPane.columnIndex="4" styleClass="day-title" maxWidth="Infinity"/>
+                <Label text="samedi" GridPane.columnIndex="5" styleClass="day-title" maxWidth="Infinity"/>
             </GridPane>
+        </HBox>
 
-            <VBox spacing="8" styleClass="planning-block" VBox.vgrow="ALWAYS">
+        <HBox spacing="12" styleClass="planning-row" VBox.vgrow="ALWAYS">
 
-                <HBox spacing="12" styleClass="days-header-row">
+            <ScrollPane fx:id="timeScroll" prefWidth="70" hbarPolicy="NEVER" vbarPolicy="NEVER" fitToWidth="true" fitToHeight="false" styleClass="time-scroll">
+                <VBox fx:id="timeColumn" styleClass="time-column"/>
+            </ScrollPane>
 
-                    <Region prefWidth="70"/>
+            <StackPane fx:id="planningCard" styleClass="planning-card" HBox.hgrow="ALWAYS" maxHeight="650">
+                <ScrollPane fx:id="planningScroll"
+                            fitToWidth="true"
+                            fitToHeight="false"
+                            hbarPolicy="NEVER"
+                            vbarPolicy="AS_NEEDED"
+                            styleClass="planning-scroll">
 
-                    <GridPane fx:id="daysHeaderGrid" styleClass="days-header" hgap="0" vgap="0" HBox.hgrow="ALWAYS">
-                        <columnConstraints>
-                            <ColumnConstraints percentWidth="16.666"/>
-                            <ColumnConstraints percentWidth="16.666"/>
-                            <ColumnConstraints percentWidth="16.666"/>
-                            <ColumnConstraints percentWidth="16.666"/>
-                            <ColumnConstraints percentWidth="16.666"/>
-                            <ColumnConstraints percentWidth="16.67"/>
-                        </columnConstraints>
+                    <StackPane fx:id="planningContent">
+                        <GridPane fx:id="planningGrid" styleClass="planning-grid" hgap="0" vgap="0" maxWidth="Infinity">
+                            <columnConstraints>
+                                <ColumnConstraints percentWidth="16.666" minWidth="0"/>
+                                <ColumnConstraints percentWidth="16.666" minWidth="0"/>
+                                <ColumnConstraints percentWidth="16.666" minWidth="0"/>
+                                <ColumnConstraints percentWidth="16.666" minWidth="0"/>
+                                <ColumnConstraints percentWidth="16.666" minWidth="0"/>
+                                <ColumnConstraints percentWidth="16.67" minWidth="0"/>
+                            </columnConstraints>
+                        </GridPane>
 
-                        <Label text="lundi" GridPane.columnIndex="0" styleClass="day-title" maxWidth="Infinity"/>
-                        <Label text="mardi" GridPane.columnIndex="1" styleClass="day-title" maxWidth="Infinity"/>
-                        <Label text="mercredi" GridPane.columnIndex="2" styleClass="day-title" maxWidth="Infinity"/>
-                        <Label text="jeudi" GridPane.columnIndex="3" styleClass="day-title" maxWidth="Infinity"/>
-                        <Label text="vendredi" GridPane.columnIndex="4" styleClass="day-title" maxWidth="Infinity"/>
-                        <Label text="samedi" GridPane.columnIndex="5" styleClass="day-title" maxWidth="Infinity"/>
-                    </GridPane>
-
-                </HBox>
-
-                <HBox spacing="12" styleClass="planning-row" VBox.vgrow="ALWAYS">
-
-                    <ScrollPane fx:id="timeScroll" prefWidth="70" hbarPolicy="NEVER" vbarPolicy="NEVER" fitToWidth="true" fitToHeight="false" styleClass="time-scroll">
-                        <VBox fx:id="timeColumn" styleClass="time-column"/>
-                    </ScrollPane>
-
-                    <StackPane fx:id="planningCard" styleClass="planning-card" HBox.hgrow="ALWAYS" maxHeight="650">
-                        <ScrollPane fx:id="planningScroll"
-                                    fitToWidth="true"
-                                    fitToHeight="false"
-                                    hbarPolicy="NEVER"
-                                    vbarPolicy="AS_NEEDED"
-                                    styleClass="planning-scroll">
-
-                            <StackPane fx:id="planningContent">
-                                <GridPane fx:id="planningGrid" styleClass="planning-grid" hgap="0" vgap="0" maxWidth="Infinity">
-                                    <columnConstraints>
-                                        <ColumnConstraints percentWidth="16.666" minWidth="0"/>
-                                        <ColumnConstraints percentWidth="16.666" minWidth="0"/>
-                                        <ColumnConstraints percentWidth="16.666" minWidth="0"/>
-                                        <ColumnConstraints percentWidth="16.666" minWidth="0"/>
-                                        <ColumnConstraints percentWidth="16.666" minWidth="0"/>
-                                        <ColumnConstraints percentWidth="16.67" minWidth="0"/>
-                                    </columnConstraints>
-                                </GridPane>
-
-                                <Pane fx:id="coursesPane" pickOnBounds="false"/>
-                            </StackPane>
-                        </ScrollPane>
+                        <Pane fx:id="coursesPane" pickOnBounds="false"/>
                     </StackPane>
+                </ScrollPane>
+            </StackPane>
 
-                </HBox>
+        </HBox>
 
-            </VBox>
+    </VBox>
 
-        </VBox>
-    </center>
-
-</BorderPane>
+</VBox>

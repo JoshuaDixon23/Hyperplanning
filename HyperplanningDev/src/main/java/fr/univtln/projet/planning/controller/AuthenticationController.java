@@ -4,9 +4,17 @@ import fr.univtln.projet.planning.modele.person.Admin;
 import fr.univtln.projet.planning.modele.person.Professor;
 import fr.univtln.projet.planning.modele.person.Student;
 import fr.univtln.projet.planning.modele.person.User;
+import fr.univtln.projet.planning.repository.academicRepository.PromoRepository;
+import fr.univtln.projet.planning.repository.academicRepository.UFRRepository;
+import fr.univtln.projet.planning.repository.infrastructureRepository.CampusRepository;
+import fr.univtln.projet.planning.repository.personRepository.AdminRepository;
 import fr.univtln.projet.planning.repository.personRepository.UserRepository;
 import fr.univtln.projet.planning.repository.planningRepository.CourseRepository;
+import fr.univtln.projet.planning.service.academicService.PromoService;
+import fr.univtln.projet.planning.service.academicService.UFRService;
 import fr.univtln.projet.planning.service.authenticationService.AuthenticationService;
+import fr.univtln.projet.planning.service.infrastructureService.CampusService;
+import fr.univtln.projet.planning.service.personService.AdminService;
 import fr.univtln.projet.planning.service.planningService.CourseService;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
@@ -293,7 +301,7 @@ public class AuthenticationController {
     private void goToPlanning(User connectedUser) {
         try {
             FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/view/planning-view.fxml")
+                    getClass().getResource("/view/main-view.fxml")
             );
 
             Scene scene = new Scene(loader.load());
@@ -305,13 +313,25 @@ public class AuthenticationController {
                     getClass().getResource("/css/planning.css").toExternalForm()
             );
 
-            PlanningController planningController = loader.getController();
+            MainController mainController = loader.getController();
 
             CourseRepository courseRepository = new CourseRepository(em);
             CourseService courseService = new CourseService(courseRepository);
 
-            planningController.setCourseService(courseService);
-            planningController.setConnectedUser(connectedUser);
+            PromoRepository promoRepository = new PromoRepository(em);
+            UFRRepository ufrRepository = new UFRRepository(em);
+            AdminRepository adminRepository = new AdminRepository(em);
+            CampusRepository campusRepository = new CampusRepository(em);
+
+            AdminService adminService = new AdminService(adminRepository);
+            CampusService campusService = new CampusService(campusRepository);
+            UFRService ufrService = new UFRService(ufrRepository, adminService, campusService);
+            PromoService promoService = new PromoService(promoRepository, ufrService);
+
+            mainController.setCourseService(courseService);
+            mainController.setPromoService(promoService);
+            mainController.setConnectedUser(connectedUser);
+            mainController.initData();
 
             Stage stage = (Stage) loginButton.getScene().getWindow();
             stage.setScene(scene);
