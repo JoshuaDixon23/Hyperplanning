@@ -1,9 +1,6 @@
 package fr.univtln.projet.planning.controller;
 
-import fr.univtln.projet.planning.modele.person.Admin;
-import fr.univtln.projet.planning.modele.person.Professor;
-import fr.univtln.projet.planning.modele.person.Student;
-import fr.univtln.projet.planning.modele.person.User;
+import fr.univtln.projet.planning.modele.person.*;
 import fr.univtln.projet.planning.repository.academicRepository.PromoRepository;
 import fr.univtln.projet.planning.repository.academicRepository.UFRRepository;
 import fr.univtln.projet.planning.repository.infrastructureRepository.CampusRepository;
@@ -212,17 +209,11 @@ public class AuthenticationController {
             //}
 //
 
-            //=====================================================================
-            //thomas ici décomente et régle la méthode en bas pour qu'elle te convienne
-            // en gros on charge la classe de l'user en question
-            // puis redirect te permet d'amener sur la vue d'un planning ou la vue d'un admin par exemple .
-            //il faut aussi décommenter en bas
-            //=====================================================================
 
-            // redirectUser(connectedUser);
 
-            // à enelever
-            goToPlanning(connectedUser);
+            redirectUser(connectedUser);
+
+
 
 
         } else {
@@ -293,11 +284,7 @@ public class AuthenticationController {
 
 
 
-    /**
-     * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-     * !!! A modifier aussi                                             !!!
-     * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-     */
+
     private void goToPlanning(User connectedUser) {
         try {
             FXMLLoader loader = new FXMLLoader(
@@ -343,21 +330,50 @@ public class AuthenticationController {
         }
     }
 
+    private void goToAdminInterface(User connectedUser) {
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/view/admin-course-view.fxml")
+            );
+
+            Scene scene = new Scene(loader.load());
+
+            scene.getStylesheets().addAll(
+                    getClass().getResource("/css/base.css").toExternalForm(),
+                    getClass().getResource("/css/sidebar.css").toExternalForm(),
+                    getClass().getResource("/css/components.css").toExternalForm()
+            );
+
+            Stage stage = (Stage) loginButton.getScene().getWindow();
+            stage.setScene(scene);
+            stage.show();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            showError("Erreur lors du chargement de l'interface admin : " + e.getMessage());
+        }
+    }
+
+    private void goToStudentPlanning(User connectedUser) {
+        goToPlanning(connectedUser);
+    }
+
+    private void goToProfessorPlanning(User connectedUser) {
+        goToPlanning(connectedUser);
+    }
 
 
-//    private void redirectUser(User connectedUser) {
-//
-//        // fais gaffe si tudent local ou étrangé
-//        if (connectedUser instanceof Student) {
-//            goToPlanning(connectedUser);
-//        } else if (connectedUser instanceof Admin) {
-//            goToAdminInterface(connectedUser);
-//        } else if (connectedUser instanceof Professor){
-//            goToPlanningProf(connectedUser); // si c'est différent
-//        }else {
-//            showError("Rôle utilisateur non reconnu");
-//        }
-//    }
+    private void redirectUser(User connectedUser) {
+        if (connectedUser instanceof Admin) {
+            goToAdminInterface(connectedUser);
+        } else if (connectedUser instanceof Professor) {
+            goToProfessorPlanning(connectedUser);
+        } else if (connectedUser instanceof LocalStudent) {
+            goToStudentPlanning(connectedUser);
+        } else {
+            showError("Rôle utilisateur non reconnu");
+        }
+    }
 
 }
 
