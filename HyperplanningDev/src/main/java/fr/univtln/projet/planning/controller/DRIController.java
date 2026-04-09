@@ -88,6 +88,8 @@ public class DRIController {
     private Set<CourseEntity> allConflictingCourses = new HashSet<>();
     
     private final List<VBox> sourceCourseCards = new ArrayList<>();
+    // Futur BasketFinal
+    private final Map<String, Map<GroupType, List<RadioButton>>> moduleRadioButtons = new HashMap<>();
 
     @FXML
     public void initialize() {
@@ -164,19 +166,44 @@ public class DRIController {
     private void buildBasket() {
         if (basketContainer == null) return;
         basketContainer.getChildren().clear();
+        moduleRadioButtons.clear();
 
         for (ModuleEntity module : inputModules) {
+            moduleRadioButtons.put(module.getCode(), new HashMap<>());
+
             VBox card = new VBox();
             card.setStyle("-fx-border-color: #d1d1d1; -fx-background-color: #f9f9f9;");
 
             HBox header = new HBox(10);
             header.setAlignment(Pos.CENTER_LEFT);
             header.setPadding(new Insets(10));
-            
+
             CheckBox activeCheck = new CheckBox();
             activeCheck.setSelected(true);
             activeCheck.setOnAction(e -> {
-                moduleSelectionStatus.put(module.getCode(), activeCheck.isSelected());
+                boolean selected = activeCheck.isSelected();
+                moduleSelectionStatus.put(module.getCode(), selected);
+
+                Map<GroupType, List<RadioButton>> radiosForModule = moduleRadioButtons.get(module.getCode());
+                if (radiosForModule != null) {
+                    for (Map.Entry<GroupType, List<RadioButton>> entry : radiosForModule.entrySet()) {
+                        if (!selected) {
+                            entry.getValue().forEach(rb -> {
+                                rb.setSelected(false);
+                                rb.setDisable(true);
+                            });
+                            selectedGroupsPerModuleAndType.get(module.getCode()).remove(entry.getKey());
+                        } else {
+                            List<RadioButton> rbs = entry.getValue();
+                            rbs.forEach(rb -> rb.setDisable(false));
+                            if (!rbs.isEmpty()) {
+                                rbs.get(0).setSelected(true);
+                                GroupEntity grp = (GroupEntity) rbs.get(0).getUserData();
+                                selectedGroupsPerModuleAndType.get(module.getCode()).put(entry.getKey(), grp);
+                            }
+                        }
+                    }
+                }
                 updateDRIState();
             });
 
@@ -185,23 +212,23 @@ public class DRIController {
             Region spacer = new Region();
             HBox.setHgrow(spacer, Priority.ALWAYS);
             Button infoBtn = new Button("info");
-            
+
             header.getChildren().addAll(activeCheck, nameLbl, spacer, infoBtn);
 
             VBox body = new VBox(5);
             body.setPadding(new Insets(10));
             body.setStyle("-fx-background-color: #ececec; -fx-border-color: #d1d1d1; -fx-border-width: 1 0 0 0;");
-            
+
             Label detailsLbl = new Label("Code : " + module.getCode() + " | ECTS : " + module.getECTS());
             detailsLbl.setStyle("-fx-font-size: 11px; -fx-text-fill: #555;");
             body.getChildren().add(detailsLbl);
 
             Map<String, GroupEntity> uniqueGroupsMap = new HashMap<>();
-            
+
             if (courseService != null) {
                 List<CourseEntity> moduleCourses = courseService.findPlanningByModuleCode(
                         module.getCode(), startOfAcademicYear, endOfAcademicYear);
-                
+
                 if (moduleCourses != null) {
                     for (CourseEntity c : moduleCourses) {
                         if (c.getGroups() != null) {
@@ -213,7 +240,7 @@ public class DRIController {
                     }
                 }
             }
-            
+
             List<GroupEntity> availableGroups = new ArrayList<>(uniqueGroupsMap.values());
 
             Map<GroupType, List<GroupEntity>> groupsByType = new HashMap<>();
@@ -225,10 +252,8 @@ public class DRIController {
 
             for (GroupType type : GroupType.values()) {
                 List<GroupEntity> groupsOfThisType = groupsByType.get(type);
-                
+
                 if (groupsOfThisType != null && !groupsOfThisType.isEmpty()) {
-                    
-                    // NOUVEAU : Tri des groupes par numéro avant affichage
                     groupsOfThisType.sort(java.util.Comparator.comparingInt(GroupEntity::getNum));
 
                     if (type == GroupType.PROMO) {
@@ -259,13 +284,12 @@ public class DRIController {
             basketContainer.getChildren().add(card);
         }
 
-        // NOUVEAU : Ajout du bouton "Valider" à la fin du panier
         Button validateBtn = new Button("Valider le planning");
         validateBtn.setStyle("-fx-background-color: black; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10 20; -fx-background-radius: 5; -fx-cursor: hand;");
         validateBtn.setMaxWidth(Double.MAX_VALUE);
         validateBtn.setOnAction(e -> handleValidateBasket());
         VBox.setMargin(validateBtn, new Insets(15, 0, 0, 0));
-        
+
         basketContainer.getChildren().add(validateBtn);
     }
 
@@ -296,27 +320,34 @@ public class DRIController {
         parent.getChildren().add(lblTitle);
 
         ToggleGroup tg = new ToggleGroup();
+        List<RadioButton> radioButtons = new ArrayList<>();
         boolean first = true;
-        
+
         for (GroupEntity grp : groups) {
             RadioButton rb = new RadioButton(grp.getPromo().getName() + " " + grp.getPromo().getStudyLevel() + " - Groupe " + grp.getNum());
             rb.setToggleGroup(tg);
-            
+            rb.setUserData(grp);
+
             if (first) {
                 rb.setSelected(true);
                 selectedGroupsPerModuleAndType.get(module.getCode()).put(type, grp);
                 first = false;
             }
-            
+
             rb.setOnAction(e -> {
                 if (rb.isSelected()) {
                     selectedGroupsPerModuleAndType.get(module.getCode()).put(type, grp);
                     updateDRIState();
                 }
             });
-            
+
             parent.getChildren().add(rb);
+            radioButtons.add(rb);
         }
+
+        moduleRadioButtons
+                .computeIfAbsent(module.getCode(), k -> new HashMap<>())
+                .put(type, radioButtons);
     }
 
     private void updateDRIState() {
