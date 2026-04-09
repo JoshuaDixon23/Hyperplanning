@@ -9,7 +9,7 @@
 
     <!-- SIDEBAR -->
     <left>
-        <fx:include source="/components/sidebar-staffDri.fxml"/>
+        <fx:include fx:id="sidebar" source="/components/sidebar-staffDri.fxml"/>
     </left>
 
     <!-- CONTENU -->
