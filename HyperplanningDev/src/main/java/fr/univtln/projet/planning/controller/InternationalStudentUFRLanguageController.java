@@ -32,6 +32,7 @@ public class InternationalStudentUFRLanguageController implements Initializable 
     @FXML private Label studentNameLabel;
     @FXML private VBox ufrListContainer;
     @FXML private VBox languageListContainer;
+    @FXML private SidebarDriController sidebarController;
 
     // -------------------------------------------------------------------------
     // Données
@@ -66,8 +67,6 @@ public class InternationalStudentUFRLanguageController implements Initializable 
      */
     public void setStudent(InternationalStudentEntity student) {
         this.currentStudent = student;
-
-        // Header : Prénom NOM
         studentNameLabel.setText(
                 student.getFirstName() + " " + student.getLastName().toUpperCase()
         );
@@ -75,6 +74,11 @@ public class InternationalStudentUFRLanguageController implements Initializable 
         // TODO: vérifier ici si un ModuleBasket existe déjà pour cet étudiant.
         //       Si oui, rediriger directement vers la page de planning.
         //       ex: if (moduleBasketService.existsByStudent(student)) { navigateToPlanning(); return; }
+
+
+        if (sidebarController != null) {
+            sidebarController.setUFRLanguageController(this);
+        }
 
         loadUFRs();
         loadLanguages();
@@ -190,12 +194,25 @@ public class InternationalStudentUFRLanguageController implements Initializable 
             // next.setContext(currentStudent, selectedUFRs, selectedLanguages);
 
             Stage stage = (Stage) studentNameLabel.getScene().getWindow();
-            stage.setScene(new Scene(root));
-            stage.show();
+            stage.getScene().setRoot(root);
 
         } catch (IOException e) {
             System.err.println("Erreur navigation : " + e.getMessage());
             showErrorAlert("Erreur", "Impossible d'ouvrir la page suivante.");
+        }
+    }
+
+    public void navigateBackToHome() {
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/view/staffDri-student-view.fxml")
+            );
+            Parent root = loader.load();
+            Stage stage = (Stage) studentNameLabel.getScene().getWindow();
+            stage.getScene().setRoot(root);
+        } catch (IOException e) {
+            System.err.println("Navigation error: " + e.getMessage());
+            showErrorAlert("Error", "Unable to return to the students page.");
         }
     }
 

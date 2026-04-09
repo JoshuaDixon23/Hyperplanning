@@ -228,10 +228,10 @@ public class InternationalStudentController implements Initializable {
     @FXML
     private void handleAddStudent() {
         Dialog<Void> dialog = new Dialog<>();
-        dialog.setTitle("Nouvel étudiant international");
-        dialog.setHeaderText("Saisir les informations du nouvel étudiant");
+        dialog.setTitle("New international student");
+        dialog.setHeaderText("Enter the new student's information");
 
-        ButtonType saveButtonType = new ButtonType("Créer", ButtonBar.ButtonData.OK_DONE);
+        ButtonType saveButtonType = new ButtonType("Create", ButtonBar.ButtonData.OK_DONE);
         dialog.getDialogPane().getButtonTypes().addAll(saveButtonType, ButtonType.CANCEL);
 
         GridPane grid = new GridPane();
@@ -240,26 +240,25 @@ public class InternationalStudentController implements Initializable {
         grid.setPadding(new Insets(20, 150, 10, 10));
 
         TextField firstNameField = new TextField();
-        firstNameField.setPromptText("Ex: Jean");
+        firstNameField.setPromptText("e.g. John");
 
         TextField lastNameField = new TextField();
-        lastNameField.setPromptText("Ex: Dupont");
+        lastNameField.setPromptText("e.g. Smith");
 
         TextField emailField = new TextField();
-        emailField.setPromptText("Ex: jean.dupont@email.com");
+        emailField.setPromptText("e.g. john.smith@email.com");
 
-        grid.add(new Label("Prénom :"), 0, 0);   grid.add(firstNameField, 1, 0);
-        grid.add(new Label("Nom :"), 0, 1);      grid.add(lastNameField, 1, 1);
-        grid.add(new Label("Email personnel :"), 0, 2); grid.add(emailField, 1, 2);
+        grid.add(new Label("First name:"),      0, 0); grid.add(firstNameField, 1, 0);
+        grid.add(new Label("Last name:"),       0, 1); grid.add(lastNameField,  1, 1);
+        grid.add(new Label("Personal email:"),  0, 2); grid.add(emailField,     1, 2);
 
         dialog.getDialogPane().setContent(grid);
 
-        // Validation avant fermeture (même pattern que ton collègue)
         final Button btSave = (Button) dialog.getDialogPane().lookupButton(saveButtonType);
         btSave.addEventFilter(javafx.event.ActionEvent.ACTION, event -> {
-            if (!validateNotEmpty(firstNameField.getText(), "Prénom") ||
-                    !validateNotEmpty(lastNameField.getText(), "Nom") ||
-                    !validateNotEmpty(emailField.getText(), "Email personnel")) {
+            if (!validateNotEmpty(firstNameField.getText(), "First name") ||
+                    !validateNotEmpty(lastNameField.getText(), "Last name") ||
+                    !validateNotEmpty(emailField.getText(), "Personal email")) {
                 event.consume();
             }
         });
@@ -274,8 +273,8 @@ public class InternationalStudentController implements Initializable {
                     );
                     loadStudents();
                 } catch (Exception e) {
-                    System.err.println("Erreur création étudiant : " + e.getMessage());
-                    showErrorAlert("Erreur DB", "Impossible de créer l'étudiant.");
+                    System.err.println("Create error: " + e.getMessage());
+                    showErrorAlert("Database error", "Unable to create this student.");
                 }
             }
             return null;
@@ -284,6 +283,7 @@ public class InternationalStudentController implements Initializable {
         dialog.showAndWait();
     }
 
+
     /**
      * Ouvre le dialog de suppression d'un étudiant (avec confirmation).
      * Appelé depuis le bouton "X" de chaque carte — voir handleSelectStudent
@@ -291,19 +291,19 @@ public class InternationalStudentController implements Initializable {
      */
     private void handleDeleteStudent(InternationalStudentEntity student) {
         Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
-        confirm.setTitle("Suppression");
-        confirm.setHeaderText("Supprimer " + student.getFirstName() + " " + student.getLastName() + " ?");
-        confirm.setContentText("Cette action est irréversible.");
+        confirm.setTitle("Delete student");
+        confirm.setHeaderText("Are you sure you want to delete "
+                + student.getFirstName() + " " + student.getLastName() + "?");
+        confirm.setContentText("This action is irreversible.");
 
         confirm.showAndWait().ifPresent(response -> {
             if (response == ButtonType.OK) {
                 try {
-                    // Le service supprime par emailUniv (clé métier exposée par ton service)
                     studentService.delete(student.getEmailUniv());
                     loadStudents();
                 } catch (Exception e) {
-                    System.err.println("Erreur suppression : " + e.getMessage());
-                    showErrorAlert("Erreur DB", "Impossible de supprimer l'étudiant.");
+                    System.err.println("Delete error: " + e.getMessage());
+                    showErrorAlert("Database error", "Unable to delete this student.");
                 }
             }
         });
@@ -313,64 +313,55 @@ public class InternationalStudentController implements Initializable {
      * Clic sur une carte étudiant → ouvre un dialog de détail / édition.
      */
     private void handleSelectStudent(InternationalStudentEntity student) {
-        Dialog<Void> dialog = new Dialog<>();
-        dialog.setTitle("Détail étudiant");
+        Dialog<ButtonType> dialog = new Dialog<>();
+        dialog.setTitle("Student details");
         dialog.setHeaderText(student.getFirstName() + " " + student.getLastName().toUpperCase());
 
-        ButtonType planningButtonType = new ButtonType("Gérer le planning", ButtonBar.ButtonData.LEFT);
-        ButtonType deleteButtonType   = new ButtonType("Supprimer",         ButtonBar.ButtonData.LEFT);
+        ButtonType planningButtonType = new ButtonType("Manage planning", ButtonBar.ButtonData.LEFT);
+        ButtonType deleteButtonType   = new ButtonType("Delete",          ButtonBar.ButtonData.LEFT);
+        ButtonType closeButtonType    = new ButtonType("Close",           ButtonBar.ButtonData.CANCEL_CLOSE);
+
         dialog.getDialogPane().getButtonTypes().addAll(
-                planningButtonType, deleteButtonType, ButtonType.CLOSE
+                planningButtonType, deleteButtonType, closeButtonType
         );
 
         VBox content = new VBox(10);
         content.setPadding(new Insets(20));
         content.getChildren().addAll(
-                new Label("Email univ  : " + student.getEmailUniv()),
-                new Label("Email perso : " + student.getEmailPersonal())
+                new Label("University email : " + student.getEmailUniv()),
+                new Label("Personal email   : " + student.getEmailPersonal())
         );
         dialog.getDialogPane().setContent(content);
 
-        dialog.setResultConverter(btn -> {
+        // ← Plus de dialog.close() ici, showAndWait() retourne le bouton cliqué
+        dialog.showAndWait().ifPresent(btn -> {
             if (btn == deleteButtonType) {
-                dialog.close();
                 handleDeleteStudent(student);
             } else if (btn == planningButtonType) {
-                dialog.close();
                 navigateToPlanningSetup(student);
             }
-            return null;
         });
-
-        dialog.showAndWait();
     }
-
     /**
      * Ouvre la page de sélection UFR / Langues pour cet étudiant.
      */
     private void navigateToPlanningSetup(InternationalStudentEntity student) {
         try {
-            // TODO: vérifier ici si un ModuleBasket existe déjà pour cet étudiant
-            //       Si oui, naviguer directement vers la page de planning existant
-            //       ex: if (moduleBasketService.existsByStudent(student)) { ... }
-
             FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/view/student-ufr-language-selection.fxml")
+                    getClass().getResource("/view/staffDri-ufr-language-selection.fxml")
             );
             Parent root = loader.load();
 
             InternationalStudentUFRLanguageController controller = loader.getController();
             controller.setStudent(student);
 
-            // Réutilise la même fenêtre (comme ton collègue avec les modules)
             Stage stage = (Stage) studentsGrid.getScene().getWindow();
-            stage.setScene(new Scene(root));
-            stage.show();
+            stage.getScene().setRoot(root);
 
         } catch (IOException e) {
-            System.err.println("Erreur navigation planning : " + e.getMessage());
-            // showErrorAlert est déjà disponible dans ce controller
-            showErrorAlert("Erreur", "Impossible d'ouvrir la page de gestion du planning.");
+            System.err.println("Navigation error: " + e.getMessage());
+            e.printStackTrace(); // ← ajoute ça temporairement pour voir l'erreur exacte
+            showErrorAlert("Error", "Unable to open the planning management page.");
         }
     }
 
@@ -397,14 +388,14 @@ public class InternationalStudentController implements Initializable {
     private void showErrorAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle(title);
-        alert.setHeaderText("Erreur");
+        alert.setHeaderText("Error");
         alert.setContentText(message);
         alert.showAndWait();
     }
 
     private boolean validateNotEmpty(String text, String fieldName) {
         if (text == null || text.trim().isEmpty()) {
-            showErrorAlert("Champ obligatoire", "Le champ '" + fieldName + "' ne peut pas être vide.");
+            showErrorAlert("Required field", "The field '" + fieldName + "' cannot be empty.");
             return false;
         }
         return true;
