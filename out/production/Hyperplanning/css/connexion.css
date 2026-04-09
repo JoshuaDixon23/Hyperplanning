@@ -1,0 +1,105 @@
+.login-root {
+    -fx-background-color: #f3f3f3;
+}
+
+.header-bar {
+    -fx-background-color: transparent;
+}
+
+.content-area {
+    -fx-background-color: transparent;
+}
+
+/* Header */
+.app-icon {
+    -fx-font-size: 30px;
+}
+
+.app-title {
+    -fx-text-fill: #111111;
+    -fx-font-size: 24px;
+    -fx-font-weight: 500;
+}
+
+/* Card */
+.login-card {
+    -fx-background-color: #f3f3f3;
+    -fx-border-color: #c7c7c7;
+    -fx-border-width: 1;
+    -fx-border-radius: 18;
+    -fx-background-radius: 18;
+}
+
+/* Titre */
+.login-main-title {
+    -fx-text-fill: #434a58;
+    -fx-font-size: 34px;
+    -fx-font-weight: 300;
+}
+
+/* Labels */
+.field-label {
+    -fx-text-fill: #434a58;
+    -fx-font-size: 16px;
+    -fx-font-weight: 400;
+}
+
+/* Champs */
+.login-input {
+    -fx-background-color: #d8dade;
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+    -fx-border-color: transparent;
+    -fx-text-fill: #222222;
+    -fx-prompt-text-fill: #8a8f97;
+    -fx-font-size: 14px;
+    -fx-pref-height: 52;
+    -fx-padding: 0 18 0 18;
+}
+
+.login-input:focused {
+    -fx-background-color: #d8dade;
+    -fx-border-color: #9ea5b0;
+    -fx-border-width: 1.2;
+}
+
+/* Bouton principal */
+.login-button {
+    -fx-background-color: #3b4250;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-font-weight: 400;
+    -fx-background-radius: 12;
+    -fx-pref-height: 52;
+    -fx-padding: 0 18 0 18;
+}
+
+.login-button:hover {
+    -fx-background-color: #343a46;
+    -fx-cursor: hand;
+}
+
+.login-button:pressed {
+    -fx-background-color: #2d323c;
+}
+
+/* Bouton annuler */
+.login-button-secondary {
+    -fx-background-color: transparent;
+    -fx-text-fill: #666b74;
+    -fx-border-color: transparent;
+    -fx-font-size: 13px;
+    -fx-padding: 4 0 0 0;
+}
+
+.login-button-secondary:hover {
+    -fx-cursor: hand;
+    -fx-underline: true;
+}
+
+/* Erreur */
+.error-label {
+    -fx-text-fill: #c62828;
+    -fx-font-size: 12px;
+    -fx-padding: 0 0 10 0;
+}

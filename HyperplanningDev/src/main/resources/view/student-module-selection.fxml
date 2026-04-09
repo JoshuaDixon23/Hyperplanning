@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="fr.univtln.projet.planning.controller.InternationalStudentModuleController"
+            style="-fx-background-color: #f8f9fa;">
+
+    <!-- SIDEBAR -->
+    <left>
+        <fx:include source="/components/sidebar-staffDri.fxml"/>
+    </left>
+
+    <!-- CONTENU -->
+    <center>
+        <VBox spacing="20" style="-fx-padding: 40;">
+
+            <!-- NOM ETUDIANT -->
+            <Label fx:id="studentNameLabel"
+                   text="Nom étudiant"
+                   style="-fx-font-size: 28px; -fx-font-weight: bold;"/>
+
+            <!-- CONTENU PROMOS + MODULES -->
+            <ScrollPane fitToWidth="true"
+                        style="-fx-background-color: transparent;">
+
+                <content>
+                    <VBox fx:id="promoContainer"
+                          spacing="15"
+                          style="-fx-padding: 10;"/>
+                </content>
+
+            </ScrollPane>
+
+        </VBox>
+    </center>
+
+</BorderPane>

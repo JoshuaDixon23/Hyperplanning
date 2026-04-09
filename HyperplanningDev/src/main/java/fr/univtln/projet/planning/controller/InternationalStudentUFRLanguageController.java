@@ -188,6 +188,8 @@ public class InternationalStudentUFRLanguageController implements Initializable 
             //                             List<Language> languages)
             // StudentModuleSelectionController next = loader.getController();
             // next.setContext(currentStudent, selectedUFRs, selectedLanguages);
+            InternationalStudentModuleController controller = loader.getController();
+            controller.setContext(currentStudent, selectedUFRs, selectedLanguages);
 
             Stage stage = (Stage) studentNameLabel.getScene().getWindow();
             stage.setScene(new Scene(root));
