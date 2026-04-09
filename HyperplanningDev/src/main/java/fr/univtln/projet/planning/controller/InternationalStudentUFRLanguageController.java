@@ -178,7 +178,7 @@ public class InternationalStudentUFRLanguageController implements Initializable 
         try {
             // TODO: remplacer le chemin par votre vrai FXML de la page suivante
             FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/views/student-module-selection.fxml")
+                    getClass().getResource("/view/student-module-selection.fxml")
             );
             Parent root = loader.load();
 
