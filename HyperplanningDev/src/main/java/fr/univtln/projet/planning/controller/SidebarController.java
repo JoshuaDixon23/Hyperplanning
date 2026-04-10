@@ -32,7 +32,7 @@ public class SidebarController {
     @FXML private HBox btnDashboard;
     @FXML private HBox btnModules;
     @FXML private Label userNameLabel;
-    @FXML private HBox btnLogout;
+
 
     // ... déclare les autres boutons ici
 
@@ -55,6 +55,7 @@ public class SidebarController {
     private void handleMenuClick(MouseEvent event) {
         // L'élément cliqué (la HBox)
         HBox clickedItem = (HBox) event.getSource();
+        System.out.println("Clic sidebar : " + clickedItem.getId());
 
         if ("btnLogout".equals(clickedItem.getId())) {
             if (onMenuSelected != null) {
@@ -136,6 +137,8 @@ public class SidebarController {
             }
         }
     }
+
+
 
 
 

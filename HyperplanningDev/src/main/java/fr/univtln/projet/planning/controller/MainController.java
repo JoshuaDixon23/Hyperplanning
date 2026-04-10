@@ -70,7 +70,10 @@ public class MainController {
     }
 
     private void handleSidebarNavigation(String itemId) {
+        System.out.println("Navigation demandée : " + itemId);
         switch (itemId) {
+
+
             case "btnPlanning" -> {
                 loadPlanningView();
                 sidebarController.setActiveById("btnPlanning");
@@ -80,6 +83,11 @@ public class MainController {
                 sidebarController.setActiveById("btnMap");
             }
             case "btnLogout" -> logout();
+
+            case "btnRooms" -> {
+                loadView("/view/room-view.fxml");
+                sidebarController.setActiveById("btnRooms");
+            }
         }
     }
 
@@ -138,4 +146,6 @@ public class MainController {
             e.printStackTrace();
         }
     }
+
+
 }
