@@ -72,7 +72,7 @@
                                  -fx-border-radius: 8;
                                  -fx-background-radius: 8;
                                  -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.04), 4, 0, 0, 1);">
-                        <Label text="ECTS cumulés"
+                        <Label text="ECTS"
                                style="-fx-padding: 10 16;
                                       -fx-font-size: 13px;
                                       -fx-font-weight: 500;
