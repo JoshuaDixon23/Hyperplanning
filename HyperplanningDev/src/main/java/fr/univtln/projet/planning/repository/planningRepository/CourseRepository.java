@@ -23,6 +23,22 @@ public class CourseRepository extends JpaRepository<Course, Long> {
         return em.createQuery(jpql, Course.class).getResultList();
     }
 
+    // find for empty room
+
+    public List<Course> findByDate(LocalDate date) {
+        if (date == null) {
+            throw new IllegalArgumentException("Date nulle");
+        }
+
+        String jpql = "SELECT c FROM Course c " +
+                "WHERE c.date = :date " +
+                "ORDER BY c.startTime";
+
+        return em.createQuery(jpql, Course.class)
+                .setParameter("date", date)
+                .getResultList();
+    }
+
     // ----------------- Planning by Group -----------------
     public List<Course> findByGroupAndPeriod(Group group, LocalDate start, LocalDate end) {
         validatePeriod(start, end);

@@ -68,7 +68,7 @@ class CourseServiceTest {
         ModuleService moduleService = new ModuleService(moduleRepo, profService);
         GroupService groupService = new GroupService(groupRepo, promoService, moduleService);
 
-        RoomService roomService = new RoomService(roomRepo, buildingService);
+        RoomService roomService = new RoomService(roomRepo, buildingService,courseRepo);
 
         CourseService courseService = new CourseService(courseRepo/*, moduleService, roomService, profService*/);
 

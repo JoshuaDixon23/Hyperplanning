@@ -101,7 +101,7 @@ public class ServiceRegistry {
 
 
             buildingService = new BuildingService(buildingRepo, campusService, ufrService);
-            roomService = new RoomService(roomRepo, buildingService);
+            roomService = new RoomService(roomRepo, buildingService,courseRepo);
             System.out.println("Infrastructure services initialized (Building, Room)");
 
             promoService = new PromoService(promoRepo, ufrService);

@@ -50,6 +50,8 @@ public class RoomEntity {
         this.type = type;
     }
 
+
+
     /*
     public Set<CourseEntity> getCourses() {
         return courses;
@@ -59,6 +61,11 @@ public class RoomEntity {
 
     public String getName(){
         return building.getName() + this.getNumber();
+    }
+
+
+    public static String buildRoomKey(String buildingName, String roomNumber) {
+        return buildingName.trim().toLowerCase() + "::" + roomNumber.trim().toLowerCase();
     }
 
     @Override
