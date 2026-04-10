@@ -1,8 +1,8 @@
 package fr.univtln.projet.planning.controller;
 
 import fr.univtln.projet.planning.entity.infrastructure.RoomEntity;
-import fr.univtln.projet.planning.service.infrastructureService.RoomService;
 import fr.univtln.projet.planning.service.ServiceRegistry;
+import fr.univtln.projet.planning.service.infrastructureService.RoomService;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.DatePicker;
@@ -32,6 +32,7 @@ public class RoomsController {
         datePicker.setValue(LocalDate.now());
         startTimeField.setText("08:00");
         endTimeField.setText("10:00");
+        resultLabel.setText("Choisissez une date et un créneau, puis lancez la recherche.");
     }
 
     @FXML
@@ -57,7 +58,7 @@ public class RoomsController {
             }
 
         } catch (DateTimeParseException e) {
-            resultLabel.setText("Format d'heure invalide. Utilise HH:mm, par exemple 08:30.");
+            resultLabel.setText("Format d'heure invalide");
             roomsListView.getItems().clear();
         } catch (IllegalArgumentException e) {
             resultLabel.setText(e.getMessage());
@@ -74,4 +75,6 @@ public class RoomsController {
         String roomNumber = room.getNumber() != null ? room.getNumber() : "Salle inconnue";
         return buildingName + " - " + roomNumber;
     }
+
+
 }
