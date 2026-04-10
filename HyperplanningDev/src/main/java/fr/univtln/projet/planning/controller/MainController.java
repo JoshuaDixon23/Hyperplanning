@@ -6,8 +6,10 @@ import fr.univtln.projet.planning.service.planningService.CourseService;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 
 
 import java.io.IOException;
@@ -77,6 +79,7 @@ public class MainController {
                 loadView("/view/map-view.fxml");
                 sidebarController.setActiveById("btnMap");
             }
+            case "btnLogout" -> logout();
         }
     }
 
@@ -110,6 +113,27 @@ public class MainController {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
             Node view = loader.load();
             contentArea.getChildren().setAll(view);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void logout() {
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/view/connexion-view.fxml")
+            );
+
+            Scene scene = new Scene(loader.load());
+
+            scene.getStylesheets().add(
+                    getClass().getResource("/css/connexion.css").toExternalForm()
+            );
+
+            Stage stage = (Stage) contentArea.getScene().getWindow();
+            stage.setScene(scene);
+            stage.show();
+
         } catch (IOException e) {
             e.printStackTrace();
         }

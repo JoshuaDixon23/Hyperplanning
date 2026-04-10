@@ -1,5 +1,6 @@
 package fr.univtln.projet.planning.controller;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -7,12 +8,15 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.shape.SVGPath;
+import javafx.stage.Stage;
 
 public class SidebarController {
 
@@ -28,6 +32,7 @@ public class SidebarController {
     @FXML private HBox btnDashboard;
     @FXML private HBox btnModules;
     @FXML private Label userNameLabel;
+    @FXML private HBox btnLogout;
 
     // ... déclare les autres boutons ici
 
@@ -50,6 +55,13 @@ public class SidebarController {
     private void handleMenuClick(MouseEvent event) {
         // L'élément cliqué (la HBox)
         HBox clickedItem = (HBox) event.getSource();
+
+        if ("btnLogout".equals(clickedItem.getId())) {
+            if (onMenuSelected != null) {
+                onMenuSelected.accept(clickedItem.getId());
+            }
+            return;
+        }
 
         // 1. Enlever l'état "sélectionné" de TOUS les boutons
         for (HBox item : menuItems) {
@@ -124,4 +136,8 @@ public class SidebarController {
             }
         }
     }
+
+
+
+
 }

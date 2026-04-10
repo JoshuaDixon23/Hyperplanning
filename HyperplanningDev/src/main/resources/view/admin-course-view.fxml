@@ -10,7 +10,7 @@
             style="-fx-background-color: #f8f9fa;">
 
     <left>
-        <fx:include source="/components/sidebar-admin.fxml" />
+        <fx:include fx:id="sidebar" source="/components/sidebar-admin.fxml" />
     </left>
 
     <center>

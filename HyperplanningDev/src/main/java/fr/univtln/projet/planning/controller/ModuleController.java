@@ -1,5 +1,6 @@
 package fr.univtln.projet.planning.controller;
 
+import java.io.IOException;
 import java.net.URL;
 import java.time.Duration;
 import java.time.LocalDate;
@@ -27,9 +28,11 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
@@ -54,18 +57,21 @@ import fr.univtln.projet.planning.service.planningService.ModuleService;
 import fr.univtln.projet.planning.service.personService.ProfessorService;
 import fr.univtln.projet.planning.service.academicService.GroupService;
 import fr.univtln.projet.planning.service.ServiceRegistry;
+import javafx.stage.Stage;
 
 public class ModuleController implements Initializable {
 
     @FXML private HBox cardsContainer;
     @FXML private TextField searchField;
     @FXML private Label pageIndicator;
+    @FXML private SidebarController sidebarController;
     
     private RoomService roomService;
     private ModuleService moduleService;
     private ProfessorService professorService;
     private GroupService groupService;
-    private CourseService courseService; 
+    private CourseService courseService;
+
     
     // Cache et Pagination
     private List<ModuleEntity> allModulesCache = new ArrayList<>(); 
@@ -86,6 +92,7 @@ public class ModuleController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         try {
+
             roomService = ServiceRegistry.getRoomService();
             moduleService = ServiceRegistry.getModuleService();
             professorService = ServiceRegistry.getProfessorService();
@@ -104,9 +111,47 @@ public class ModuleController implements Initializable {
             System.err.println("ServiceRegistry not initialized: " + e.getMessage());
             return;
         }
-        
+        if (sidebarController != null) {
+            sidebarController.setOnMenuSelected(this::handleSidebarNavigation);
+        }
+
+
         preloadReferenceData();
         loadModulesAndCoursesFromService();
+    }
+
+    private void handleSidebarNavigation(String itemId) {
+        switch (itemId) {
+            case "btnLogout" -> logout();
+            case "btnModules" -> {
+                // déjà sur la page modules, donc rien à faire
+            }
+            default -> {
+                // tu pourras gérer les autres boutons plus tard
+                System.out.println("Navigation admin non encore gérée : " + itemId);
+            }
+        }
+    }
+
+    private void logout() {
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/view/connexion-view.fxml")
+            );
+
+            Scene scene = new Scene(loader.load());
+
+            scene.getStylesheets().add(
+                    getClass().getResource("/css/connexion.css").toExternalForm()
+            );
+
+            Stage stage = (Stage) cardsContainer.getScene().getWindow();
+            stage.setScene(scene);
+            stage.show();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void preloadReferenceData() {
