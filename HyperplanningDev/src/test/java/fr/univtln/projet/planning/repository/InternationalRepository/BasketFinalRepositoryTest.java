@@ -1,15 +1,16 @@
 package fr.univtln.projet.planning.repository.InternationalRepository;
 
-import fr.univtln.projet.planning.modele.international.BasketFinal;
+import java.util.List;
+import java.util.Optional;
+
+import org.junit.jupiter.api.Test;
+
 import fr.univtln.projet.planning.entity.planning.ModuleEntity;
+import fr.univtln.projet.planning.modele.international.BasketFinal;
 import fr.univtln.projet.planning.repository.internationalRepository.BasketFinalRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
-import org.junit.jupiter.api.Test;
-
-import java.util.List;
-import java.util.Optional;
 
 public class BasketFinalRepositoryTest {
 
@@ -28,7 +29,9 @@ public class BasketFinalRepositoryTest {
         });
 
         // 🔹 Test findByModule (⚠️ module doit exister en DB)
-        ModuleEntity module = new ModuleEntity("Maths");
+        ModuleEntity module = ModuleEntity.builder()
+                .name("Maths")
+                .build();
         List<BasketFinal> baskets = repo.findByModule(module);
         baskets.forEach(System.out::println);
 

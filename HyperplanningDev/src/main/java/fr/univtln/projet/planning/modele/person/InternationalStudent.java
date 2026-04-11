@@ -1,7 +1,10 @@
 package fr.univtln.projet.planning.modele.person;
 
-//import fr.univtln.projet.planning.modele.international.Basket; // Assure-toi que Basket est bien dans modele
+import fr.univtln.projet.planning.modele.international.BasketFinal;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
@@ -32,6 +35,7 @@ public class InternationalStudent extends Student {
         this.basketFinal = basketFinal;
     }
 
+    @Override
     public Long getId() {
         return super.getId();
     }

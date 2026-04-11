@@ -7,6 +7,7 @@ import fr.univtln.projet.planning.controller.DRIController;
 import fr.univtln.projet.planning.entity.planning.ModuleEntity;
 import fr.univtln.projet.planning.modele.person.InternationalStudent;
 import fr.univtln.projet.planning.service.ServiceRegistry;
+import fr.univtln.projet.planning.service.internationalService.BasketFinalService;
 import fr.univtln.projet.planning.service.planningService.ModuleService;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -26,14 +27,13 @@ public class Main extends Application {
         DRIController controller = loader.getController();
 
         ModuleService moduleService = ServiceRegistry.getModuleService();
-        List<ModuleEntity> firstThreeModules = moduleService.findAll().stream()
-                .limit(3)
-                .collect(Collectors.toList());
+        BasketFinalService basketFinalService = ServiceRegistry.getBasketFinalService();
 
         InternationalStudent student = new InternationalStudent("Jean", "Dupont", "jean.dupont@etud.univ-tln.fr", "jean.dupont@gmail.com");
 
         controller.setCourseService(ServiceRegistry.getCourseService());
-        controller.loadStudentDRI(student, firstThreeModules);
+        controller.setBasketFinalService(basketFinalService);
+        controller.loadStudentDRI(student);
 
         Scene scene = new Scene(root, 1600, 900);
 

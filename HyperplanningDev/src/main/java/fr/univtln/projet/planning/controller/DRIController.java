@@ -12,12 +12,17 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import fr.univtln.projet.planning.entity.academic.GroupEntity;
-import fr.univtln.projet.planning.modele.academic.GroupType;
 import fr.univtln.projet.planning.entity.planning.CourseEntity;
 import fr.univtln.projet.planning.entity.planning.ModuleEntity;
+import fr.univtln.projet.planning.mapper.academic.GroupMapper;
+import fr.univtln.projet.planning.mapper.planning.ModuleMapper;
+import fr.univtln.projet.planning.modele.academic.GroupType;
+import fr.univtln.projet.planning.modele.international.BasketFinal;
 import fr.univtln.projet.planning.modele.person.InternationalStudent;
+import fr.univtln.projet.planning.service.internationalService.BasketFinalService;
 import fr.univtln.projet.planning.service.planningService.CourseService;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -26,6 +31,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
@@ -76,6 +82,7 @@ public class DRIController {
     private LocalDate endOfAcademicYear;
 
     private CourseService courseService;
+    private BasketFinalService basketFinalService; 
     
     private InternationalStudent currentStudent;
     private List<ModuleEntity> inputModules = new ArrayList<>();
@@ -88,7 +95,6 @@ public class DRIController {
     private Set<CourseEntity> allConflictingCourses = new HashSet<>();
     
     private final List<VBox> sourceCourseCards = new ArrayList<>();
-    // Futur BasketFinal
     private final Map<String, Map<GroupType, List<RadioButton>>> moduleRadioButtons = new HashMap<>();
 
     @FXML
@@ -146,15 +152,26 @@ public class DRIController {
         this.courseService = courseService;
     }
 
-    public void loadStudentDRI(InternationalStudent student, List<ModuleEntity> modules) {
+    public void setBasketFinalService(BasketFinalService basketFinalService) {
+        this.basketFinalService = basketFinalService;
+    }
+
+    public void loadStudentDRI(InternationalStudent student) {
         this.currentStudent = student;
-        this.inputModules = modules;
-        
+
+        if (currentStudent != null && currentStudent.getBasketFinal() != null && currentStudent.getBasketFinal().getEntries() != null) {
+            this.inputModules = currentStudent.getBasketFinal().getEntries().stream()
+                    .map(entry -> ModuleMapper.toDomain(entry.getModule())) 
+                    .collect(Collectors.toList());
+        } else {
+            this.inputModules = new ArrayList<>();
+        }
+
         if (studentTitleLabel != null) {
             studentTitleLabel.setText("Planning de l'étudiant(e) : " + student.getFirstName() + " " + student.getLastName());
         }
         
-        for (ModuleEntity m : modules) {
+        for (ModuleEntity m : inputModules) {
             moduleSelectionStatus.put(m.getCode(), true);
             selectedGroupsPerModuleAndType.put(m.getCode(), new HashMap<>());
         }
@@ -293,16 +310,58 @@ public class DRIController {
         basketContainer.getChildren().add(validateBtn);
     }
 
-    /**
-     * Méthode Placeholder appelée par le bouton Valider
-     */
     @FXML
     private void handleValidateBasket() {
-        System.out.println("✅ VALIDATION DU PLANNING DRI");
-        System.out.println("Étudiant : " + (currentStudent != null ? currentStudent.getFirstName() + " " + currentStudent.getLastName() : "Inconnu"));
-        System.out.println("Nombre de conflits non résolus : " + allConflictingCourses.size());
-        System.out.println("TODO: Implémenter la sauvegarde en base de données ici.");
-        // Tu pourras récupérer les choix faits via 'selectedGroupsPerModuleAndType'
+        if (currentStudent == null) {
+            System.err.println("Erreur: Aucun étudiant sélectionné.");
+            return;
+        }
+        if (basketFinalService == null) {
+            System.err.println("Erreur: Le BasketFinalService n'a pas été défini.");
+            return;
+        }
+
+        try {
+            // 1. On crée le panier final pour cet étudiant via le service
+            BasketFinal basket = basketFinalService.create();
+            basket.setStudent(currentStudent);
+
+            // 2. On parcourt les choix effectués par l'agent DRI dans l'interface
+            for (ModuleEntity module : inputModules) {
+                if (moduleSelectionStatus.getOrDefault(module.getCode(), false)) {
+                    Map<GroupType, GroupEntity> groups = selectedGroupsPerModuleAndType.get(module.getCode());
+                    
+                    if (groups != null) {
+                        for (GroupEntity group : groups.values()) {
+                            // Utilisation des Mappers pour repasser de Entity à Modèle pour l'enregistrement
+                            basketFinalService.addModule(
+                                basket.getId(), 
+                                ModuleMapper.toJpa(module), 
+                                GroupMapper.toJpa(group)
+                            );
+                        }
+                    }
+                }
+            }
+
+            System.out.println("✅ VALIDATION DU PLANNING RÉUSSIE pour " + currentStudent.getFirstName());
+            
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Validation Réussie");
+            alert.setHeaderText("Panier Final Enregistré !");
+            alert.setContentText("Le planning a été validé avec succès pour l'étudiant " 
+                                + currentStudent.getFirstName() + ".\n"
+                                + "Conflits restants : " + allConflictingCourses.size());
+            alert.showAndWait();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            Alert error = new Alert(Alert.AlertType.ERROR);
+            error.setTitle("Erreur de sauvegarde");
+            error.setHeaderText(null);
+            error.setContentText("Impossible d'enregistrer le BasketFinal dans la base de données.");
+            error.showAndWait();
+        }
     }
 
     private String getSectionTitle(GroupType type) {
@@ -313,6 +372,7 @@ public class DRIController {
             default -> type.name();
         };
     }
+
 
     private void createGroupSectionUI(VBox parent, ModuleEntity module, List<GroupEntity> groups, String title, GroupType type) {
         Label lblTitle = new Label(title);
@@ -783,10 +843,6 @@ public class DRIController {
         if (course.getDuration() == null) return 0;
         return (int) course.getDuration().toMinutes(); 
     }
-
-    // ==========================================================
-    // Navigation et Utilitaires
-    // ==========================================================
 
     private String formatRange(LocalDate start, LocalDate end) {
         String startStr = start.format(dayMonthFmt);

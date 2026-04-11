@@ -1,15 +1,20 @@
 package fr.univtln.projet.planning.modele.international;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import fr.univtln.projet.planning.entity.planning.ModuleEntity;
 import fr.univtln.projet.planning.modele.academic.Group;
 import fr.univtln.projet.planning.modele.person.InternationalStudent;
 import fr.univtln.projet.planning.modele.planning.Module;
-
-import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import lombok.Getter;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Getter
 @Entity
@@ -22,7 +27,7 @@ public class BasketFinal {
     @OneToMany(mappedBy = "basket", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<BasketEntry> entries = new ArrayList<>();
 
-    @OneToOne(mappedBy = "basket", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "basketFinal", cascade = CascadeType.ALL)
     private InternationalStudent student;
 
     public BasketFinal() {}
@@ -48,7 +53,6 @@ public class BasketFinal {
             student.setBasketFinal(this);
         }
     }
-
     //Avoid double
     public boolean containsModule(Module module) {
         return entries.stream()

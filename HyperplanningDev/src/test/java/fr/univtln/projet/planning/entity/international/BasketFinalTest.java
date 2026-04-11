@@ -1,11 +1,13 @@
 package fr.univtln.projet.planning.entity.international;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import org.junit.jupiter.api.Test;
+
 import fr.univtln.projet.planning.entity.academic.GroupEntity;
 import fr.univtln.projet.planning.entity.person.InternationalStudentEntity;
 import fr.univtln.projet.planning.entity.planning.ModuleEntity;
-import fr.univtln.projet.planning.modele.international.BasketFinal;
-import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
+import fr.univtln.projet.planning.modele.academic.GroupType;
 
 public class BasketFinalTest {
     @Test
@@ -16,10 +18,11 @@ public class BasketFinalTest {
 
         BasketFinalEntity basket = new BasketFinalEntity();
 
-        ModuleEntity module = new ModuleEntity("Maths");
+        ModuleEntity module = ModuleEntity.builder()
+                .name("Maths")
+                .build();
 
-        GroupEntity group = new GroupEntity();
-        group.setNum(1);
+        GroupEntity group = GroupEntity.GroupFactory(1, GroupType.TD);
 
         basket.addModuleGroup(module, group);
 

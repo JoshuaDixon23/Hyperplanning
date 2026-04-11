@@ -1,5 +1,7 @@
 package fr.univtln.projet.planning.entity.planning;
 
+import java.lang.module.ModuleDescriptor;
+
 import fr.univtln.projet.planning.entity.TextTransformation;
 import fr.univtln.projet.planning.entity.person.ProfessorEntity;
 import fr.univtln.projet.planning.modele.planning.Language;
@@ -22,7 +24,7 @@ public class ModuleEntity {
     private ProfessorEntity responsible;
     private Map<CourseType, Float> courseHours; // Dictionary for CM/TD/TP hours in module
 
-    public ModuleEntity(String b){
+    private ModuleEntity(Builder b){
         code = b.code;
         name = b.name;
         language = b.language;
