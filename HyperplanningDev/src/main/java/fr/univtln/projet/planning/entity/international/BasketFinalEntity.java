@@ -1,10 +1,12 @@
 package fr.univtln.projet.planning.entity.international;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import fr.univtln.projet.planning.entity.academic.GroupEntity;
 import fr.univtln.projet.planning.entity.planning.ModuleEntity;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class BasketFinalEntity {
 
@@ -24,6 +26,10 @@ public class BasketFinalEntity {
 
     public GroupEntity getGroup(ModuleEntity module) {
         return moduleGroup.get(module);
+    }
+
+    public List<ModuleEntity> getListModules() {
+        return new ArrayList<>(moduleGroup.keySet());
     }
 
     public void removeModule(ModuleEntity module) {

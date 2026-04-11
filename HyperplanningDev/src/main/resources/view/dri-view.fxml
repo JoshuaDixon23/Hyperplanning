@@ -9,24 +9,7 @@
             styleClass="root">
 
     <left>
-        <VBox prefWidth="280" styleClass="sidebar">
-            <HBox spacing="14" alignment="CENTER_LEFT" styleClass="sidebar-header">
-                <Label text="📅" styleClass="sidebar-logo"/>
-                <Label fx:id="userNameLabel" text="Staff DRI" styleClass="sidebar-username"/>
-            </HBox>
-            <Separator styleClass="sidebar-sep"/>
-            <VBox spacing="6" styleClass="sidebar-menu">
-                <HBox spacing="12" alignment="CENTER_LEFT" styleClass="nav-item">
-                    <Label text="⬛" styleClass="nav-icon"/>
-                    <Label text="Dashboard" styleClass="nav-text"/>
-                </HBox>
-                <HBox spacing="12" alignment="CENTER_LEFT" styleClass="nav-item, nav-item-selected">
-                    <Label text="📅" styleClass="nav-icon, nav-icon-selected"/>
-                    <Label text="Planning DRI" styleClass="nav-text, nav-text-selected"/>
-                </HBox>
-            </VBox>
-            <VBox VBox.vgrow="ALWAYS"/>
-        </VBox>
+<fx:include source="/components/sidebar-staffDri.fxml" />
     </left>
 
     <center>

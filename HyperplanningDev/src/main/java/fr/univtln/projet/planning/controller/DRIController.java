@@ -12,18 +12,19 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import fr.univtln.projet.planning.entity.academic.GroupEntity;
+import fr.univtln.projet.planning.entity.person.InternationalStudentEntity;
 import fr.univtln.projet.planning.entity.planning.CourseEntity;
 import fr.univtln.projet.planning.entity.planning.ModuleEntity;
-import fr.univtln.projet.planning.mapper.academic.GroupMapper;
-import fr.univtln.projet.planning.mapper.planning.ModuleMapper;
 import fr.univtln.projet.planning.modele.academic.GroupType;
 import fr.univtln.projet.planning.modele.international.BasketFinal;
 import fr.univtln.projet.planning.modele.person.InternationalStudent;
+import fr.univtln.projet.planning.service.academicService.GroupService;
 import fr.univtln.projet.planning.service.internationalService.BasketFinalService;
+import fr.univtln.projet.planning.service.personService.InternationalStudentService;
 import fr.univtln.projet.planning.service.planningService.CourseService;
+import fr.univtln.projet.planning.service.planningService.ModuleService;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -83,8 +84,11 @@ public class DRIController {
 
     private CourseService courseService;
     private BasketFinalService basketFinalService; 
+    private InternationalStudentService internationalStudentService; 
+    private ModuleService moduleService;
+    private GroupService groupService;
     
-    private InternationalStudent currentStudent;
+    private InternationalStudentEntity currentStudent;
     private List<ModuleEntity> inputModules = new ArrayList<>();
     
     private final Map<String, Map<GroupType, GroupEntity>> selectedGroupsPerModuleAndType = new HashMap<>();
@@ -156,13 +160,23 @@ public class DRIController {
         this.basketFinalService = basketFinalService;
     }
 
-    public void loadStudentDRI(InternationalStudent student) {
+    public void setInternationalStudentService(InternationalStudentService internationalStudentService) {
+        this.internationalStudentService = internationalStudentService;
+    }
+
+    public void setModuleService(ModuleService moduleService) {
+        this.moduleService = moduleService;
+    }
+
+    public void setGroupService(GroupService groupService) {
+        this.groupService = groupService;
+    }
+
+    public void loadStudentDRI(InternationalStudentEntity student) {
         this.currentStudent = student;
 
-        if (currentStudent != null && currentStudent.getBasketFinal() != null && currentStudent.getBasketFinal().getEntries() != null) {
-            this.inputModules = currentStudent.getBasketFinal().getEntries().stream()
-                    .map(entry -> ModuleMapper.toDomain(entry.getModule())) 
-                    .collect(Collectors.toList());
+        if (currentStudent != null && currentStudent.getBasketFinal() != null && currentStudent.getBasketFinal().getModuleGroup() != null) {
+            this.inputModules = new ArrayList<>(currentStudent.getBasketFinal().getModuleGroup().keySet());
         } else {
             this.inputModules = new ArrayList<>();
         }
@@ -316,35 +330,54 @@ public class DRIController {
             System.err.println("Erreur: Aucun étudiant sélectionné.");
             return;
         }
-        if (basketFinalService == null) {
-            System.err.println("Erreur: Le BasketFinalService n'a pas été défini.");
+        if (basketFinalService == null || internationalStudentService == null || moduleService == null || groupService == null) {
+            System.err.println("Erreur: Tous les services nécessaires n'ont pas été définis.");
             return;
         }
 
         try {
-            // 1. On crée le panier final pour cet étudiant via le service
-            BasketFinal basket = basketFinalService.create();
-            basket.setStudent(currentStudent);
+            InternationalStudent managedStudent = internationalStudentService.getByEmailUniv(currentStudent.getEmailUniv());
+            if (managedStudent == null) {
+                throw new Exception("L'étudiant n'a pas pu être trouvé en base de données.");
+            }
 
-            // 2. On parcourt les choix effectués par l'agent DRI dans l'interface
+            BasketFinal basket = basketFinalService.create();
+            basket.setStudent(managedStudent);
+
             for (ModuleEntity module : inputModules) {
                 if (moduleSelectionStatus.getOrDefault(module.getCode(), false)) {
                     Map<GroupType, GroupEntity> groups = selectedGroupsPerModuleAndType.get(module.getCode());
                     
                     if (groups != null) {
                         for (GroupEntity group : groups.values()) {
-                            // Utilisation des Mappers pour repasser de Entity à Modèle pour l'enregistrement
-                            basketFinalService.addModule(
-                                basket.getId(), 
-                                ModuleMapper.toJpa(module), 
-                                GroupMapper.toJpa(group)
-                            );
+                            fr.univtln.projet.planning.modele.planning.Module managedModule = moduleService.findJpaByCode(module.getCode());
+                            fr.univtln.projet.planning.modele.academic.Group managedGroup = null;
+                            
+                            if (group != null) {
+                                managedGroup = groupService.findJpaByNumAndTypeAndPromo(
+                                        group.getNum(), 
+                                        group.getType(), 
+                                        group.getPromo().getName(), 
+                                        group.getPromo().getStudyLevel(), 
+                                        group.getPromo().getYear()
+                                );
+                            }
+
+                            if (managedModule != null) {
+                                basketFinalService.addModule(
+                                    basket.getId(), 
+                                    managedModule, 
+                                    managedGroup
+                                );
+                            } else {
+                                System.err.println("Module introuvable en base pour la validation: " + module.getCode());
+                            }
                         }
                     }
                 }
             }
 
-            System.out.println("✅ VALIDATION DU PLANNING RÉUSSIE pour " + currentStudent.getFirstName());
+            System.out.println("VALIDATION DU PLANNING RÉUSSIE pour " + currentStudent.getFirstName());
             
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Validation Réussie");
@@ -354,12 +387,28 @@ public class DRIController {
                                 + "Conflits restants : " + allConflictingCourses.size());
             alert.showAndWait();
 
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/staffDri-student-view.fxml"));
+            Scene scene = new Scene(loader.load(), 1600, 900); // Adapte la taille si besoin
+
+            scene.getStylesheets().addAll(
+                getClass().getResource("/css/base.css").toExternalForm(),
+                getClass().getResource("/css/sidebar.css").toExternalForm(),
+                getClass().getResource("/css/components.css").toExternalForm(),
+                getClass().getResource("/css/planning.css").toExternalForm()
+            );
+
+            // Changement de la scène sur la fenêtre actuelle
+            Stage stage = (Stage) basketContainer.getScene().getWindow();
+            stage.setScene(scene);
+            stage.centerOnScreen();
+            stage.show();
+
         } catch (Exception e) {
             e.printStackTrace();
             Alert error = new Alert(Alert.AlertType.ERROR);
             error.setTitle("Erreur de sauvegarde");
             error.setHeaderText(null);
-            error.setContentText("Impossible d'enregistrer le BasketFinal dans la base de données.");
+            error.setContentText("Impossible d'enregistrer le BasketFinal dans la base de données : " + e.getMessage());
             error.showAndWait();
         }
     }
@@ -372,7 +421,6 @@ public class DRIController {
             default -> type.name();
         };
     }
-
 
     private void createGroupSectionUI(VBox parent, ModuleEntity module, List<GroupEntity> groups, String title, GroupType type) {
         Label lblTitle = new Label(title);
@@ -969,25 +1017,4 @@ public class DRIController {
         planningContent.setMinHeight(totalHeight);
     }
 
-    @FXML
-    private void handleLogout() {
-        if (logoutButton != null) {
-            logoutButton.setText("Chargement...");
-            logoutButton.setDisable(true);
-        }
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/connexion-view.fxml"));
-            Scene scene = new Scene(loader.load());
-            scene.getStylesheets().add(getClass().getResource("/css/connexion.css").toExternalForm());
-            Stage stage = (Stage) logoutButton.getScene().getWindow();
-            stage.setScene(scene);
-            stage.show();
-        } catch (Exception e) {
-            e.printStackTrace();
-            if (logoutButton != null) {
-                logoutButton.setText("Déconnexion");
-                logoutButton.setDisable(false);
-            }
-        }
-    }
 }

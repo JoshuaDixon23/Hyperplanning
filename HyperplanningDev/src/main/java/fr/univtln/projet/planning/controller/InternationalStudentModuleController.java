@@ -1,24 +1,37 @@
 package fr.univtln.projet.planning.controller;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
+import fr.univtln.projet.planning.entity.academic.PromoEntity;
 import fr.univtln.projet.planning.entity.academic.UFREntity;
 import fr.univtln.projet.planning.entity.person.InternationalStudentEntity;
 import fr.univtln.projet.planning.entity.planning.ModuleEntity;
 import fr.univtln.projet.planning.modele.planning.Language;
 import fr.univtln.projet.planning.service.ServiceRegistry;
+import fr.univtln.projet.planning.service.academicService.PromoService;
 import fr.univtln.projet.planning.service.planningService.ModuleService;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
-import javafx.scene.layout.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import fr.univtln.projet.planning.entity.academic.PromoEntity;
-import fr.univtln.projet.planning.service.academicService.PromoService;
-
-import java.util.*;
-import java.util.stream.Collectors;
 
 public class InternationalStudentModuleController {
 
@@ -241,24 +254,62 @@ public class InternationalStudentModuleController {
     @FXML
     private void handleValidate() {
         if (selectedModules.isEmpty()) return;
-        System.out.println("Validate ToDo");
-        /*
+        
         try {
-            FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/view/dri-view.fxml")
+            // 1. Récupération ou création du panier de l'étudiant
+            fr.univtln.projet.planning.entity.international.BasketFinalEntity basket = currentStudent.getBasketFinal();
+            
+            // CORRECTION : Si le panier n'existe pas, on le crée !
+            if (basket == null) {
+                basket = new fr.univtln.projet.planning.entity.international.BasketFinalEntity();
+                currentStudent.setBasketFinal(basket);
+            } else {
+                // On vide le panier au cas où l'agent serait revenu en arrière pour modifier ses choix
+                basket.getModuleGroup().clear();
+            }
+            
+            // 2. Remplissage avec les modules sélectionnés (les Groupes sont null pour l'instant)
+            for (ModuleEntity module : selectedModules) {
+                basket.addModuleGroup(module, null);
+            }
+
+            // 3. Chargement de la vue DRI
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/dri-view.fxml"));
+            Scene scene = new Scene(loader.load(), 1600, 900);
+
+            scene.getStylesheets().addAll(
+                getClass().getResource("/css/base.css").toExternalForm(),
+                getClass().getResource("/css/sidebar.css").toExternalForm(),
+                getClass().getResource("/css/components.css").toExternalForm(),
+                getClass().getResource("/css/planning.css").toExternalForm(),
+                getClass().getResource("/css/connexion.css").toExternalForm()
             );
-            Scene scene = new Scene(loader.load());
 
-            SidebarDriController driController = loader.getController();
-            // driController.loadStudentDRI(currentStudent, selectedModules);
+            // 4. Transmission des données au contrôleur
+            DRIController driController = loader.getController();
+            
+            driController.setCourseService(ServiceRegistry.getCourseService());
+            driController.setBasketFinalService(ServiceRegistry.getBasketFinalService());
+            driController.setInternationalStudentService(ServiceRegistry.getInternationalStudentService());
+            driController.setGroupService(ServiceRegistry.getGroupService());
+            driController.setModuleService(ServiceRegistry.getModuleService());
+            
+            // On passe l'entité avec son panier sécurisé !
+            driController.loadStudentDRI(currentStudent);
 
+            // 5. Changement de scène
             Stage stage = (Stage) validateButton.getScene().getWindow();
             stage.setScene(scene);
+            stage.centerOnScreen();
             stage.show();
+            
         } catch (Exception e) {
             e.printStackTrace();
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Erreur de navigation");
+            alert.setHeaderText("Impossible d'ouvrir le planning");
+            alert.setContentText("Une erreur est survenue lors du chargement de la vue DRI : " + e.getMessage());
+            alert.showAndWait();
         }
-
-         */
     }
 }
