@@ -1,5 +1,3 @@
-Diagramme de contexte statique :
-
 @startuml
 left to right direction
 
@@ -8,17 +6,15 @@ actor Professor as p
 actor Invited as i
 actor Admin as a
 actor StaffDRI as DRI
-actor Server
+database Server
 
-rectangle app {
-  s --down-- (app)
-  p --down-- (app)
-  i --down-- (app)
-  a --down-- (app)
-  DRI --down-- (app)
+rectangle App{
+  s --down-- (App)
+  p --down-- (App)
+  i --down-- (App)
+  a --down-- (App)
+  DRI --down-- (App)
 
-  Server --up-- (app)
+  Server --up-- (App)
 }
 @enduml
-
-
