@@ -52,4 +52,11 @@ public class PromoService {
     public Promo findJpaByNameAndYearAndStudyLevel(String name, int year, StudyLevel studyLevel) {
         return promoRepository.findByNameAndYearAndStudyLevel(name, year, studyLevel);
     }
+
+    public List<PromoEntity> findByModuleCode(String moduleCode) {
+        return promoRepository.findByModuleCode(moduleCode)
+                .stream()
+                .map(PromoMapper::toDomain)
+                .toList();
+    }
 }

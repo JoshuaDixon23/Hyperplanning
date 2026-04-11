@@ -29,7 +29,7 @@ public class InternationalStudentRepository extends JpaRepository<InternationalS
     @Override
     public List<InternationalStudent> findAll(int pageNumber, int pageSize) {
         //Utiliser des named queries ou la criteria API
-        String jpql = "SELECT e FROM InternationalStudent e ORDER BY e.userId";
+        String jpql = "SELECT e FROM InternationalStudent e ORDER BY e.userId DESC";
         return em.createQuery(jpql, InternationalStudent.class)
                 .setFirstResult(pageNumber*pageSize)
                 .setMaxResults(pageSize)

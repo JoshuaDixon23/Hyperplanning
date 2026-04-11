@@ -1,14 +1,6 @@
 package fr.univtln.projet.planning;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
-import fr.univtln.projet.planning.controller.DRIController;
-import fr.univtln.projet.planning.entity.planning.ModuleEntity;
-import fr.univtln.projet.planning.modele.person.InternationalStudent;
 import fr.univtln.projet.planning.service.ServiceRegistry;
-import fr.univtln.projet.planning.service.internationalService.BasketFinalService;
-import fr.univtln.projet.planning.service.planningService.ModuleService;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -21,19 +13,9 @@ public class Main extends Application {
     public void start(Stage stage) throws Exception {
         ServiceRegistry.initialize();
 
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/dri-view.fxml"));
-        Parent root = loader.load();
-
-        DRIController controller = loader.getController();
-
-        ModuleService moduleService = ServiceRegistry.getModuleService();
-        BasketFinalService basketFinalService = ServiceRegistry.getBasketFinalService();
-
-        InternationalStudent student = new InternationalStudent("Jean", "Dupont", "jean.dupont@etud.univ-tln.fr", "jean.dupont@gmail.com");
-
-        controller.setCourseService(ServiceRegistry.getCourseService());
-        controller.setBasketFinalService(basketFinalService);
-        controller.loadStudentDRI(student);
+        Parent root = FXMLLoader.load(
+                getClass().getResource("/view/staffDri-student-view.fxml")
+        );
 
         Scene scene = new Scene(root, 1600, 900);
 

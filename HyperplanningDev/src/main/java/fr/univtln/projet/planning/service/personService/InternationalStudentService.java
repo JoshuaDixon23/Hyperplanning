@@ -26,6 +26,16 @@ public class InternationalStudentService {
                 .toList();
     }
 
+    /*
+    public List<InternationalStudentEntity> findAll() {
+        return internationalStudentRepository.findAll()
+                .stream()
+                .map(InternationalStudentMapper::toDomain)
+                .toList();
+    }
+
+     */
+
     public Optional<InternationalStudentEntity> findById(Long id){
         return internationalStudentRepository.findById(id)
                 .map(InternationalStudentMapper::toDomain);

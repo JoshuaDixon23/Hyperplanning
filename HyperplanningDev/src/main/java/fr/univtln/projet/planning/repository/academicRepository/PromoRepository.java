@@ -35,4 +35,13 @@ public class PromoRepository extends JpaRepository<Promo, Long> {
         query.setParameter("year", year);
         return query.getSingleResult();
     }
+
+    public List<Promo> findByModuleCode(String moduleCode) {
+        String jpql = "SELECT DISTINCT g.promo FROM Group g " +
+                "JOIN g.modules m " +
+                "WHERE m.code = :moduleCode";
+        TypedQuery<Promo> query = em.createQuery(jpql, Promo.class);
+        query.setParameter("moduleCode", moduleCode);
+        return query.getResultList();
+    }
 }
