@@ -15,18 +15,12 @@ group Choice of convenient courses in basket
     s -> a : Chooses convenient UFRS from the list
     a -> s : Asks the language(s) convenient for studing for a student
     s -> a : Chooses the language(s) spoken by student
-    a -> s : Displays convenient promos
-    s -> a : Chooses convenient promos
-    note right
-    Can consult convenient courses 
-    for each promo but not chose 
-    them for instance
-    end note
-    a -> s : Displays all the promos chosen with courses names 
+    a -> s : Displays promos with convenient modules
     s -> a : Chooses convenient courses in basket
     note right
-    Can consult courses details by
-    clicking on them (ECTS, language etc)
+    Must be able to consult courses details 
+    like ECTS and language in order to have
+    adapted selection
     end note
     s -> a : Validates basket
 end
