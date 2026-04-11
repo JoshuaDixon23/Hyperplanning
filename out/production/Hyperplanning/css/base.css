@@ -1,0 +1,14 @@
+.root{
+    -fx-background-color: #f6f7f9;
+    -fx-font-family: "Inter", "SF Pro Display", "System";
+}
+
+.content{
+    -fx-padding: 26 28 18 28;
+}
+
+.page-title {
+    -fx-font-size: 44px;
+    -fx-font-weight: 800;
+    -fx-text-fill: #2a2a2a;
+}

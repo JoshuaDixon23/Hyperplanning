@@ -1,13 +1,13 @@
 package fr.univtln.projet.planning.entity.person;
 
-import fr.univtln.projet.planning.entity.international.BasketEntity;
+import fr.univtln.projet.planning.entity.international.BasketFinalEntity;
 
 public class InternationalStudentEntity extends StudentEntity {
-    private BasketEntity basket;
+    private BasketFinalEntity basketFinal;
 
-    private InternationalStudentEntity(String fname, String lname){
+    public InternationalStudentEntity(String fname, String lname){
         super(fname, lname);
-        this.basket = new BasketEntity();
+        this.basketFinal = new BasketFinalEntity();
     }
 
     public InternationalStudentEntity(String firstName, String lastName, String emailUniv, String emailPersonal) {
@@ -20,5 +20,9 @@ public class InternationalStudentEntity extends StudentEntity {
         InternationalStudentEntity s =  UserFactory(fname, lname, InternationalStudentEntity::new);
         s.setEmailPersonal(emailPersonal.toLowerCase());
         return s;
+    }
+
+    public void setEmailUniv(String mail) {
+
     }
 }

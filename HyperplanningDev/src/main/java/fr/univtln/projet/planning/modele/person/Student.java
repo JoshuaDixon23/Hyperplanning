@@ -13,6 +13,7 @@ import lombok.Setter;
 public class Student extends User {
     @Column(unique = true, nullable = false)
     private String emailPersonal;
+    private Long id;
 
     protected Student() {
         super();
@@ -27,6 +28,8 @@ public class Student extends User {
         super(firstName, lastName, emailUniv);
         this.emailPersonal = emailPersonal;
     }
+
+
 
     /**
      * Factory method to create a Student properly.

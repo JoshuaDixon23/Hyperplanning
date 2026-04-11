@@ -12,18 +12,28 @@ import lombok.Setter;
 @Setter
 public class InternationalStudent extends Student {
 
-    // @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-    // @JoinColumn(name = "idBasket")
-    // private Basket basket;
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "basket_id")
+    private BasketFinal basketFinal;
 
     protected InternationalStudent() {
         super();
-        // this.basket = new Basket(); 
     }
 
     public InternationalStudent(String firstName, String lastName, String emailUniv, String emailPersonal) {
         super(firstName, lastName, emailUniv, emailPersonal);
-        //this.basket = new Basket();
+    }
+
+    public BasketFinal getBasketFinal() {
+        return basketFinal;
+    }
+
+    public void setBasketFinal(BasketFinal basketFinal) {
+        this.basketFinal = basketFinal;
+    }
+
+    public Long getId() {
+        return super.getId();
     }
 
     /*
