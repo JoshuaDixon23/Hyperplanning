@@ -96,8 +96,6 @@ Admin                -[hidden]r- StaffDRI
 
 ' Ligne 2 : coeur académique horizontal
 Promo                -[hidden]r- Group
-Group                -[hidden]r- ModuleGroup
-ModuleGroup          -[hidden]r- Module
 Module               -[hidden]r- Course
 Course               -[hidden]r- UFR
 UFR                  -[hidden]r- Building
@@ -110,7 +108,6 @@ BasketModule         -[hidden]r- BasketFinal
 ' Alignements verticaux
 LocalStudent         -[hidden]d- Promo
 Student              -[hidden]d- Group
-InternationalStudent -[hidden]d- ModuleGroup
 User                 -[hidden]d- Module
 Professor            -[hidden]d- Course
 Admin                -[hidden]d- UFR
