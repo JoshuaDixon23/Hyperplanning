@@ -12,30 +12,41 @@ group Authentication
     App --> Admin: Access to Dashboard
 end
 
-group UFR & Program Management
+group UFR Management
     Admin -> App: Create "Sciences and Technologies" UFR
     App -> DB: Save new UFR
     Admin -> App: Generate "Computer Science - L3"  Program within UFR
     App -> DB: Associate Program with UFR
     Admin -> App: Configure parameters (Academic year, Expected headcount)
     App -> DB: Update Database
-
+end
 
 group Module Management
-    Admin -> App: Add Modules ("Crypto", "Databases")
+    Admin -> App: Add modules ("Crypto", "Databases")
     App -> DB: Link modules to L3 Program
     App --> Admin: Modules registered
+
+group Course Management
+    Admin -> App: Create new course acnd add to a module
+    App -> DB: Link course and Crypto module
+    App --> Admin: Display new course
 end
 end
 
-group Availability Analysis
-    Admin -> App: Consult Rooms schedules
-    App -> DB: Get Room schedule
-    DB --> App: Data on used time slots
-    App --> Admin: Display availability
+group Teacher Management
+    Admin -> App: Change teacher name Grey to Sheperd
+    App -> DB: Apply changes
+    App --> Admin: Display new name
 end
 
-group Mapping
+group Student Management
+    Admin -> App: Add new student Josh
+    App -> DB: Insert Josh
+    App --> Admin: Display new student
+end
+
+
+group Map Management
     Admin -> App: Modify map (Add new building)
     App -> DB: Update map
     App --> Admin: Map updated
