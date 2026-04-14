@@ -2,9 +2,10 @@
 package fr.univtln.projet.planning.controller;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
-import javafx.scene.layout.VBox;
-import javafx.scene.text.Text;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
 
 public class ConnexionController {
@@ -49,7 +50,6 @@ public class ConnexionController {
         if (authenticate(username, password)) {
             System.out.println("Connexion réussie : " + username);
 
-            // 👉 ici tu peux changer de scène (planning)
             goToPlanning();
 
         } else {
@@ -88,7 +88,6 @@ public class ConnexionController {
      */
     private void goToPlanning() {
         try {
-            // ⚠️ adapte le chemin
             javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(
                     getClass().getResource("/fxml/planning.fxml")
             );

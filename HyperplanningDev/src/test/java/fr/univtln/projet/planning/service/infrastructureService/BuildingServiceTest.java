@@ -1,5 +1,11 @@
 package fr.univtln.projet.planning.service.infrastructureService;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.junit.jupiter.api.Test;
+
 import fr.univtln.projet.planning.entity.infrastructure.BuildingEntity;
 import fr.univtln.projet.planning.modele.infrastructure.Building;
 import fr.univtln.projet.planning.repository.academicRepository.UFRRepository;
@@ -11,11 +17,6 @@ import fr.univtln.projet.planning.service.personService.AdminService;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
-import org.junit.jupiter.api.Test;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 class BuildingServiceTest {
 
@@ -41,7 +42,7 @@ class BuildingServiceTest {
         String buildingName = "A";
         String localisation = "Center";
 
-        // ⚠️ hours are given empty, change of visibility of Hours may be needed
+        // hours are given empty, change of visibility of Hours may be needed
         Map<fr.univtln.projet.planning.modele.infrastructure.Day, Building.Hours> hours = new HashMap<>();
 
         // ------------------ TRANSACTION ------------------

@@ -22,20 +22,17 @@ public class BasketFinalRepositoryTest {
 
         BasketFinalRepository repo = new BasketFinalRepository(em);
 
-        // 🔹 Test findWithAll (⚠️ nécessite un id existant en DB)
         Optional<BasketFinal> basketOpt = repo.findWithAll(1L);
         basketOpt.ifPresent(b -> {
             System.out.println("Basket trouvé : " + b);
         });
 
-        // 🔹 Test findByModule (⚠️ module doit exister en DB)
         ModuleEntity module = ModuleEntity.builder()
                 .name("Maths")
                 .build();
         List<BasketFinal> baskets = repo.findByModule(module);
         baskets.forEach(System.out::println);
 
-        // 🔹 Test containsModule
         boolean exists = repo.containsModule(1L, module);
         System.out.println("Contient module ? " + exists);
 

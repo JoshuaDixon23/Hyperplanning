@@ -16,7 +16,6 @@ public class GroupMapper {
                 g.getType(),
                 g.getPromo() != null ? PromoMapper.toDomain(g.getPromo()) : null
         );
-        // toDomain of planning to add ?
         return entity;
     }
 

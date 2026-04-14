@@ -26,18 +26,15 @@ public class BasketFinalServiceTest {
         // ------------------ TRANSACTION ------------------
         em.getTransaction().begin();
 
-        // 🔹 Création du panier
         System.out.println("Creating BasketFinal...");
         BasketFinal basket = service.create();
 
-        // 🔹 Création module + group
         Module module = new Module();
         module.setName("Maths");
 
         Group group = new Group();
         group.setNum(1);
 
-        // 🔹 Ajout module au panier
         service.addModule(basket.getId(), module, group);
 
         em.getTransaction().commit();

@@ -641,7 +641,6 @@ public class ModuleController implements Initializable {
         GridPane grid = new GridPane();
         grid.setHgap(10); grid.setVgap(10); grid.setPadding(new Insets(20, 150, 10, 10));
 
-        // AJOUT: DatePicker
         DatePicker datePicker = new DatePicker(course.getDate());
         TextField timeField = new TextField(timeFormatter.format(course.getStartTime())); 
         TextField durationField = new TextField(String.valueOf(course.getDuration().toMinutes())); 
@@ -701,14 +700,13 @@ public class ModuleController implements Initializable {
                 }
             });
 
-            // CORRECTION: Vérification stricte avec le StudyLevel
             boolean isAlreadyLinked = false;
             if (course.getGroups() != null) {
                 for (GroupEntity courseGroup : course.getGroups()) {
                    if (courseGroup.getNum() == g.getNum() && 
                         courseGroup.getType() == g.getType() && 
                         courseGroup.getPromo().getName().equals(g.getPromo().getName()) &&
-                        courseGroup.getPromo().getStudyLevel().equals(g.getPromo().getStudyLevel())) { // <-- Correction ici
+                        courseGroup.getPromo().getStudyLevel().equals(g.getPromo().getStudyLevel())) { 
                         
                         isAlreadyLinked = true;
                         break;

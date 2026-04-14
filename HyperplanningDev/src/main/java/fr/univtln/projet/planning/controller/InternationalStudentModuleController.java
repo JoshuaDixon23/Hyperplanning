@@ -256,10 +256,8 @@ public class InternationalStudentModuleController {
         if (selectedModules.isEmpty()) return;
         
         try {
-            // 1. Récupération ou création du panier de l'étudiant
             fr.univtln.projet.planning.entity.international.BasketFinalEntity basket = currentStudent.getBasketFinal();
             
-            // CORRECTION : Si le panier n'existe pas, on le crée !
             if (basket == null) {
                 basket = new fr.univtln.projet.planning.entity.international.BasketFinalEntity();
                 currentStudent.setBasketFinal(basket);
@@ -268,12 +266,10 @@ public class InternationalStudentModuleController {
                 basket.getModuleGroup().clear();
             }
             
-            // 2. Remplissage avec les modules sélectionnés (les Groupes sont null pour l'instant)
             for (ModuleEntity module : selectedModules) {
                 basket.addModuleGroup(module, null);
             }
 
-            // 3. Chargement de la vue DRI
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/dri-view.fxml"));
             Scene scene = new Scene(loader.load(), 1600, 900);
 
@@ -285,7 +281,6 @@ public class InternationalStudentModuleController {
                 getClass().getResource("/css/connexion.css").toExternalForm()
             );
 
-            // 4. Transmission des données au contrôleur
             DRIController driController = loader.getController();
             
             driController.setCourseService(ServiceRegistry.getCourseService());
@@ -294,10 +289,8 @@ public class InternationalStudentModuleController {
             driController.setGroupService(ServiceRegistry.getGroupService());
             driController.setModuleService(ServiceRegistry.getModuleService());
             
-            // On passe l'entité avec son panier sécurisé !
             driController.loadStudentDRI(currentStudent);
 
-            // 5. Changement de scène
             Stage stage = (Stage) validateButton.getScene().getWindow();
             stage.setScene(scene);
             stage.centerOnScreen();
