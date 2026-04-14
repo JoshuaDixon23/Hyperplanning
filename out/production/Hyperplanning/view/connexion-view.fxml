@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="fr.univtln.projet.planning.controller.AuthenticationController"
+            stylesheets="@/css/connexion.css"
+            styleClass="login-root">
+
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="14" styleClass="header-bar">
+            <children>
+                <Label text="📅" styleClass="app-icon"/>
+                <Label text="HyperPlanning" styleClass="app-title"/>
+            </children>
+            <padding>
+                <Insets top="24" right="24" bottom="18" left="24"/>
+            </padding>
+        </HBox>
+    </top>
+
+    <!-- Centre -->
+    <center>
+        <StackPane alignment="CENTER" styleClass="content-area">
+            <children>
+                <VBox styleClass="login-card"
+                      alignment="TOP_CENTER"
+                      spacing="0"
+                      prefWidth="420"
+                      maxWidth="420"
+                      prefHeight="560"
+                      maxHeight="560">
+
+                    <padding>
+                        <Insets top="42" right="32" bottom="28" left="32"/>
+                    </padding>
+
+                    <Label text="Connexion" styleClass="login-main-title"/>
+
+                    <Region prefHeight="28"/>
+
+                    <VBox spacing="8" maxWidth="345" prefWidth="345" alignment="TOP_LEFT">
+                        <Label text="identifiant" styleClass="field-label"/>
+                        <TextField fx:id="usernameField"
+                                   promptText="entrer votre identifiant ..."
+                                   styleClass="login-input"
+                                   maxWidth="1.7976931348623157E308"/>
+                    </VBox>
+
+                    <Region prefHeight="20"/>
+
+                    <VBox spacing="8" maxWidth="345" prefWidth="345" alignment="TOP_LEFT">
+                        <Label text="mot de passe" styleClass="field-label"/>
+                        <PasswordField fx:id="passwordField"
+                                       promptText="entrer votre mot de passe ..."
+                                       styleClass="login-input"
+                                       maxWidth="1.7976931348623157E308"/>
+
+                    </VBox>
+
+                    <VBox fx:id="confirmPasswordBox"
+                          spacing="8"
+                          maxWidth="345"
+                          prefWidth="345"
+                          alignment="TOP_LEFT"
+                          visible="false"
+                          managed="false">
+                        <Label text="confirmer mot de passe" styleClass="field-label"/>
+                        <PasswordField fx:id="confirmPasswordField"
+                                       promptText="confirmer votre mot de passe ..."
+                                       styleClass="login-input"
+                                       maxWidth="1.7976931348623157E308"/>
+                    </VBox>
+
+                    <Region prefHeight="22"/>
+
+                    <Label fx:id="errorLabel"
+                           text=""
+                           wrapText="true"
+                           visible="false"
+                           styleClass="error-label"
+                           maxWidth="345"/>
+
+                    <Button fx:id="loginButton"
+                            text="se connecter"
+                            styleClass="login-button"
+                            onAction="#handleLogin"
+                            maxWidth="345"
+                            prefWidth="345"/>
+
+                    <Region prefHeight="14"/>
+
+                    <Button fx:id="cancelButton"
+                            text="annuler"
+                            styleClass="login-button-secondary"
+                            onAction="#handleCancel"/>
+
+                    <Label fx:id="planningLabel"
+                           text="Planning 2026"
+                           managed="false"
+                           visible="false"/>
+                </VBox>
+            </children>
+            <BorderPane.margin>
+                <Insets top="10" right="20" bottom="20" left="20"/>
+            </BorderPane.margin>
+        </StackPane>
+    </center>
+
+</BorderPane>

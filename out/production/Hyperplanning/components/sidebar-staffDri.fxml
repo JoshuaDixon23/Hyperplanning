@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+
+<VBox xmlns:fx="http://javafx.com/fxml"
+      prefWidth="280"
+      styleClass="sidebar"
+      fx:controller="fr.univtln.projet.planning.controller.SidebarController">
+
+    <HBox spacing="14" alignment="CENTER_LEFT" styleClass="sidebar-header">
+        <Region style="-fx-shape: 'SVG A DEFINIR';"
+                prefWidth="32" prefHeight="32" minWidth="32" minHeight="32"
+                styleClass="sidebar-logo"/>
+        <Label fx:id="userNameLabel" text="Username" styleClass="sidebar-username"/>
+    </HBox>
+
+    <Separator styleClass="sidebar-sep"/>
+
+    <VBox spacing="6" styleClass="sidebar-menu">
+
+        <HBox fx:id="btnStudent" onMouseClicked="#handleMenuClick" spacing="12" alignment="CENTER_LEFT" styleClass="nav-item, nav-item-selected">
+            <Region style="-fx-shape: 'M505.837,180.418L279.265,76.124c-7.349-3.385-15.177-5.093-23.265-5.093c-8.088,0-15.914,1.708-23.265,5.093 L6.163,180.418C2.418,182.149,0,185.922,0,190.045s2.418,7.896,6.163,9.627l226.572,104.294c7.349,3.385,15.177,5.101,23.265,5.101 c8.088,0,15.916-1.716,23.267-5.101l178.812-82.306v82.881c-7.096,0.8-12.63,6.84-12.63,14.138c0,6.359,4.208,11.864,10.206,13.618 l-12.092,79.791h55.676l-12.09-79.791c5.996-1.754,10.204-7.259,10.204-13.618c0-7.298-5.534-13.338-12.63-14.138v-95.148 l21.116-9.721c3.744-1.731,6.163-5.504,6.163-9.627S509.582,182.149,505.837,180.418z M256,346.831c-11.246,0-22.143-2.391-32.386-7.104L112.793,288.71v101.638 c0,22.314,67.426,50.621,143.207,50.621c75.782,0,143.209-28.308,143.209-50.621V288.71l-110.827,51.017 C278.145,344.44,267.25,346.831,256,346.831z';"
+                    prefWidth="20" prefHeight="20" minWidth="20" minHeight="20" styleClass="nav-icon, nav-icon-selected"/>
+            <Label text="Student" styleClass="nav-text, nav-text-selected"/>
+        </HBox>
+
+        <HBox spacing="12" alignment="CENTER_LEFT" styleClass="nav-item">
+            <Label text="📅" styleClass="nav-icon"/>
+            <Label text="Planning" styleClass="nav-text"/>
+        </HBox>
+
+        <HBox fx:id="btnRooms" onMouseClicked="#handleMenuClick" spacing="12" alignment="CENTER_LEFT" styleClass="nav-item">
+            <Region style="-fx-shape: 'M10.5 9C12.9853 9 15 6.98528 15 4.5C15 2.01472 12.9853 0 10.5 0C8.01475 0 6.00003 2.01472 6.00003 4.5C6.00003 5.38054 6.25294 6.20201 6.69008 6.89574L0.585815 13L3.58292 15.9971L4.99714 14.5829L3.41424 13L5.00003 11.4142L6.58292 12.9971L7.99714 11.5829L6.41424 10L8.10429 8.30995C8.79801 8.74709 9.61949 9 10.5 9ZM10.5 7C11.8807 7 13 5.88071 13 4.5C13 3.11929 11.8807 2 10.5 2C9.11932 2 8.00003 3.11929 8.00003 4.5C8.00003 5.88071 9.11932 7 10.5 7Z';"
+                    prefWidth="20" prefHeight="20" minWidth="20" minHeight="20" styleClass="nav-icon"/>
+            <Label text="Rooms" styleClass="nav-text"/>
+        </HBox>
+
+        <HBox fx:id="btnMap" onMouseClicked="#handleMenuClick" spacing="12" alignment="CENTER_LEFT" styleClass="nav-item">
+            <Region style="-fx-shape: 'M3.37892 10.2236L8 16L12.6211 10.2236C13.5137 9.10788 14 7.72154 14 6.29266V6C14 2.68629 11.3137 0 8 0C4.68629 0 2 2.68629 2 6V6.29266C2 7.72154 2.4863 9.10788 3.37892 10.2236ZM8 8C9.10457 8 10 7.10457 10 6C10 4.89543 9.10457 4 8 4C6.89543 4 6 4.89543 6 6C6 7.10457 6.89543 8 8 8Z';"
+                    prefWidth="20" prefHeight="20" minWidth="20" minHeight="20" styleClass="nav-icon"/>
+            <Label text="Map" styleClass="nav-text"/>
+        </HBox>
+
+    </VBox>
+
+    <VBox VBox.vgrow="ALWAYS"/>
+</VBox>

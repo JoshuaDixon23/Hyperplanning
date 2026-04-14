@@ -92,6 +92,10 @@ public class Course implements Comparable<Course> {
         return new Builder();
     }
 
+    public void setModule(Object o) {
+
+    }
+
     public static final class Builder {
         private Long courseId = null;
         private Module module = null;

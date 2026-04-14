@@ -7,6 +7,7 @@ import java.util.Objects;
 import java.util.Set;
 
 import fr.univtln.projet.planning.entity.TextTransformation;
+import fr.univtln.projet.planning.entity.academic.GroupEntity; // Adjust package if needed
 import fr.univtln.projet.planning.modele.academic.Group;
 import fr.univtln.projet.planning.modele.person.Professor;
 import jakarta.persistence.CascadeType;
@@ -54,7 +55,7 @@ public class Module {
     @OneToMany(mappedBy = "module", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Course> planning = new ArrayList<>();
     
-    protected Module() {
+    public Module() {
     }
 
     private Module(Builder b) {
@@ -89,6 +90,13 @@ public class Module {
 
     public static Builder builder() { 
         return new Builder(); 
+    }
+
+    public float getEcts() {
+        return ects;
+    }
+
+    public void addGroup(GroupEntity group) {
     }
 
     public static final class Builder {

@@ -6,6 +6,7 @@ import fr.univtln.projet.planning.repository.academicRepository.UFRRepository;
 import fr.univtln.projet.planning.repository.infrastructureRepository.BuildingRepository;
 import fr.univtln.projet.planning.repository.infrastructureRepository.CampusRepository;
 import fr.univtln.projet.planning.repository.infrastructureRepository.RoomRepository;
+import fr.univtln.projet.planning.repository.internationalRepository.BasketFinalRepository;
 import fr.univtln.projet.planning.repository.personRepository.AdminRepository;
 import fr.univtln.projet.planning.repository.personRepository.InternationalStudentRepository;
 import fr.univtln.projet.planning.repository.personRepository.LocalStudentRepository;
@@ -19,6 +20,7 @@ import fr.univtln.projet.planning.service.academicService.UFRService;
 import fr.univtln.projet.planning.service.infrastructureService.BuildingService;
 import fr.univtln.projet.planning.service.infrastructureService.CampusService;
 import fr.univtln.projet.planning.service.infrastructureService.RoomService;
+import fr.univtln.projet.planning.service.internationalService.BasketFinalService;
 import fr.univtln.projet.planning.service.personService.AdminService;
 import fr.univtln.projet.planning.service.personService.InternationalStudentService;
 import fr.univtln.projet.planning.service.personService.LocalStudentService;
@@ -61,6 +63,8 @@ public class ServiceRegistry {
     private static ModuleService moduleService;
     private static CourseService courseService;
 
+    private static BasketFinalService basketFinalService;
+
     /**
      * Initializes all services and repositories.
      * Must be called once at application startup.
@@ -86,10 +90,12 @@ public class ServiceRegistry {
             GroupRepository groupRepo = new GroupRepository(em);
             ModuleRepository moduleRepo = new ModuleRepository(em);
             CourseRepository courseRepo = new CourseRepository(em);
+            BasketFinalRepository basketFinalRepo = new BasketFinalRepository(em);
             System.out.println("All repositories initialized");
 
             campusService = new CampusService(campusRepo);
             adminService = new AdminService(adminRepo);
+            basketFinalService = new BasketFinalService(basketFinalRepo);
             System.out.println("Simple services initialized (Campus, Admin)");
 
             ufrService = new UFRService(ufrRepo, adminService, campusService);
@@ -202,6 +208,11 @@ public class ServiceRegistry {
     public static CourseService getCourseService() {
         validateInitialized();
         return courseService;
+    }
+
+    public static BasketFinalService getBasketFinalService() {
+        validateInitialized();
+        return basketFinalService;
     }
 
     // ========== GETTERS: JPA Context ==========

@@ -87,7 +87,7 @@ public class Group {
         }
     }
 
-    protected Group() {
+    public Group() {
     }
 
     private Group(int num, GroupType type) {
