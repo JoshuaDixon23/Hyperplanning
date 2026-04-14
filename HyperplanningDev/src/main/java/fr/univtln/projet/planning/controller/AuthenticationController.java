@@ -1,6 +1,11 @@
 package fr.univtln.projet.planning.controller;
 
-import fr.univtln.projet.planning.modele.person.*;
+import java.util.Optional;
+
+import fr.univtln.projet.planning.modele.person.Admin;
+import fr.univtln.projet.planning.modele.person.LocalStudent;
+import fr.univtln.projet.planning.modele.person.Professor;
+import fr.univtln.projet.planning.modele.person.User;
 import fr.univtln.projet.planning.repository.academicRepository.PromoRepository;
 import fr.univtln.projet.planning.repository.academicRepository.UFRRepository;
 import fr.univtln.projet.planning.repository.infrastructureRepository.CampusRepository;
@@ -19,12 +24,13 @@ import jakarta.persistence.Persistence;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-
-import java.util.Optional;
 
 /*
     Attention créer un entity manager à chaques fois peut etres pas cool (peut etre à optimiser)
@@ -411,6 +417,34 @@ public class AuthenticationController {
         goToPlanning(connectedUser);
     }
 
+    private void goToStaffDRI(User connectedUser){
+        
+
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                getClass().getResource("/view/staffDri-student-view.fxml")
+            );
+            
+            Scene scene = new Scene(loader.load());
+
+            scene.getStylesheets().addAll(
+                    getClass().getResource("/css/base.css").toExternalForm(),
+                    getClass().getResource("/css/sidebar.css").toExternalForm(),
+                    getClass().getResource("/css/components.css").toExternalForm()
+            );
+
+
+            Stage stage = (Stage) loginButton.getScene().getWindow();
+            stage.setScene(scene);
+            stage.show();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            showError("Erreur lors du chargement de l'interface DRI : " + e.getMessage());
+        }
+
+    }
+
 
     private void redirectUser(User connectedUser) {
         if (connectedUser instanceof Admin) {
@@ -419,7 +453,10 @@ public class AuthenticationController {
             goToProfessorPlanning(connectedUser);
         } else if (connectedUser instanceof LocalStudent) {
             goToStudentPlanning(connectedUser);
-        } else {
+        } else if (connectedUser instanceof fr.univtln.projet.planning.modele.person.StaffDRI) {
+            goToStaffDRI(connectedUser);
+        } 
+        else {
             showError("Rôle utilisateur non reconnu");
         }
     }
