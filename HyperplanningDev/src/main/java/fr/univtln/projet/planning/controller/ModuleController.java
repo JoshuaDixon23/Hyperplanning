@@ -127,7 +127,6 @@ public class ModuleController implements Initializable {
                 // déjà sur la page modules, donc rien à faire
             }
             default -> {
-                // tu pourras gérer les autres boutons plus tard
                 System.out.println("Navigation admin non encore gérée : " + itemId);
             }
         }

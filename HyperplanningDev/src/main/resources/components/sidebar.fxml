@@ -81,14 +81,7 @@
             <Label text="Menu" styleClass="nav-text"/>
         </HBox>
 
-        <HBox fx:id="btnLogout"
-              onMouseClicked="#handleMenuClick"
-              spacing="12"
-              alignment="CENTER_LEFT"
-              styleClass="nav-item">
-            <Label text="⏻" styleClass="nav-text"/>
-            <Label text="Déconnexion" styleClass="nav-text"/>
-        </HBox>
+
 
 
     </VBox>
@@ -96,5 +89,15 @@
 
 
     <VBox VBox.vgrow="ALWAYS"/>
+    <VBox VBox.vgrow="ALWAYS"/>
+
+    <HBox fx:id="btnLogout"
+          onMouseClicked="#handleMenuClick"
+          spacing="12"
+          alignment="CENTER_LEFT"
+          styleClass="nav-item">
+        <Label text="⏻" styleClass="nav-text"/>
+        <Label text="Déconnexion" styleClass="nav-text"/>
+    </HBox>
 
 </VBox>

@@ -72,7 +72,7 @@ public class SidebarController {
         // 2. Ajouter l'état "sélectionné" UNIQUEMENT au bouton cliqué
         addSelectedStyle(clickedItem);
 
-        // Optionnel : Ici tu pourrais aussi déclencher le changement de page
+
         // changerPage(clickedItem.getId());
         if (onMenuSelected != null) {
             onMenuSelected.accept(clickedItem.getId());
