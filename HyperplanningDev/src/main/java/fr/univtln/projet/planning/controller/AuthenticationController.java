@@ -298,7 +298,7 @@ public class AuthenticationController {
     private void goToGuestPlanning() {
         try {
             FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/view/main-view.fxml")
+                    getClass().getResource("/view/invite-view.fxml")
             );
 
             Scene scene = new Scene(loader.load());
