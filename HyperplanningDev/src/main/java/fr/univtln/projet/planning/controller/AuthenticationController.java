@@ -301,7 +301,7 @@ public class AuthenticationController {
                     getClass().getResource("/view/invite-view.fxml")
             );
 
-            Scene scene = new Scene(loader.load());
+            Scene scene = new Scene(loader.load(), 1024, 768);
 
             scene.getStylesheets().addAll(
                     getClass().getResource("/css/base.css").toExternalForm(),
@@ -345,8 +345,9 @@ public class AuthenticationController {
             FXMLLoader loader = new FXMLLoader(
                     getClass().getResource("/view/main-view.fxml")
             );
+            
 
-            Scene scene = new Scene(loader.load());
+            Scene scene = new Scene(loader.load(), 1024, 768);
 
             scene.getStylesheets().addAll(
                     getClass().getResource("/css/base.css").toExternalForm(),
@@ -390,8 +391,7 @@ public class AuthenticationController {
             FXMLLoader loader = new FXMLLoader(
                     getClass().getResource("/view/admin-course-view.fxml")
             );
-
-            Scene scene = new Scene(loader.load());
+            Scene scene = new Scene(loader.load(), 1024, 768);
 
             scene.getStylesheets().addAll(
                     getClass().getResource("/css/base.css").toExternalForm(),
@@ -425,7 +425,7 @@ public class AuthenticationController {
                 getClass().getResource("/view/staffDri-student-view.fxml")
             );
             
-            Scene scene = new Scene(loader.load());
+            Scene scene = new Scene(loader.load(), 1024, 768);
 
             scene.getStylesheets().addAll(
                     getClass().getResource("/css/base.css").toExternalForm(),
