@@ -6,9 +6,9 @@ actor Student as st
 
 ref over s, a : Student dossier creation 
 
-ref over s, a : Choice of convenient courses in basket
+ref over s, a : Choice of convenient moduls in basket
 
-ref over s, a :  Choice of courses for planning from basket
+ref over s, a :  Choice of moduls for planning from basket
 
 ref over s, st : Share planning with student
 
