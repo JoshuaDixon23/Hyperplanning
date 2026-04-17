@@ -430,7 +430,7 @@ public class PlanningController {
     // A corriger proprement par la suite car la c'est une methode qui permet de recuperer la durée qui est en nanos secondes et pas en minutes
     private int extractDurationMinutes(CourseEntity course) {
         if (course.getDuration() == null) return 0;
-        return (int) course.getDuration().toNanos();
+        return (int) course.getDuration().toMinutes();
     }
 
     private void loadCoursesFromService(List<CourseEntity> courses) {
@@ -657,7 +657,7 @@ public class PlanningController {
                 : "Non définie";
 
         String duration = course.getDuration() != null
-                ? course.getDuration().toNanos() + " min"
+                ? course.getDuration().toMinutes() + " min"
                 : "Non définie";
 
         String room = course.getRoom() != null
